@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.7)
+
+# Envy
+add_subdirectory("./source")
+
+# Examples
+add_subdirectory("./examples")
