@@ -1,2 +1,2 @@
 # Envy
-A lite game engine written in C++20 for Windows
+A lite game engine written in C++20 for Windows.
