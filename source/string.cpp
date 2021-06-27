@@ -1,51 +1,154 @@
 #include <string.hpp>
 
-#include <cstring>
-#include <algorithm>
+#include <exception>
+#include <utility>
+#include <ctype.h>
+#include <format>
 
 namespace Envy
 {
 
-    // string::string() :
-    //     size     {0u},
-    //     capacity {16u},
-    //     bytes    {new u8[capacity]}
-    // { std::fill(bytes.get(), bytes.get() + capacity, '\0'); }
+    namespace
+    {
+        macro_map global_macros;
+    }
 
 
-    // string::string(const char* cstr) :
-    //     size     {std::strlen(cstr)},
-    //     capacity {size + 11u},
-    //     bytes    {new u8[capacity]}
-    // {
-    //     strncpy_s( (char*) bytes.get(), capacity, cstr, capacity);
-    // }
+    void macro(macro_map& map, std::string_view name, macro_t m)
+    { map[std::string(name)] = m; }
 
 
-    // char* string::cstr() noexcept
-    // { return (char*) bytes.get(); }
+    void macro(std::string_view name, macro_t m)
+    { macro(global_macros, name, m); }
 
 
-    // const char* string::cstr() const noexcept
-    // { return (const char*) bytes.get(); }
+    std::tuple<std::string,std::string,usize> read_tag(std::string_view::const_iterator start, std::string_view::const_iterator end) noexcept
+    {
+        std::tuple<std::string,std::string,usize> tag;
+
+        auto i {start};
+
+        // tag identifier
+        for(; i != end; ++i)
+        {
+            if(*i == ':')
+            { break; }
+
+            if(*i == '}')
+            {
+                std::get<1>(tag) = "{}";
+                std::get<2>(tag) = i - start;
+                return tag;
+            }
+
+            std::get<0>(tag).push_back(*i);
+        }
+
+        if(i == end)
+        { return std::tuple<std::string,std::string,usize> {}; }
+
+        // fmt specifier
+        std::get<1>(tag).push_back('{');
+        for(; i != end; ++i)
+        {
+            std::get<1>(tag).push_back(*i);
+
+            if(*i == '}')
+            {
+                std::get<2>(tag) = i - start;
+                return tag;
+            }
+        }
+
+        return std::tuple<std::string,std::string,usize> {};
+    }
 
 
-    // u8* string::data() noexcept
-    // { return bytes.get(); }
+    bool is_identifier_string(std::string_view s) noexcept
+    {
+        if(s.empty())
+        { return false; }
+
+        if(isdigit((int)s.front()))
+        { return false; }
+
+        for(auto c : s)
+        {
+            if(!isalnum((int)c) && c != '_')
+            { return false; }
+        }
+
+        return true;
+    }
 
 
-    // const u8* string::data() const noexcept
-    // { return bytes.get(); }
+    std::string resolve_local(std::string_view s, const macro_map& map)
+    {
+        // TODO: escaped macro tags?
+
+        std::string result;
+        result.reserve(s.size());
+
+        for(auto i {s.begin()}; i != s.end(); ++i)
+        {
+            if(*i == '{')
+            {
+                ++i;
+
+                if(*i == '}')
+                {
+                    // empty tag, probably a placeholder for std::format() so we ignore
+                    result += "{}";
+                }
+                else
+                {
+                    // possible macro tag
+                    auto [identifier,fmt,tag_size] {read_tag(i,s.end())};
+
+                    if(is_identifier_string(identifier))
+                    {
+                        // yes, a valid macro tag (we just assume fmt is valid, let std::format() deal with it)
+
+                        auto macro_it {map.find(identifier)};
+
+                        if(macro_it == map.end())
+                        {
+                            // macro does not exist, let's just write it to the result as-is
+                            result.push_back('{');
+                            --i;
+                        }
+                        else
+                        {
+                            // let the replacement occur
+                            result += std::format(fmt,macro_it->second());
+                            i += tag_size;
+                        }
+                    }
+                    else
+                    {
+                        // invalid tag, let's just write it to the result as-is
+                        result.push_back('{');
+                        --i;
+                    }
+                }
+            }
+            else
+            { result.push_back(*i); }
+        }
+
+        return result;
+    }
 
 
-    // usize string::data_size() const
-    // { return size; }
+    std::string resolve(std::string_view s)
+    {
+        return resolve_local(s, global_macros);
+    }
 
 
-    // std::ostream& operator << (std::ostream& os, const string& s)
-    // {
-    //     os << s.cstr();
-    //     return os;
-    // }
+    std::string resolve(std::string_view s, const macro_map& additional)
+    {
+        return resolve_local( resolve_local(s, additional), global_macros);
+    }
 
 }

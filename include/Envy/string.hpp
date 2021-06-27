@@ -28,229 +28,101 @@
 #pragma once
 
 #include "common.hpp"
-
 #include "unicode.hpp"
 
+#include <unordered_map>
 #include <string>
+#include <string_view>
 #include <iostream>
-#include <vector>
-#include <iterator>
-#include <cstring>
-#include <algorithm>
+#include <functional>
+#include <sstream>
 
 namespace Envy
 {
 
-    template <character_encoding E>
-    class basic_string
+    template <typename T>
+    concept numeric =
+        std::floating_point<T> || std::integral<T> ||
+        std::convertible_to<numeric>;
+
+
+    template <typename T>
+    concept stream_insertable = requires (T t) { std::cout << t; };
+
+
+    template <typename T>
+    concept tostring_member = requires (T t) { { t.to_string() } -> std::convertible_to<std::string>; };
+
+
+    template <typename T>
+    concept tostring_freefunc = requires (T t) { { ::to_string(t) } -> std::convertible_to<std::string>; };
+
+
+    template <typename T>
+    concept convertable_to_string =
+        std::convertible_to<T,std::string>  ||
+        numeric<T>                          ||
+        stream_insertable<T>                ||
+        tostring_member<T>                  ||
+        tostring_freefunc<T>;
+
+
+    template <convertable_to_string T>
+    std::string to_string(T&& v)
     {
-    public:
 
-        using encoding = E;
-        using code_unit = encoding::code_unit;
-        using buffer = encoding::buffer;
+        if constexpr (std::same_as<T,bool>)
+        { return v ? "true" : "false"; }
 
-        class character
+        else if constexpr (std::same_as<T,char>)
+        { return std::string(&v,1); }
+
+        // TODO: unicode characters
+
+        else if constexpr (std::convertible_to<T,std::string>)
+        { return (std::string) std::forward<T>(v); }
+
+        else if constexpr (numeric<T>)
+        { return std::to_string(v); }
+
+        else if constexpr (tostring_member<T>)
+        { return std::forward<T>(v).to_string(); }
+
+        else if constexpr (tostring_freefunc<T>)
+        { return ::to_string(std::forward<T>(v)); }
+
+        else if constexpr (stream_insertable<T>)
         {
-            friend class iterator;
-            friend class basic_string<encoding>;
-
-            basic_string<encoding>& s;
-            code_unit* ptr;
-
-            character(basic_string<encoding>& s, code_unit* ptr) noexcept : s{s} , ptr{ptr} {}
-        public:
-
-            // ? no copy, no move, private construction ?
-
-            character& operator=(const character& c)
-            {
-                s.set_char(ptr, c);
-                return *this;
-            }
-            character& operator=(char c)
-            {
-                s.set_char(ptr, c);
-                return *this;
-            }
-            character& operator=(code_point cp)
-            {
-                s.set_char(ptr, cp);
-                return *this;
-            }
-
-            explicit operator code_point() const
-            {
-                return encoding::decode(ptr);
-            }
-
-            explicit operator char() const
-            {
-                // TODO: assert( ascii::valid(ptr), "character is not ascii")
-                return (char) *ptr;
-            }
-
-        };
-
-
-        class iterator
-        {
-        public:
-
-        private:
-            basic_string<encoding>* s;
-            code_unit* ptr;
-        public:
-
-            // // Member Types
-            using iterator_category = std::bidirectional_iterator_tag;
-            using difference_type   = std::ptrdiff_t;
-            using value_type        = character;
-            using pointer           = value_type*;  // or also value_type*
-            using reference         = value_type&;  // or also value_type&
-
-            iterator() noexcept : s{nullptr}, ptr{nullptr} {}
-
-            iterator(basic_string<encoding>* s, code_unit* ptr) noexcept : s{s} , ptr{ptr} {}
-
-            iterator(const iterator&) = default;
-            iterator& operator=(const iterator&) = default;
-
-            iterator& operator++() noexcept
-            {
-                encoding::increment(&ptr);
-                return *this;
-            }
-
-            iterator& operator++(int) noexcept
-            {
-                iterator t {*this};
-                ++(*this);
-                return t;
-            }
-
-            iterator& operator--() noexcept
-            {
-                encoding::decrement(&ptr);
-                return *this;
-            }
-
-            iterator& operator--(int) noexcept
-            {
-                iterator t {*this};
-                --(*this);
-                return t;
-            }
-
-            character operator*()
-            {
-                return {*s,ptr};
-            }
-
-            const character operator*() const
-            {
-                return {*s,ptr};
-            }
-
-            bool operator==(const iterator& other) const noexcept
-            { return ptr == other.ptr; }
-
-            code_unit* get()
-            { return ptr; }
-        };
-
-         // static_assert(std::bidirectional_iterator<iterator>);
-
-    private:
-
-        std::vector<code_unit> data;
-
-        usize size_chars;
-
-        static constexpr usize npos { (usize) -1 };
-
-    public:
-
-        basic_string() = default;
-
-        // temp
-        basic_string(const char* cstr) :
-            data {cstr, cstr + strlen(cstr) + 1}
-        {}
-
-        basic_string(const basic_string<encoding>&) = default;
-        basic_string(basic_string<encoding>&&) = default;
-
-        basic_string<encoding>& operator=(const basic_string<encoding>&) = default;
-        basic_string<encoding>& operator=(basic_string<encoding>&&) = default;
-
-        constexpr iterator begin() noexcept { return {this,data.data()}; }
-        // constexpr const_iterator begin() const noexcept;
-        // constexpr const_iterator cbegin() const noexcept;
-        constexpr iterator end() noexcept { return {this,data.data()+data.size()-1}; }
-        // constexpr const_iterator end() const noexcept;
-        // constexpr const_iterator cend() const noexcept;
-
-        // constexpr reverse_iterator       rbegin() noexcept;
-        // constexpr const_reverse_iterator rbegin() const noexcept;
-        // constexpr const_reverse_iterator crbegin() const noexcept;
-        // constexpr reverse_iterator       rend() noexcept;
-        // constexpr const_reverse_iterator rend() const noexcept;
-        // constexpr const_reverse_iterator crend() const noexcept;
-
-        char* cstr() noexcept
-        { return (char*) data.data(); }
-        const char* cstr() const noexcept
-        { return (const char*) data.data(); }
-
-        // code_unit* data() noexcept;
-        // const code_unit* data() const noexcept;
-
-        // usize data_size() const;
-
-        void set_char(iterator it, char c)
-        { set_char(it.get(),c); }
-
-        void set_char(iterator it, character c)
-        { set_char(it.get(),c); }
-
-        void set_char(code_unit* p, char c)
-        {
-            auto psz {encoding::count_code_units(p)};
-
-            if(psz > 1)
-            {
-                std::shift_left(p+1, data.data()+data.size(), psz-1);
-            }
-
-            *p = c;
+            std::stringstream ss;
+            ss << std::forward<T>(v);
+            return std::move(ss).str();
         }
 
-        void set_char(code_unit* p, character c)
-        {
-            // auto psz {encoding::count_code_units(p)};
-            // auto csz {encoding::count_code_units(c.ptr)};
-            // auto diff = csz - psz;
-
-            // if(diff > 0 && size_bytes + diff > capacity)
-            // { realloc(diff); }
-
-            // auto suffix { ((usize) p - data.get()) + psz };
-            // Envy::mutable_buffer(data.get(),size_bytes).shiftr(suffix, size_bytes - suffix, diff);
-
-            // for(int i {}; i < csz; ++i)
-            // {
-            //     p[i] = c.ptr[i];
-            // }
-        }
-
-    };
-
-    template<character_encoding E>
-    std::ostream& operator<<(std::ostream& os, const basic_string<E>& s)
-    {
-        os << s.cstr();
-        return os;
+        else { static_assert(true,"wat?"); return std::string(); }
     }
+
+
+    using macro_t = std::function<std::string(void)>;
+    using macro_map = std::unordered_map<std::string,macro_t>;
+
+    void macro(std::string_view name, macro_t m);
+    void macro(macro_map& map, std::string_view name, macro_t m);
+
+    inline void macro(std::string_view name, std::string(*mfn)(void))
+    { macro(name, macro_t(mfn)); }
+    inline void macro(macro_map& map, std::string_view name, std::string(*mfn)(void))
+    { macro(map, name, macro_t(mfn)); }
+
+    template <convertable_to_string T>
+    void macro(std::string_view name, const T& v)
+    { macro(name, [s=to_string(v)](){ return s; }); }
+
+    template <convertable_to_string T>
+    void macro(macro_map& map, std::string_view name, const T& v)
+    { macro(map, name, [s=to_string(v)](){ return s; }); }
+
+    std::string resolve_local(std::string_view s, const macro_map& map);
+    std::string resolve(std::string_view);
+    std::string resolve(std::string_view, const macro_map& additional);
 
 }
