@@ -4,6 +4,8 @@
 #include <format>
 #include <iostream>
 #include <exception>
+#include <unordered_map>
+#include <chrono>
 
 #include <string_util.hpp>
 
@@ -11,48 +13,92 @@ namespace Envy
 {
     namespace
     {
-        std::string log_preamble {};
+        std::string preamble {"{BBLK}[{datetime}] {file: >15} LN{line:0>4} | {lvlcol}{level: >7}{BBLK} : {BWHT}"};
     }
 
 
-    std::string resolve_preamble(std::source_location loc)
+    void set_preamble_pattern(std::string_view pattern)
     {
-        if(log_preamble.empty()) return log_preamble;
-
-        std::string resolved {log_preamble};
-
-        // replace_inplace(resolved, "{file}", "{0}");
-        // replace_inplace(resolved, "{line}", "{1}");
-        // replace_inplace(resolved, "{col}" , "{2}");
-        // replace_inplace(resolved, "{func}", "{3}");
-
-        // resolved = std::format(resolved, loc.file_name(), loc.line(), loc.column(), loc.function_name());
-
-        return resolved;
+        preamble = std::move(preamble);
     }
 
 
-    void set_log_preamble(std::string preamble) noexcept
+    void print_preamble(logger::level lvl, std::source_location l)
     {
-        log_preamble = std::move(preamble);
+        macro_map preamble_macros;
+
+        constexpr const char* lvls[]
+        {"err", "wrn", "nte", "inf"};
+        constexpr const char* levels[]
+        {"error", "warning", "note", "info"};
+        constexpr const char* lvlcols[]
+        {"{BRED}", "{BYEL}", "{BMAG}", "{BCYN}"};
+
+        std::filesystem::path file {l.file_name()};
+
+        std::chrono::zoned_time time {std::chrono::current_zone(), std::chrono::system_clock::now()};
+
+        macro(preamble_macros, "file", file.filename());
+        macro(preamble_macros, "line", l.line());
+        macro(preamble_macros, "col" , l.column());
+        macro(preamble_macros, "func", l.function_name());
+        macro(preamble_macros, "lvl", lvls[static_cast<i32>(lvl)]);
+        macro(preamble_macros, "level", levels[static_cast<i32>(lvl)]);
+        macro(preamble_macros, "lvlcol", lvlcols[static_cast<i32>(lvl)]);
+        macro(preamble_macros, "datetime", std::format("{:%m-%d-%Y %T}",time));
+
+        print( resolve(preamble, preamble_macros) );
     }
 
 
-    void out(std::string_view msg, std::source_location loc)
+    // logger
+
+
+    logger::logger(std::string log_file)
+        : logfile {log_file}
+    {}
+
+
+    void logger::error(std::string_view s, std::source_location l)
     {
-        std::cout << "OUT > " << resolve_preamble(loc) << msg << '\n';
+        print_preamble(level::error, l);
+        printl( resolve(s) );
+        print(resolve("{CLR}"));
     }
-
-
-    void err(std::string_view msg, std::source_location loc)
+    void logger::warning(std::string_view s, std::source_location l)
     {
-        std::cout << "ERR ! " << resolve_preamble(loc) << msg << '\n';
+        print_preamble(level::warning, l);
+        printl( resolve(s) );
+        print(resolve("{CLR}"));
     }
-
-
-    void wrn(std::string_view msg, std::source_location loc)
+    void logger::note(std::string_view s, std::source_location l)
     {
-        std::cout << "WRN ! " << resolve_preamble(loc) << msg << '\n';
+        print_preamble(level::note, l);
+        printl( resolve(s) );
+        print(resolve("{CLR}"));
     }
+    void logger::info(std::string_view s, std::source_location l)
+    {
+        print_preamble(level::info, l);
+        printl( resolve(s) );
+        print(resolve("{CLR}"));
+    }
+
+
+    bool logger::logs_to_console() const noexcept
+    { return console_logging; }
+
+
+    std::string logger::file() const noexcept
+    { return logfile; }
+
+
+    void logger::enable_console_logging(bool b) noexcept
+    { console_logging = b; }
+
+
+    void logger::set_file(std::string file)
+    { logfile = std::move(file); }
+
 
 }

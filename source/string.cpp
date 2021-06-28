@@ -120,7 +120,12 @@ namespace Envy
                         else
                         {
                             // let the replacement occur
-                            result += std::format(fmt,macro_it->second());
+                            std::string replacement;
+
+                            replacement = resolve_local(macro_it->second(), map);
+                            replacement = std::format(fmt, replacement);
+
+                            result += replacement;
                             i += tag_size;
                         }
                     }

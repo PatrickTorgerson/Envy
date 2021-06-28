@@ -28,17 +28,70 @@
 #pragma once
 
 #include "common.hpp"
+#include "string.hpp"
 
-#include <string_view>
 #include <source_location>
+#include <filesystem>
 
 namespace Envy
 {
 
-    void set_log_preamble(std::string preamble) noexcept;
+    template <convertable_to_string T>
+    void print(T&& v)
+    {
+        if constexpr (std::same_as<T,bool>)
+        { std::cout << std::boolalpha << v; }
 
-    void out(std::string_view msg, std::source_location loc = std::source_location::current());
-    void err(std::string_view msg, std::source_location loc = std::source_location::current());
-    void wrn(std::string_view msg, std::source_location loc = std::source_location::current());
+        else if constexpr (stream_insertable<T>)
+        { std::cout << std::forward<T>(v); }
+
+        else
+        { std::cout << Envy::to_string(std::forward<T>(v)); }
+    }
+
+
+    template <convertable_to_string T>
+    void printl(T&& v)
+    { print(std::forward<T>(v)); print('\n'); }
+
+
+    class logger
+    {
+    public:
+
+        enum class level
+        {
+            error,
+            warning,
+            note,
+            info
+        };
+
+    private:
+
+        std::string logfile;
+        bool console_logging;
+
+    public:
+
+        logger() = default;
+        explicit logger(std::string log_file);
+
+        void error(std::string_view s, std::source_location l = std::source_location::current());
+        void warning(std::string_view s, std::source_location l = std::source_location::current());
+        void note(std::string_view s, std::source_location l = std::source_location::current());
+        void info(std::string_view s, std::source_location l = std::source_location::current());
+
+        bool logs_to_console() const noexcept;
+        std::string file() const noexcept;
+
+        void enable_console_logging(bool b) noexcept;
+        void set_file(std::string file);
+    };
+
+    inline logger log;
+
+    void set_preamble_pattern(std::string_view pattern);
+    void print_preamble(logger::level lvl, std::source_location loc = std::source_location::current());
 
 }
