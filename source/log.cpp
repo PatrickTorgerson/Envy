@@ -7,7 +7,8 @@
 #include <unordered_map>
 #include <chrono>
 
-#include <string_util.hpp>
+#include <string.hpp>
+#include <exception.hpp>
 
 namespace Envy
 {
@@ -99,6 +100,17 @@ namespace Envy
 
     void logger::set_file(std::string file)
     { logfile = std::move(file); }
+
+
+    void assert(bool test, std::string_view msg, std::source_location loc)
+    {
+        if(!test)
+        {
+            Envy::exception e(msg,loc);
+            log.error(e.what());
+            throw e;
+        }
+    }
 
 
 }

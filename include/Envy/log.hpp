@@ -94,4 +94,6 @@ namespace Envy
     void set_preamble_pattern(std::string_view pattern);
     void print_preamble(logger::level lvl, std::source_location loc = std::source_location::current());
 
+    void assert(bool test, std::string_view msg = "Assertion Failed!", std::source_location loc = std::source_location::current());
+
 }
