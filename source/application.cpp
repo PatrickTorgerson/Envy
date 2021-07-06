@@ -1,13 +1,13 @@
 #include <application.hpp>
 
-#include <iostream>
+#include <log.hpp>
 
 namespace Envy
 {
 
-    void application::whats_up()
+    application::application()
     {
-        std::cout << "What's up doc?\n";
+        Envy::init_logging();
     }
 
 }

@@ -45,8 +45,7 @@ namespace Envy
 
         mean /= (f64) times.size();
 
-        return std::format("{: >15} x{:04} [{:.2f}s,{:.2f}s] | {:.4f}s", name, times.size(), min, max, mean);
-        // [07-06-2021 12:53:26.304]   "Bench.cpp" LN0029 | Info : Rendering x0025 [1.98s,9.62s] | 3.2641s
+        return std::format("{: <10} x{:04} [{:.2f}s,{:.2f}s] | {:.4f}s", name, times.size(), min, max, mean);
     }
 
 }

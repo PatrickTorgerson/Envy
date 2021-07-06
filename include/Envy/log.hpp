@@ -69,13 +69,15 @@ namespace Envy
 
     private:
 
-        std::string logfile;
-        bool console_logging;
+        std::string name {};
+        std::string logfile {};
+        bool console_logging {true};
 
     public:
 
-        logger() = default;
-        explicit logger(std::string log_file);
+        explicit logger(std::string name);
+        logger(std::string name, std::string log_file);
+        logger(std::string name, std::string log_file, bool console);
 
         void log(level lvl, const std::string& str, std::source_location loc = std::source_location::current());
 
@@ -100,9 +102,13 @@ namespace Envy
 
         void enable_console_logging(bool b) noexcept;
         void set_file(std::string file);
+
+        void clear_file();
     };
 
-    inline logger log;
+    inline logger log {"Envy"};
+
+    void init_logging();
 
     template <convertable_to_string T>
     void error(T&& s, std::source_location loc = std::source_location::current())
@@ -121,7 +127,7 @@ namespace Envy
     { log.log(logger::level::info, Envy::to_string(std::forward<T>(s)), loc); }
 
     void set_preamble_pattern(std::string_view pattern);
-    void print_preamble(logger::level lvl, std::source_location loc = std::source_location::current());
+    void print_preamble(const std::string& name, logger::level lvl, std::source_location loc = std::source_location::current());
 
     void assert(bool test, std::string_view msg = "Assertion Failed!", std::source_location loc = std::source_location::current());
     void debug_assert(bool test, std::string_view msg = "Debug Assertion Failed!", std::source_location loc = std::source_location::current());

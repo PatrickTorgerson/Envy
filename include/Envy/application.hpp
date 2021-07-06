@@ -32,10 +32,10 @@
 namespace Envy
 {
 
-    class application
+    class application final
     {
     public:
-        void whats_up();
+        application();
     };
 
 }
