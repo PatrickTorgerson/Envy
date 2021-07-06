@@ -107,15 +107,15 @@ using u16 = uint16_t;
 using u32 = uint32_t;
 using u64 = uint64_t;
 
-using r32 = float;
-using r64 = double;
+using f32 = float;
+using f64 = double;
 
 using usize = std::size_t;
 
 using code_point = u32;
 using char8 = char8_t;
 
-static_assert(sizeof(r32) == 4u && sizeof(r64) == 8u , "Compiler not supported!");
+static_assert(sizeof(f32) == 4u && sizeof(f64) == 8u , "Compiler not supported!");
 
 namespace Envy
 {

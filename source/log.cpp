@@ -14,7 +14,7 @@ namespace Envy
 {
     namespace
     {
-        std::string preamble {"{BBLK}[{datetime}] {file: >15} LN{line:0>4} | {lvlcol}{level: >7}{BBLK} : {BWHT}"};
+        std::string preamble {"{BBLK}[{datetime}]  {file: >15}  LN{line:0>4} | {lvlcol}{level: >7}{BBLK} : {BWHT}"};
     }
 
 
@@ -60,28 +60,10 @@ namespace Envy
     {}
 
 
-    void logger::error(std::string_view s, std::source_location l)
+    void logger::log(level lvl, const std::string& str, std::source_location loc)
     {
-        print_preamble(level::error, l);
-        printl( resolve(s) );
-        print(resolve("{CLR}"));
-    }
-    void logger::warning(std::string_view s, std::source_location l)
-    {
-        print_preamble(level::warning, l);
-        printl( resolve(s) );
-        print(resolve("{CLR}"));
-    }
-    void logger::note(std::string_view s, std::source_location l)
-    {
-        print_preamble(level::note, l);
-        printl( resolve(s) );
-        print(resolve("{CLR}"));
-    }
-    void logger::info(std::string_view s, std::source_location l)
-    {
-        print_preamble(level::info, l);
-        printl( resolve(s) );
+        print_preamble(lvl, loc);
+        printl( resolve(str) );
         print(resolve("{CLR}"));
     }
 
@@ -110,6 +92,11 @@ namespace Envy
             log.error(e.what());
             throw e;
         }
+    }
+
+    void debug_assert(bool test, std::string_view msg, std::source_location loc)
+    {
+        ENVY_DEBUG_CALL(assert(test,msg,loc));
     }
 
 

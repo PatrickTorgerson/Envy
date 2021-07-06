@@ -1,23 +1,16 @@
+#include <Envy/application.hpp>
 #include <Envy/log.hpp>
+#include <Envy/bench.hpp>
 
-#include <Windows.h>
-
-#include <chrono>
-#include <format>
-
-std::string date_macro()
+i64 factorial(i64 i)
 {
-    std::chrono::zoned_time t { std::chrono::current_zone() , std::chrono::system_clock::now() };
-    return std::format("{:%m-%d-%Y %T}",t);
+    if(i == 1) return 1;
+    else return i * factorial(i-1);
 }
 
 int main(int argc, char** argv)
 {
-    SetConsoleOutputCP(65001);
-
-    Envy::macro("date_time", date_macro);
-
-    Envy::printl( Envy::resolve(" {date_time} ") );
+    Envy::application app;
 
     return 0;
 }

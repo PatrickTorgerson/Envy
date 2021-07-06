@@ -77,10 +77,23 @@ namespace Envy
         logger() = default;
         explicit logger(std::string log_file);
 
-        void error(std::string_view s, std::source_location l = std::source_location::current());
-        void warning(std::string_view s, std::source_location l = std::source_location::current());
-        void note(std::string_view s, std::source_location l = std::source_location::current());
-        void info(std::string_view s, std::source_location l = std::source_location::current());
+        void log(level lvl, const std::string& str, std::source_location loc = std::source_location::current());
+
+        template <convertable_to_string T>
+        void error(T&& s, std::source_location loc = std::source_location::current())
+        { log(level::error, Envy::to_string(std::forward<T>(s)), loc); }
+
+        template <convertable_to_string T>
+        void warning(T&& s, std::source_location loc = std::source_location::current())
+        { log(level::warning, Envy::to_string(std::forward<T>(s)), loc); }
+
+        template <convertable_to_string T>
+        void note(T&& s, std::source_location loc = std::source_location::current())
+        { log(level::note, Envy::to_string(std::forward<T>(s)), loc); }
+
+        template <convertable_to_string T>
+        void info(T&& s, std::source_location loc = std::source_location::current())
+        { log(level::info, Envy::to_string(std::forward<T>(s)), loc); }
 
         bool logs_to_console() const noexcept;
         std::string file() const noexcept;
@@ -91,9 +104,26 @@ namespace Envy
 
     inline logger log;
 
+    template <convertable_to_string T>
+    void error(T&& s, std::source_location loc = std::source_location::current())
+    { log.log(logger::level::error, Envy::to_string(std::forward<T>(s)), loc); }
+
+    template <convertable_to_string T>
+    void warning(T&& s, std::source_location loc = std::source_location::current())
+    { log.log(logger::level::warning, Envy::to_string(std::forward<T>(s)), loc); }
+
+    template <convertable_to_string T>
+    void note(T&& s, std::source_location loc = std::source_location::current())
+    { log.log(logger::level::note, Envy::to_string(std::forward<T>(s)), loc); }
+
+    template <convertable_to_string T>
+    void info(T&& s, std::source_location loc = std::source_location::current())
+    { log.log(logger::level::info, Envy::to_string(std::forward<T>(s)), loc); }
+
     void set_preamble_pattern(std::string_view pattern);
     void print_preamble(logger::level lvl, std::source_location loc = std::source_location::current());
 
     void assert(bool test, std::string_view msg = "Assertion Failed!", std::source_location loc = std::source_location::current());
+    void debug_assert(bool test, std::string_view msg = "Debug Assertion Failed!", std::source_location loc = std::source_location::current());
 
 }
