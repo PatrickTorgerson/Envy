@@ -1,5 +1,11 @@
 cmake_minimum_required(VERSION 3.7)
 
+project(EnvyEngine)
+
+# == Dependencies == #
+# Diligent
+add_subdirectory("./dependencies/DiligentCore-2.5")
+
 # Envy
 add_subdirectory("./source")
 

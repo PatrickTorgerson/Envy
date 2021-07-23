@@ -1,8 +1,17 @@
-project(Envy)
+# == ENVY ==
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(Envy "application.cpp" "log.cpp" "string.cpp" "buffers.cpp" "exception.cpp")
+add_library(Envy "application.cpp" "log.cpp" "string.cpp" "buffers.cpp" "exception.cpp" "bench.cpp" "window.cpp")
+
+set(diligent_headers
+    "${CMAKE_SOURCE_DIR}/dependencies/DiligentCore-2.5/Graphics/GraphicsEngineD3D11/interface"
+    "${CMAKE_SOURCE_DIR}/dependencies/DiligentCore-2.5/Graphics/GraphicsEngineD3D12/interface"
+)
 
 target_include_directories(Envy PUBLIC "${CMAKE_SOURCE_DIR}/include" PRIVATE "${CMAKE_SOURCE_DIR}/include/Envy")
+
+target_compile_options(Envy PRIVATE -DUNICODE)
+
+target_link_libraries(Envy Diligent-GraphicsEngineD3D11-static Diligent-GraphicsEngineD3D12-static)

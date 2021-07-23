@@ -28,20 +28,20 @@
 #pragma once
 
 #include "common.hpp"
-#include "main.hpp"
+
+#include "log.hpp"
 
 #include <thread>
+#include <mutex>
 
 namespace Envy
 {
 
-    class application final
-    {
-        std::jthread msg_thread;
-    public:
-        application();
+    void init_window(const std::wstring& title);
+    void run_window(std::stop_token stop_token);
 
-        void run();
-    };
+    bool window_is_open();
+    void window_request_close();
+
 
 }

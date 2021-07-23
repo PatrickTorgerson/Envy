@@ -28,20 +28,7 @@
 #pragma once
 
 #include "common.hpp"
-#include "main.hpp"
 
-#include <thread>
+//#define main envy_main
 
-namespace Envy
-{
-
-    class application final
-    {
-        std::jthread msg_thread;
-    public:
-        application();
-
-        void run();
-    };
-
-}
+//int envy_main();
