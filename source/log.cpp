@@ -8,18 +8,35 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
+#include <mutex>
 
 #include <string.hpp>
+#include <macro.hpp>
 #include <exception.hpp>
 
 namespace Envy
 {
     namespace
     {
-        std::string preamble {"{BBLK}[{datetime}] {file: >20} LN{line:0>4} | {lvlcol}{level: >7}{BBLK} : {BWHT}{name: >10}, "};
+        std::string preamble {"{BBLK}[{datetime}] {file: >20} LN{line:0>4} | {name: >10} {severity_color}{severity}{BBLK} : {BWHT}"};
+        std::string note_preamble {" {BMAG}note{BBLK} : "};
+
         macro_map colors;
         macro_map colors_nop;
+
+        i32 indent_count {};
+        std::string indent_str {"|   "};
+
+        std::mutex console_mutex;
     }
+
+
+    // TODO: global log file
+    // TODO: source_location macros resolved everywhere
+    // TODO: macro strip functions
+    // TODO: tab stops?
+    // TODO: cleanup
+    // TODO: documentation
 
 
     void init_logging()
@@ -62,78 +79,229 @@ namespace Envy
     }
 
 
+    void indent_log()
+    { ++indent_count; }
+
+
+    void unindent_log()
+    { --indent_count; }
+
+
+    std::string generate_indent(bool forconsole = false)
+    {
+        if(indent_count <= 0)
+        { return ""; }
+
+        std::string result;
+        result.reserve(indent_count * indent_str.size());
+
+        if(forconsole)
+        { result += "{BBLK}"; }
+
+        for(int i {}; i < indent_count; ++i)
+        { result += indent_str; }
+
+        if(forconsole)
+        { result += "{BWHT}"; }
+
+        return result;
+    }
+
+
+    std::string resolve_preamble(std::string_view name, log_severity severity, const char* file, u32 line, u32 col, const char* func, i32 preamble_size = 0)
+    {
+        macro_map preamble_macros;
+
+        constexpr const char* severities_short[]
+        {"scp", "ast", "err", "wrn", "nte", "inf"};
+        constexpr const char* severities[]
+        {" scope", "assert", " error", "  warn", "  note", "  info"};
+        constexpr const char* severity_colors[]
+        {"{BBLK}", "{RED}", "{BRED}", "{BYEL}", "{BMAG}", "{BCYN}"};
+
+        std::filesystem::path path {file};
+
+        std::chrono::zoned_time time {std::chrono::current_zone(), std::chrono::system_clock::now()};
+
+        macro(preamble_macros, "file",            path.filename());
+        macro(preamble_macros, "line",            line);
+        macro(preamble_macros, "col" ,            col);
+        macro(preamble_macros, "func",            func);
+        macro(preamble_macros, "severity_short",  severities_short[static_cast<i32>(severity)]);
+        macro(preamble_macros, "severity",        severities[static_cast<i32>(severity)]);
+        macro(preamble_macros, "severity_color",  severity_colors[static_cast<i32>(severity)]);
+        macro(preamble_macros, "datetime",        std::format("{:%m-%d-%Y %T}",time));
+        macro(preamble_macros, "name",            name);
+
+        return resolve(preamble, preamble_macros);
+    }
+
+
+    std::string resolve_note_preamble(u64 fill_count)
+    {
+        std::string result {"\n{BBLK}"};
+
+        // pads note premble with dashes
+        result += std::format("{:->{}}", "", fill_count);
+
+        result += note_preamble;
+
+        result += "{BBLK}";
+        result += generate_indent(false) + indent_str;
+
+        return result;
+    }
+
+
     void set_preamble_pattern(std::string_view pattern)
     {
         preamble = std::move(preamble);
     }
 
 
-    std::string resolve_preamble(const std::string& name, logger::level lvl, std::source_location l)
+    void print_preamble(const std::string& name, log_severity severity, std::source_location l)
     {
-        macro_map preamble_macros;
-
-        constexpr const char* lvls[]
-        {"err", "wrn", "nte", "inf"};
-        constexpr const char* levels[]
-        {"error", "warning", "note", "info"};
-        constexpr const char* lvlcols[]
-        {"{BRED}", "{BYEL}", "{BMAG}", "{BCYN}"};
-
-        std::filesystem::path file {l.file_name()};
-
-        std::chrono::zoned_time time {std::chrono::current_zone(), std::chrono::system_clock::now()};
-
-        macro(preamble_macros, "file",      file.filename());
-        macro(preamble_macros, "line",      l.line());
-        macro(preamble_macros, "col" ,      l.column());
-        macro(preamble_macros, "func",      l.function_name());
-        macro(preamble_macros, "lvl",       lvls[static_cast<i32>(lvl)]);
-        macro(preamble_macros, "level",     levels[static_cast<i32>(lvl)]);
-        macro(preamble_macros, "lvlcol",    lvlcols[static_cast<i32>(lvl)]);
-        macro(preamble_macros, "datetime",  std::format("{:%m-%d-%Y %T}",time));
-        macro(preamble_macros, "name",      name);
-
-        return resolve(preamble, preamble_macros);
+        print( resolve_local(resolve_preamble(name, severity, l.file_name(), l.line(), l.column(), l.function_name()), colors) );
     }
 
 
-    void print_preamble(const std::string& name, logger::level lvl, std::source_location l)
+    void raw_log(std::string_view logger_name, std::string_view logger_file, bool log_to_console, log_severity severity, std::string_view msg, const char* file, u32 line, u32 col, const char* func)
     {
-        print( resolve_local(resolve_preamble(name, lvl, l), colors) );
+        // resolve_preamble() leaves color macros ( {BBLK} ... )
+        std::string resolved_preamble { resolve_preamble(logger_name, severity, file, line, col, func) };
+
+        // strip color macros by resolving with 'colors_nop'
+        u64 preamble_size      { resolve_local(resolved_preamble, colors_nop).size() };
+        u64 note_preamble_size { resolve_local(note_preamble,     colors_nop).size() };
+
+        // number of chars we have to bad the note premble with to align with the rest of the log messages
+        u64 fill_count { preamble_size - note_preamble_size };
+
+        // pads note premble with gray dots, adds necessary indents
+        std::string resolved_note_preamble { resolve_note_preamble(fill_count) };
+
+        // every newline is a note, so add the note preamble
+        std::string msgstr {};
+
+        if(severity == log_severity::note)
+        { indent_log(); msgstr += "{BBLK}"; }
+
+        msgstr += Envy::replace(msg, "\n", resolved_note_preamble);
+
+        if(log_to_console)
+        {
+            std::scoped_lock l {console_mutex};
+
+            // resolve colors and print to console
+            print(resolve_local(resolved_preamble,colors));
+            print(resolve_local(generate_indent(true),colors));
+            print(resolve_local(msgstr,colors));
+            printl("\x1b[0m");
+        }
+
+        if(!logger_file.empty())
+        {
+            std::ofstream fs;
+            fs.open(logger_file, std::ios::app);
+
+            // Note: colors_nop expands color macros to empty strings to avoid outputing ansi-escape sequences to the log file
+            fs << resolve_local(resolved_preamble,colors_nop);
+            fs << generate_indent();
+            fs << resolve_local(msgstr,colors_nop);
+            fs << '\n';
+
+            fs.close();
+        }
+
+        if(severity == log_severity::note)
+        { unindent_log(); }
     }
 
 
-    // logger
+    // ==== logger
 
 
-    logger::logger(std::string name) :
+    logger::logger(std::string name) noexcept :
         name {std::move(name)}
     { }
 
 
-    logger::logger(std::string name, std::string log_file) :
+    logger::logger(std::string name, std::string log_file) noexcept :
         name     {std::move(name)},
         logfile  {std::move(log_file)}
     { }
 
 
-    logger::logger(std::string name, std::string log_file, bool console) :
+    logger::logger(std::string name, std::string log_file, bool console) noexcept :
         name             {std::move(name)},
         logfile          {std::move(log_file)},
         console_logging  {console}
     { }
 
 
-    void logger::log(level lvl, const std::string& str, std::source_location loc)
+    log_message logger::message(log_severity severity, std::string_view fmt, std::source_location loc)
     {
-        std::string msg {resolve(str)};
-        std::string pre {resolve_preamble(name, lvl,loc)};
+        return log_message
+        {
+            *this,
+            severity,
+            std::move(loc),
+            Envy::resolve(fmt, colors)
+        };
+    }
+
+
+    void logger::assert(bool test, std::string_view msg, std::source_location loc)
+    {
+        if(!test)
+        {
+            Envy::raw_log(name, logfile, console_logging, Envy::log_severity::assert, msg, loc.file_name(), loc.line(), loc.column(), loc.function_name());
+            throw Envy::assertion(msg, loc);
+        }
+    }
+
+
+    void logger::debug_assert(bool test, std::string_view msg, std::source_location loc) noexcept(!Envy::debug)
+    {
+        ENVY_DEBUG_CALL(assert(test,msg,loc));
+    }
+
+
+    log_message logger::error(std::string_view fmt, std::source_location loc)
+    {
+        return message(log_severity::error, fmt, loc);
+    }
+
+
+    log_message logger::warning(std::string_view fmt, std::source_location loc)
+    {
+        return message(log_severity::warning, fmt, loc);
+    }
+
+
+    log_message logger::note(std::string_view fmt, std::source_location loc)
+    {
+        return message(log_severity::note, fmt, loc);
+    }
+
+
+    log_message logger::info(std::string_view fmt, std::source_location loc)
+    {
+        return message(log_severity::info, fmt, loc);
+    }
+
+
+    void logger::seperator()
+    {
+        static constexpr char sep[] {"======================================================================================================================================================"};
 
         if(console_logging)
         {
-            print(resolve_local(pre,colors));
-            print(resolve_local(msg,colors));
-            printl("\x1b[0m");
+            std::scoped_lock l {console_mutex};
+            print(resolve("{BBLK}",colors));
+            print(sep);
+            print(resolve("{BWHT}",colors));
+            print("\n");
         }
 
         if(!logfile.empty())
@@ -141,9 +309,8 @@ namespace Envy
             std::ofstream fs;
             fs.open(logfile, std::ios::app);
 
-            // Note: colors_nop expands color macros to emty strings to avoid outputting ansi escape sequences to the log file
-            fs << resolve_local(pre,colors_nop);
-            fs << resolve_local(msg,colors_nop);
+            // Note: colors_nop expands color macros to empty strings to avoid outputing ansi-escape sequences to the log file
+            fs << sep;
             fs << '\n';
 
             fs.close();
@@ -155,7 +322,7 @@ namespace Envy
     { return console_logging; }
 
 
-    std::string logger::file() const noexcept
+    std::string logger::get_file() const noexcept
     { return logfile; }
 
 
@@ -177,20 +344,35 @@ namespace Envy
         }
     }
 
-    void assert(bool test, std::string_view msg, std::source_location loc)
-    {
-        if(!test)
-        {
-            Envy::exception e(msg,loc);
-            log.error(e.what());
-            throw e;
-        }
-    }
 
-    void debug_assert(bool test, std::string_view msg, std::source_location loc)
-    {
-        ENVY_DEBUG_CALL(assert(test,msg,loc));
-    }
+    std::string_view logger::get_name()
+    { return name; }
+
+
+    // ==== global log functions
+
+
+    log_message error(std::string fmt, std::source_location loc)
+    { return log.message(log_severity::error, std::move(fmt), loc); }
+
+
+    log_message warning(std::string fmt, std::source_location loc)
+    { return log.message(log_severity::warning, std::move(fmt), loc); }
+
+
+    log_message note(std::string fmt, std::source_location loc)
+    { return log.message(log_severity::note, std::move(fmt), loc); }
+
+
+    log_message info(std::string fmt, std::source_location loc)
+    { return log.message(log_severity::info, std::move(fmt), loc); }
+
+
+    void assert(bool test, std::string_view msg, std::source_location loc)
+    { log.assert(test,msg,loc); }
+
+    void debug_assert(bool test, std::string_view msg, std::source_location loc) noexcept(!Envy::debug)
+    { log.debug_assert(test,msg,loc); }
 
 
 }

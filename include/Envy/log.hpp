@@ -30,8 +30,12 @@
 #include "common.hpp"
 #include "string.hpp"
 
+#include <format>
 #include <source_location>
 #include <filesystem>
+#include <chrono>
+
+// TODO: noexcept logging
 
 namespace Envy
 {
@@ -55,19 +59,25 @@ namespace Envy
     { print(std::forward<T>(v)); print('\n'); }
 
 
+    enum class log_severity : u8
+    {
+        scope,
+        assert,
+        error,
+        warning,
+        note,
+        info
+    };
+
+
+    void raw_log(std::string_view logger_name, std::string_view logger_file, bool log_to_console, log_severity severity, std::string_view msg, const char* file, u32 line, u32 col, const char* func);
+
+
+    class log_message;
+
+
     class logger
     {
-    public:
-
-        enum class level
-        {
-            error,
-            warning,
-            note,
-            info
-        };
-
-    private:
 
         std::string name {};
         std::string logfile {};
@@ -75,61 +85,117 @@ namespace Envy
 
     public:
 
-        explicit logger(std::string name);
-        logger(std::string name, std::string log_file);
-        logger(std::string name, std::string log_file, bool console);
+        explicit logger(std::string name) noexcept;
+        logger(std::string name, std::string log_file) noexcept;
+        logger(std::string name, std::string log_file, bool console) noexcept;
 
-        void log(level lvl, const std::string& str, std::source_location loc = std::source_location::current());
+        log_message message(log_severity severity, std::string_view fmt, std::source_location loc = std::source_location::current());
 
-        template <convertable_to_string T>
-        void error(T&& s, std::source_location loc = std::source_location::current())
-        { log(level::error, Envy::to_string(std::forward<T>(s)), loc); }
+        log_message error(std::string_view fmt, std::source_location loc = std::source_location::current());
+        log_message warning(std::string_view fmt, std::source_location loc = std::source_location::current());
+        log_message note(std::string_view fmt, std::source_location loc = std::source_location::current());
+        log_message info(std::string_view fmt, std::source_location loc = std::source_location::current());
 
-        template <convertable_to_string T>
-        void warning(T&& s, std::source_location loc = std::source_location::current())
-        { log(level::warning, Envy::to_string(std::forward<T>(s)), loc); }
-
-        template <convertable_to_string T>
-        void note(T&& s, std::source_location loc = std::source_location::current())
-        { log(level::note, Envy::to_string(std::forward<T>(s)), loc); }
-
-        template <convertable_to_string T>
-        void info(T&& s, std::source_location loc = std::source_location::current())
-        { log(level::info, Envy::to_string(std::forward<T>(s)), loc); }
+        void assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current());
+        void debug_assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current()) noexcept(!Envy::debug);
 
         bool logs_to_console() const noexcept;
-        std::string file() const noexcept;
-
         void enable_console_logging(bool b) noexcept;
-        void set_file(std::string file);
 
+        void seperator();
+
+        std::string get_file() const noexcept;
+        void set_file(std::string file);
         void clear_file();
+
+        std::string_view get_name();
     };
+
+
+    void indent_log();
+    void unindent_log();
+    void log_seperator();
+
+    class log_message
+    {
+    public:
+
+        logger& log;
+        log_severity severity;
+        std::source_location loc;
+        std::string fmt;
+
+        log_message(logger& log, log_severity severity, std::source_location loc, std::string fmt) noexcept :
+            log {log},
+            severity {severity},
+            loc {std::move(loc)},
+            fmt {std::move(fmt)}
+        { }
+
+        ~log_message()
+        {
+            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), severity, fmt, loc.file_name(), loc.line(), loc.column(), loc.function_name());
+        }
+
+        log_message(const log_message&) = delete;
+        log_message(log_message&&) = delete;
+        log_message& operator=(const log_message&) = delete;
+        log_message& operator=(log_message&&) = delete;
+
+        template <convertable_to_string ... Ts>
+        log_message& operator()(Ts&& ... args)
+        {
+            fmt = std::format( fmt, std::forward<Ts>(args)... );
+            return *this;
+            //raw_log(log.get_name(), log.get_file(), log.logs_to_console(), severity, std::format( fmt, std::forward<Ts>(args)... ), loc.file_name(), loc.line(), loc.column(), loc.function_name());
+        }
+
+        template <convertable_to_string ... Ts>
+        log_message& note(const std::string& fmtstr, Ts&& ... args)
+        {
+            fmt += std::format("\n"+fmtstr, std::forward<Ts>(args)...);
+            return *this;
+        }
+    };
+
 
     inline logger log {"Envy"};
 
+
+    class scope_logger
+    {
+        logger& log;
+        std::chrono::high_resolution_clock::time_point t;
+    public:
+
+        explicit scope_logger(std::string msg, logger& l = Envy::log, std::source_location loc = std::source_location::current()) :
+            log {l}
+        {
+            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), log_severity::scope, "{ {BBLK}" + msg, loc.file_name(), loc.line(), loc.column(), loc.function_name());
+            indent_log();
+            t = std::chrono::high_resolution_clock::now();
+        }
+
+        ~scope_logger()
+        {
+            std::chrono::duration<f64> delta { std::chrono::high_resolution_clock::now() - t };
+            unindent_log();
+            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), log_severity::scope, "} " + std::format("{{BBLK}}{}{{BWHT}}", delta), "", 0, 0, "");
+        }
+    };
+
+
     void init_logging();
 
-    template <convertable_to_string T>
-    void error(T&& s, std::source_location loc = std::source_location::current())
-    { log.log(logger::level::error, Envy::to_string(std::forward<T>(s)), loc); }
-
-    template <convertable_to_string T>
-    void warning(T&& s, std::source_location loc = std::source_location::current())
-    { log.log(logger::level::warning, Envy::to_string(std::forward<T>(s)), loc); }
-
-    template <convertable_to_string T>
-    void note(T&& s, std::source_location loc = std::source_location::current())
-    { log.log(logger::level::note, Envy::to_string(std::forward<T>(s)), loc); }
-
-    template <convertable_to_string T>
-    void info(T&& s, std::source_location loc = std::source_location::current())
-    { log.log(logger::level::info, Envy::to_string(std::forward<T>(s)), loc); }
+    log_message error(std::string fmt, std::source_location loc = std::source_location::current());
+    log_message warning(std::string fmt, std::source_location loc = std::source_location::current());
+    log_message note(std::string fmt, std::source_location loc = std::source_location::current());
+    log_message info(std::string fmt, std::source_location loc = std::source_location::current());
 
     void set_preamble_pattern(std::string_view pattern);
-    void print_preamble(const std::string& name, logger::level lvl, std::source_location loc = std::source_location::current());
+    void print_preamble(const std::string& name, log_severity lvl, std::source_location loc = std::source_location::current());
 
-    void assert(bool test, std::string_view msg = "Assertion Failed!", std::source_location loc = std::source_location::current());
-    void debug_assert(bool test, std::string_view msg = "Debug Assertion Failed!", std::source_location loc = std::source_location::current());
+    void assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current());
+    void debug_assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current()) noexcept(!Envy::debug);
 
 }
