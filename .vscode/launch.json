@@ -8,7 +8,7 @@
             "name": "Debug",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/examples/Debug/bench.exe",
+            "program": "${workspaceFolder}/build/tests/Debug/testbench.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/examples/bench",
