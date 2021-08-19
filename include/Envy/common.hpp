@@ -122,4 +122,10 @@ namespace Envy
     constexpr i32 version_major {0};
     constexpr i32 version_minor {0};
     constexpr i32 version_patch {0};
+
+    #if defined(ENVY_DEBUG)
+    constexpr bool debug {true};
+    #else
+    constexpr bool debug {false};
+    #endif
 }

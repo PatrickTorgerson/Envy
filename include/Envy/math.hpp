@@ -3,7 +3,7 @@
 //    Envy Game Engine
 //    https://github.com/PatrickTorgerson/Envy
 //
-//    Copyright (c) 2021 Patrick Torgerson
+//    Copyright (c) 2018 Patrick Torgerson
 //
 //    Permission is hereby granted, free of charge, to any person obtaining a copy
 //    of this software and associated documentation files (the "Software"), to deal
@@ -29,32 +29,14 @@
 
 #include "common.hpp"
 
-#include <exception>
-#include <source_location>
-#include <string>
+#include <concepts>
 
 namespace Envy
 {
 
-    class exception final : std::exception
-    {
-        std::string msg;
-    public:
-
-        exception(std::string_view msg, std::source_location loc = std::source_location::current());
-
-        const char* what() const override;
-    };
-
-    // Not derived from std::exception, not intended to be caught, should always crash program
-    class assertion final
-    {
-        std::string msg;
-    public:
-
-        assertion(std::string_view msg, std::source_location loc = std::source_location::current());
-
-        const char* what() const;
-    };
+    template <typename T>
+    concept numeric =
+        std::floating_point<T> || std::integral<T> ||
+        std::convertible_to<numeric>;
 
 }

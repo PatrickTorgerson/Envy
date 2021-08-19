@@ -28,33 +28,38 @@
 #pragma once
 
 #include "common.hpp"
+#include "string.hpp"
 
-#include <exception>
-#include <source_location>
+#include <functional>
+#include <unordered_map>
 #include <string>
+#include <string_view>
 
 namespace Envy
 {
+    // TODO: wrapper type for macro_map
+    // TODO: rename function 'macro' so as not to collide with wrapper type
+    using macro_t = std::function<std::string(void)>;
+    using macro_map = std::unordered_map<std::string,macro_t>;
 
-    class exception final : std::exception
-    {
-        std::string msg;
-    public:
+    void macro(std::string_view name, macro_t m);
+    void macro(macro_map& map, std::string_view name, macro_t m);
 
-        exception(std::string_view msg, std::source_location loc = std::source_location::current());
+    inline void macro(std::string_view name, std::string(*mfn)(void))
+    { macro(name, macro_t(mfn)); }
+    inline void macro(macro_map& map, std::string_view name, std::string(*mfn)(void))
+    { macro(map, name, macro_t(mfn)); }
 
-        const char* what() const override;
-    };
+    template <convertable_to_string T>
+    void macro(std::string_view name, T&& v)
+    { macro(name, [s=to_string(std::forward<T>(v))](){ return s; }); }
 
-    // Not derived from std::exception, not intended to be caught, should always crash program
-    class assertion final
-    {
-        std::string msg;
-    public:
+    template <convertable_to_string T>
+    void macro(macro_map& map, std::string_view name, T&& v)
+    { macro(map, name, [s=to_string(std::forward<T>(v))](){ return s; }); }
 
-        assertion(std::string_view msg, std::source_location loc = std::source_location::current());
-
-        const char* what() const;
-    };
-
+    // TODO: resolve takes a variable number of macro_maps
+    [[nodiscard]] std::string resolve_local(std::string_view s, const macro_map& map);
+    [[nodiscard]] std::string resolve(std::string_view);
+    [[nodiscard]] std::string resolve(std::string_view, const macro_map& additional);
 }

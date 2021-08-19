@@ -2,158 +2,254 @@
 
 #include <exception>
 #include <utility>
-#include <ctype.h>
+#include <cctype>
 #include <format>
+#include <bit>
+#include <cstring>
 
 namespace Envy
 {
+    string::string(reserve_tag, usize bytes) :
+        buffer_size      { 0 },
+        buffer_capacity  { new_capacity(bytes) },
+        buffer           { new utf8::code_unit[buffer_capacity] },
+        code_point_count { npos }
+    {}
 
-    namespace
+
+    string::string(size_tag, usize bytes) :
+        buffer_size      { bytes },
+        buffer_capacity  { new_capacity(bytes+10) },
+        buffer           { new utf8::code_unit[buffer_capacity] },
+        code_point_count { npos }
     {
-        macro_map global_macros;
+        buffer[buffer_size] = '\0';
     }
 
 
-    void macro(macro_map& map, std::string_view name, macro_t m)
-    { map[std::string(name)] = m; }
+    string::string() :
+        string(reserve_tag{}, 30u)
+    { }
 
 
-    void macro(std::string_view name, macro_t m)
-    { macro(global_macros, name, m); }
-
-
-    std::tuple<std::string,std::string,usize> read_tag(std::string_view::const_iterator start, std::string_view::const_iterator end) noexcept
+    string::string(const char* cstr) :
+        string(size_tag{}, strlen(cstr))
     {
-        std::tuple<std::string,std::string,usize> tag;
+        // +1 to copy null terminator as well
+        std::memcpy( buffer, cstr, buffer_size + 1);
+    }
 
-        auto i {start};
 
-        // tag identifier
-        for(; i != end; ++i)
+    string::string(const char8_t* cstr) :
+        string( reinterpret_cast<const char*>(cstr) )
+    { }
+
+
+    string::string(usize count, char fill) :
+        string(size_tag{}, count)
+    {
+        std::fill(buffer, buffer + buffer_size, (u8) fill);
+    }
+
+
+    string::~string()
+    {
+        if(buffer)
+        { delete[] buffer; }
+    }
+
+
+    const utf8::code_unit* string::data() const noexcept
+    { return buffer; }
+
+
+    usize string::size_bytes() const noexcept
+    { return buffer_size; }
+
+
+    utf8::iterator string::begin() const noexcept
+    { return utf8::iterator(buffer); }
+
+
+    utf8::iterator string::end() const noexcept
+    { return utf8::iterator(buffer + buffer_size); }
+
+
+    utf8::iterator string::cbegin() const noexcept
+    { return begin(); }
+
+
+    utf8::iterator string::cend() const noexcept
+    { return end(); }
+
+
+    utf8::reverse_iterator string::rbegin() const noexcept
+    { return std::make_reverse_iterator(end()); }
+
+
+    utf8::reverse_iterator string::rend() const noexcept
+    { return std::make_reverse_iterator(begin()); }
+
+
+    utf8::reverse_iterator string::crbegin() const noexcept
+    { return std::make_reverse_iterator(cend()); }
+
+
+    utf8::reverse_iterator string::crend() const noexcept
+    { return std::make_reverse_iterator(cbegin()); }
+
+
+    std::basic_string_view<utf8::code_unit> string::code_units() const
+    { return std::basic_string_view<utf8::code_unit>(buffer, buffer_size); }
+
+
+    const char* string::c_str() const
+    { return (const char*) buffer; }
+
+
+    string_view string::view(utf8::iterator first, utf8::iterator last) const
+    {
+        return string_view(first,last);
+    }
+
+
+    string_view string::view_from(utf8::iterator first) const
+    {
+        return view(first, end());
+    }
+
+
+    string_view string::view_until(utf8::iterator last) const
+    {
+        return view(begin(), last);
+    }
+
+
+    bool string::empty() const noexcept
+    { return buffer_size == 0; }
+
+
+    usize string::size() const noexcept(!Envy::debug)
+    {
+        if(code_point_count == npos)
         {
-            if(*i == ':')
-            { break; }
+            code_point_count = utf8::count_code_points(buffer);
+        }
 
-            if(*i == '}')
+        return code_point_count;
+    }
+
+
+    usize string::capacity() const noexcept
+    { return buffer_capacity; }
+
+
+    void string::clear() noexcept
+    { *buffer = '\0'; buffer_size = 0; }
+
+
+    void string::reserve(usize bytes)
+    {
+        adjust_buffer(bytes);
+    }
+
+
+    void string::append(const char* cstr)
+    {
+        append(std::string_view(cstr));
+    }
+
+
+    void string::append(Envy::string_view str)
+    {
+        adjust_buffer( buffer_size + str.size_bytes() );
+
+        for(auto cu : str.code_units())
+        {
+            buffer[buffer_size] = cu;
+            ++buffer_size;
+        }
+
+        buffer[buffer_size] = '\0';
+    }
+
+
+    void string::append(utf8::code_point cp)
+    {
+        i32 units {utf8::code_units_required(cp)};
+        adjust_buffer( buffer_size + units );
+
+        utf8::encode(cp, buffer + buffer_size);
+
+        buffer_size += units;
+
+        buffer[buffer_size] = '\0';
+    }
+
+    void string::append(char c)
+    {
+        adjust_buffer( buffer_size + 1 );
+        buffer[buffer_size] = (utf8::code_unit) c;
+        ++buffer_size;
+        buffer[buffer_size] = '\0';
+    }
+
+
+    bool string::operator==(const Envy::string& other) const noexcept
+    {
+        // TODO: Maybe use std::memcmp()??
+        return
+            buffer_size == other.buffer_size &&
+            std::strcmp( (const char*) buffer, (const char*) other.buffer ) == 0;
+    }
+
+
+    usize string::new_capacity(usize required_size) noexcept
+    {
+        // plus one to accomodate for null-terminator
+        return std::bit_ceil(required_size+1);
+    }
+
+
+    void string::adjust_buffer(usize required_size)
+    {
+        if(required_size > buffer_capacity)
+        {
+            buffer_capacity = new_capacity(required_size);
+
+            utf8::code_unit* new_buffer { new utf8::code_unit[buffer_capacity] };
+
+            if(buffer)
             {
-                std::get<1>(tag) = "{}";
-                std::get<2>(tag) = i - start;
-                return tag;
+                std::memcpy(new_buffer, buffer, buffer_size+1);
+                delete[] buffer;
             }
 
-            std::get<0>(tag).push_back(*i);
+            buffer = new_buffer;
         }
 
-        if(i == end)
-        { return std::tuple<std::string,std::string,usize> {}; }
-
-        // fmt specifier
-        std::get<1>(tag).push_back('{');
-        for(; i != end; ++i)
-        {
-            std::get<1>(tag).push_back(*i);
-
-            if(*i == '}')
-            {
-                std::get<2>(tag) = i - start;
-                return tag;
-            }
-        }
-
-        return std::tuple<std::string,std::string,usize> {};
     }
 
 
-    bool is_identifier_string(std::string_view s) noexcept
+
+
+    std::string replace(std::string_view str, std::string_view target, std::string_view replacement)
     {
-        if(s.empty())
-        { return false; }
-
-        if(isdigit((int)s.front()))
-        { return false; }
-
-        for(auto c : s)
-        {
-            if(!isalnum((int)c) && c != '_')
-            { return false; }
-        }
-
-        return true;
-    }
-
-
-    std::string resolve_local(std::string_view s, const macro_map& map)
-    {
-        // TODO: escaped macro tags?
-
+        std::size_t prev {0u};
+        std::size_t pos  {str.find(target)};
         std::string result;
-        result.reserve(s.size());
 
-        for(auto i {s.begin()}; i != s.end(); ++i)
+        while(pos != std::string::npos)
         {
-            if(*i == '{')
-            {
-                ++i;
+            result += str.substr(prev, pos - prev);
+            result += replacement;
 
-                if(*i == '}')
-                {
-                    // empty tag, probably a placeholder for std::format() so we ignore
-                    result += "{}";
-                }
-                else
-                {
-                    // possible macro tag
-                    auto [identifier,fmt,tag_size] {read_tag(i,s.end())};
-
-                    if(is_identifier_string(identifier))
-                    {
-                        // yes, a valid macro tag (we just assume fmt is valid, let std::format() deal with it)
-
-                        auto macro_it {map.find(identifier)};
-
-                        if(macro_it == map.end())
-                        {
-                            // macro does not exist, let's just write it to the result as-is
-                            result.push_back('{');
-                            --i;
-                        }
-                        else
-                        {
-                            // let the replacement occur
-                            std::string replacement;
-
-                            replacement = resolve_local(macro_it->second(), map);
-                            replacement = std::format(fmt, replacement);
-
-                            result += replacement;
-                            i += tag_size;
-                        }
-                    }
-                    else
-                    {
-                        // invalid tag, let's just write it to the result as-is
-                        result.push_back('{');
-                        --i;
-                    }
-                }
-            }
-            else
-            { result.push_back(*i); }
+            prev = pos + target.size();
+            pos = str.find(target, pos+1);
         }
 
+        result += str.substr(prev);
         return result;
-    }
-
-
-    std::string resolve(std::string_view s)
-    {
-        return resolve_local(s, global_macros);
-    }
-
-
-    std::string resolve(std::string_view s, const macro_map& additional)
-    {
-        return resolve_local( resolve_local(s, additional), global_macros);
     }
 
 }
