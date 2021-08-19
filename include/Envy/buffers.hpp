@@ -50,7 +50,7 @@ namespace Envy
 
 
     template <buffer_safe T>
-    constexpr auto byte_pointer(T* ptr) noexcept
+    [[nodiscard]] constexpr auto byte_pointer(T* ptr) noexcept
     {
         auto void_ptr = static_cast<void*>(ptr);
         return static_cast<u8*>(void_ptr);
@@ -58,7 +58,7 @@ namespace Envy
 
 
     template <buffer_safe T>
-    auto byte_pointer(const T* ptr) noexcept
+    [[nodiscard]] auto byte_pointer(const T* ptr) noexcept
     {
         auto void_ptr = static_cast<const void*>(ptr);
         return static_cast<const u8*>(void_ptr);
@@ -67,7 +67,7 @@ namespace Envy
 
     template <typename T>
         requires buffer_safe<std::remove_cvref_t<T>>
-    auto byte_addressof(T&& obj) noexcept
+    [[nodiscard]] auto byte_addressof(T&& obj) noexcept
     {
         return byte_pointer(std::addressof(obj));
     }
@@ -91,7 +91,7 @@ namespace Envy
 
 
     template <trivial_range T>
-    usize range_size_bytes(const T& c)
+    [[nodiscard]] usize range_size_bytes(const T& c)
     {
         return std::ranges::size(c) * sizeof(std::ranges::range_value_t<decltype(c)>);
     }
@@ -115,27 +115,27 @@ namespace Envy
             const_buffer( std::ranges::data(c) , std::ranges::size(c) )
         { }
 
-        const u8* data() const noexcept;
-        usize size() const noexcept;
+        [[nodiscard]] const u8* data() const noexcept;
+        [[nodiscard]] usize size() const noexcept;
 
-        bool empty() const noexcept;
+        [[nodiscard]] bool empty() const noexcept;
 
-        operator bool() const noexcept;
+        [[nodiscard]] operator bool() const noexcept;
 
-        u8 operator[](usize i) const noexcept;
-        u8 operator*() const noexcept;
+        [[nodiscard]] u8 operator[](usize i) const noexcept;
+        [[nodiscard]] u8 operator*() const noexcept;
 
         const_buffer& operator+=(usize offset) noexcept;
 
         void remove_prefix(usize count);
         void remove_suffix(usize count);
 
-        u8 first() const noexcept;
-        u8 last() const noexcept;
+        [[nodiscard]] u8 first() const noexcept;
+        [[nodiscard]] u8 last() const noexcept;
 
-        const_buffer first(usize count) const;
-        const_buffer last(usize count) const;
-        const_buffer sub(usize pos, usize size) const;
+        [[nodiscard]] const_buffer first(usize count) const;
+        [[nodiscard]] const_buffer last(usize count) const;
+        [[nodiscard]] const_buffer sub(usize pos, usize size) const;
 
     };
 
@@ -158,32 +158,32 @@ namespace Envy
             mutable_buffer( std::ranges::data(c) , std::ranges::size(c) )
         { }
 
-        u8* data() noexcept;
-        const u8* data() const noexcept;
-        usize size() const noexcept;
+        [[nodiscard]] u8* data() noexcept;
+        [[nodiscard]] const u8* data() const noexcept;
+        [[nodiscard]] usize size() const noexcept;
 
-        bool empty() const noexcept;
+        [[nodiscard]] bool empty() const noexcept;
 
-        operator bool() const noexcept;
-        operator const_buffer() const noexcept;
+        [[nodiscard]] operator bool() const noexcept;
+        [[nodiscard]] operator const_buffer() const noexcept;
 
-        u8 operator[](usize i) const noexcept;
-        u8 operator*() const noexcept;
+        [[nodiscard]] u8 operator[](usize i) const noexcept;
+        [[nodiscard]] u8 operator*() const noexcept;
 
-        u8& operator[](usize i) noexcept;
-        u8& operator*() noexcept;
+        [[nodiscard]] u8& operator[](usize i) noexcept;
+        [[nodiscard]] u8& operator*() noexcept;
 
         mutable_buffer& operator+=(usize offset) noexcept;
 
         void remove_prefix(usize count);
         void remove_suffix(usize count);
 
-        u8 first() const noexcept;
-        u8 last() const noexcept;
+        [[nodiscard]] u8 first() const noexcept;
+        [[nodiscard]] u8 last() const noexcept;
 
-        mutable_buffer first(usize count) const;
-        mutable_buffer last(usize count) const;
-        mutable_buffer sub(usize pos, usize size) const;
+        [[nodiscard]] mutable_buffer first(usize count) const;
+        [[nodiscard]] mutable_buffer last(usize count) const;
+        [[nodiscard]] mutable_buffer sub(usize pos, usize size) const;
     };
 
 }

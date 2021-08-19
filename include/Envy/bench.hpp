@@ -50,9 +50,10 @@ namespace Envy
         void start();
         f64 record();
 
-        void clear();
+        void clear() noexcept;
 
-        std::string to_string();
+        // TODO: Test
+        [[nodiscard]] std::string to_string() const;
     };
 
 }

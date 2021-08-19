@@ -22,11 +22,11 @@ namespace Envy
     }
 
 
-    void bench::clear()
+    void bench::clear() noexcept
     { times.clear(); }
 
 
-    std::string bench::to_string()
+    std::string bench::to_string() const
     {
         if(times.empty())
         { return name + "(0)"; }
