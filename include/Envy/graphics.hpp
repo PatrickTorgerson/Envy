@@ -28,7 +28,18 @@
 #pragma once
 
 #include "common.hpp"
+#include "log.hpp"
 
-//#define main envy_main
+namespace Envy::graphics
+{
+    struct description
+    {
+        // ???
+    };
 
-//int envy_main();
+
+    void init(const description& gfxdesc);
+
+    void clear();
+    void present();
+}

@@ -28,20 +28,21 @@
 #pragma once
 
 #include "common.hpp"
-#include "main.hpp"
+#include "log.hpp"
+#include "window.hpp"
+#include "graphics.hpp"
 
-#include <thread>
-
-namespace Envy
+namespace Envy::engine
 {
-
-    class application final
+    struct description
     {
-        std::jthread msg_thread;
-    public:
-        application();
-
-        void run();
+        window::description window {};
+        graphics::description graphics {};
+        // log
+        // cli
+        // roots
+        // rootstack
     };
 
+    void run(const description& engdesc, int argc = 0, char** argv = nullptr);
 }

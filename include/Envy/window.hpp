@@ -30,18 +30,48 @@
 #include "common.hpp"
 
 #include "log.hpp"
+#include "vector.hpp"
+#include "event.hpp"
+
+#include <Windows.h>
 
 #include <thread>
-#include <mutex>
 
-namespace Envy
+namespace Envy::window
 {
 
-    void init_window(const std::wstring& title);
-    void run_window(std::stop_token stop_token);
+    struct description
+    {
+        std::wstring title {L"Envy Application"};
 
-    bool window_is_open();
-    void window_request_close();
+        Envy::vector2<i32> minimum_window_size {300,300};
+        Envy::vector2<i32> maximum_window_size {0,0};
 
+        // TODO: border, resizable, confine cursor, etc
+    };
+
+    void wait_for_creation();
+
+    void run(std::stop_token stop_token, const description& windesc);
+
+    bool is_open();
+    void request_close();
+
+    HWND get_hwnd();
+
+    void set_size_constraints(Envy::vector2<i32> min, Envy::vector2<i32> max);
+
+
+    // event types
+
+
+    class resized : public Envy::event
+    {
+    public:
+
+        Envy::vector2<i32> size;
+
+        resized(Envy::vector2<i32> s) : size {s} {}
+    };
 
 }
