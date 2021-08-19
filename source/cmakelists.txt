@@ -3,12 +3,24 @@
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(Envy "application.cpp" "log.cpp" "string.cpp" "buffers.cpp" "exception.cpp" "bench.cpp" "window.cpp")
-
-set(diligent_headers
-    "${CMAKE_SOURCE_DIR}/dependencies/DiligentCore-2.5/Graphics/GraphicsEngineD3D11/interface"
-    "${CMAKE_SOURCE_DIR}/dependencies/DiligentCore-2.5/Graphics/GraphicsEngineD3D12/interface"
+# Envy Source files
+set(ENVY_SOURCES
+    "utf8.cpp"
+    "string.cpp"
+    "string_view.cpp"
+    "macro.cpp"
+    "buffers.cpp"
+    "exception.cpp"
+    "bench.cpp"
+    "log.cpp"
+    "test.cpp"
+    "event.cpp"
+    "window.cpp"
+    "graphics.cpp"
+    "engine.cpp"
 )
+
+add_library(Envy ${ENVY_SOURCES})
 
 target_include_directories(Envy PUBLIC "${CMAKE_SOURCE_DIR}/include" PRIVATE "${CMAKE_SOURCE_DIR}/include/Envy")
 

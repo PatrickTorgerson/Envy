@@ -1,0 +1,14 @@
+# == testbench ==
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Source files
+set(SOURCES
+    "testbench.cpp"
+    "tests.cpp"
+)
+
+add_executable(testbench ${SOURCES})
+
+target_link_libraries(testbench Envy)

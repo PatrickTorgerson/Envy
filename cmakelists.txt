@@ -4,10 +4,10 @@ project(EnvyEngine)
 
 # == Dependencies == #
 # Diligent
-add_subdirectory("./dependencies/DiligentCore-2.5")
+add_subdirectory("./dependencies/DiligentEngine")
 
 # Envy
 add_subdirectory("./source")
 
-# Examples
-add_subdirectory("./examples")
+# Tests
+add_subdirectory("./tests")
