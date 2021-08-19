@@ -1,3 +1,0 @@
-[submodule "dependencies/DiligentCore"]
-	path = dependencies/DiligentCore
-	url = https://github.com/DiligentGraphics/DiligentCore/
