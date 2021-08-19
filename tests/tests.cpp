@@ -16,7 +16,7 @@ void utf8_test(Envy::test_state& tests)
 
     Envy::test_case decode {"Envy::utf8::decode"};
 
-    decode.require( Envy::utf8::decode((cu*)"a")   == 98u,      "'a'" );
+    decode.require( Envy::utf8::decode((cu*)"a")   == 97u,      "'a'" );
     decode.require( Envy::utf8::decode((cu*)"A")   == 65u,      "'A'" );
     decode.require( Envy::utf8::decode((cu*)"0")   == 48u,      "'0'" );
     decode.require( Envy::utf8::decode((cu*)"$")   == 0x0024u,  "'$'" );
