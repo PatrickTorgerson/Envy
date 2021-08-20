@@ -6,8 +6,8 @@ project(EnvyEngine)
 # Diligent
 add_subdirectory("./dependencies/DiligentCore")
 
-# Envy
+# == Envy ==
 add_subdirectory("./source")
 
-# Tests
+# == Tests ==
 add_subdirectory("./tests")

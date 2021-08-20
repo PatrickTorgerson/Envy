@@ -22,8 +22,8 @@ set(ENVY_SOURCES
 
 add_library(Envy ${ENVY_SOURCES})
 
-target_include_directories(Envy PUBLIC "${CMAKE_SOURCE_DIR}/include" PRIVATE "${CMAKE_SOURCE_DIR}/include/Envy")
+target_include_directories(Envy INTERFACE "${CMAKE_SOURCE_DIR}/include" PRIVATE "${CMAKE_SOURCE_DIR}/include/Envy")
 
-target_compile_options(Envy PRIVATE -DUNICODE)
+target_compile_options(Envy PUBLIC -DUNICODE)
 
 target_link_libraries(Envy Diligent-GraphicsEngineD3D11-static Diligent-GraphicsEngineD3D12-static)
