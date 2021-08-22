@@ -1,0 +1,10 @@
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\THIRDPARTY\SPIRV-TOOLS\SOURCE\OPT\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Envy -BD:/Envy/build --check-stamp-file D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/source/opt/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

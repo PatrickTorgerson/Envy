@@ -1,0 +1,43 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"dependencies/DiligentCore/Graphics/GraphicsEngineVulkan/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "Diligent-GraphicsEngineVk-static::@899d38c8f1ddb883059b"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineVk-shared::@899d38c8f1ddb883059b"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "CMakePredefinedTargets"
+	},
+	"id" : "ALL_BUILD::@899d38c8f1ddb883059b",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/Graphics/GraphicsEngineVulkan",
+		"source" : "dependencies/DiligentCore/Graphics/GraphicsEngineVulkan"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

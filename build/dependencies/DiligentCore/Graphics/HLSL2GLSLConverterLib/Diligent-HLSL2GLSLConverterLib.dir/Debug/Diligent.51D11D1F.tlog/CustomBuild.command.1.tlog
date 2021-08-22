@@ -1,0 +1,24 @@
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\GRAPHICS\HLSL2GLSLCONVERTERLIB\INCLUDE\GLSLDEFINITIONS.H
+setlocal
+cd D:\Envy\dependencies\DiligentCore\Graphics\HLSL2GLSLConverterLib
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+D:\Envy\dependencies\DiligentCore\BuildTools\File2Include\bin\Win32\x32\File2String.exe include/GLSLDefinitions.h include/GLSLDefinitions_inc.h
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\GRAPHICS\HLSL2GLSLCONVERTERLIB\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Envy -BD:/Envy/build --check-stamp-file D:/Envy/build/dependencies/DiligentCore/Graphics/HLSL2GLSLConverterLib/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

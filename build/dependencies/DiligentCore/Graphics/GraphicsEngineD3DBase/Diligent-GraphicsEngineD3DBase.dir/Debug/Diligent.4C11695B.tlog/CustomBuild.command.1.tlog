@@ -1,0 +1,24 @@
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\GRAPHICS\GRAPHICSENGINED3DBASE\INCLUDE\HLSLDEFINITIONS.FXH
+setlocal
+cd D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3DBase
+if %errorlevel% neq 0 goto :cmEnd
+D:
+if %errorlevel% neq 0 goto :cmEnd
+D:\Envy\dependencies\DiligentCore\BuildTools\File2Include\bin\Win32\x32\File2String.exe include/HLSLDefinitions.fxh include/HLSLDefinitions_inc.fxh
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\GRAPHICS\GRAPHICSENGINED3DBASE\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Envy -BD:/Envy/build --check-stamp-file D:/Envy/build/dependencies/DiligentCore/Graphics/GraphicsEngineD3DBase/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

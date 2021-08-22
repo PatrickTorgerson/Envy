@@ -1,0 +1,338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\BufferD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\BufferViewD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\CommandContext.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\CommandListManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\CommandQueueD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\D3D12TypeConversions.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\D3D12Utils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\DescriptorHeap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\DeviceContextD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\D3D12DynamicHeap.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\EngineFactoryD3D12.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\FenceD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\FramebufferD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\GenerateMips.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\PipelineStateD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\QueryD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\QueryManagerD3D12.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\RenderDeviceD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\RenderPassD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\RootParamsManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\RootSignature.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\SamplerD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\ShaderD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\ShaderResourceBindingD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\ShaderResourceCacheD3D12.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\ShaderResourcesD3D12.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\ShaderVariableManagerD3D12.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\SwapChainD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\TextureD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\TextureViewD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\BottomLevelASD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\TopLevelASD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\ShaderBindingTableD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\PipelineResourceSignatureD3D12Impl.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\src\D3D12Loader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\BufferD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\BufferViewD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\CommandQueueD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\DeviceContextD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\EngineFactoryD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\FenceD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\PipelineStateD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\QueryD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\RenderDeviceD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\SamplerD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\ShaderD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\ShaderResourceBindingD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\SwapChainD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\TextureD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\TextureViewD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\BottomLevelASD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\TopLevelASD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\interface\ShaderBindingTableD3D12.h">
+      <Filter>interface</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\BufferD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\BufferViewD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\CommandContext.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\CommandListD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\CommandListManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\CommandQueueD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\D3D12ResourceBase.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\D3D12TypeConversions.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\D3D12TypeDefinitions.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\D3D12Utils.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\d3dx12_win.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\DescriptorHeap.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\DeviceContextD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\EngineD3D12ImplTraits.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\D3D12DynamicHeap.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\FenceD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\FramebufferD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\GenerateMips.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\pch.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\PipelineStateD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\QueryD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\QueryManagerD3D12.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\RenderDeviceD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\RenderPassD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\RootParamsManager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\RootSignature.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\SamplerD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\ShaderD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\ShaderResourceBindingD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\ShaderResourceCacheD3D12.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\ShaderResourcesD3D12.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\ShaderVariableManagerD3D12.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\SwapChainD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\TextureD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\TextureViewD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\BottomLevelASD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\TopLevelASD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\ShaderBindingTableD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\PipelineResourceSignatureD3D12Impl.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\PipelineResourceAttribsD3D12.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\include\D3D12Loader.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsGammaCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsGammaOddCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsGammaOddXCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsGammaOddYCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsLinearCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsLinearOddCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsLinearOddXCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+    <FXCompile Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsLinearOddYCS.hlsl">
+      <Filter>shaders</Filter>
+    </FXCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Envy\dependencies\DiligentCore\Graphics\GraphicsEngineD3D12\shaders\GenerateMips\GenerateMipsCS.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{5376A3F6-C0DD-3CD9-A327-43B250A5227A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interface">
+      <UniqueIdentifier>{EEB8980D-6702-33EA-9183-5C96E838D66B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{2CB95599-7ACF-3B4C-8E1D-8D4A924D867D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2BAD00CE-7FCC-3F0F-89F0-A7DC717021A3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
