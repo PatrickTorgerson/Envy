@@ -108,7 +108,7 @@
     <CustomBuild Include="D:\Envy\build\CMakeFiles\019c79a74153cb99f3c67fde8ac7fb78\spirv-tools-shared-pkg-config.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"></Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc -DCMAKE_INSTALL_PREFIX=D:/Envy/build/install -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
+"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc "-DCMAKE_INSTALL_PREFIX=C:/Program Files (x86)/EnvyEngine" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -122,7 +122,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</VerifyInputsAndOutputsExist>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'"></Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc -DCMAKE_INSTALL_PREFIX=D:/Envy/build/install -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
+"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc "-DCMAKE_INSTALL_PREFIX=C:/Program Files (x86)/EnvyEngine" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -136,7 +136,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</VerifyInputsAndOutputsExist>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'"></Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc -DCMAKE_INSTALL_PREFIX=D:/Envy/build/install -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
+"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc "-DCMAKE_INSTALL_PREFIX=C:/Program Files (x86)/EnvyEngine" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -150,7 +150,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <VerifyInputsAndOutputsExist Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</VerifyInputsAndOutputsExist>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'"></Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc -DCMAKE_INSTALL_PREFIX=D:/Envy/build/install -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
+"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools-shared.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools-shared.pc "-DCMAKE_INSTALL_PREFIX=C:/Program Files (x86)/EnvyEngine" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DSPIRV_SHARED_LIBRARIES=-lSPIRV-Tools-shared -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
