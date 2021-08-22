@@ -1,0 +1,255 @@
+{
+	"archive" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64",
+				"role" : "flags"
+			}
+		]
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "D:/Envy/lib/RelWithDebInfo/spirv-cross-core.lib"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"spirv_cross_add_library",
+			"install",
+			"target_compile_options",
+			"target_compile_definitions",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"dependencies/DiligentCore/ThirdParty/SPIRV-Cross/CMakeLists.txt",
+			"dependencies/DiligentCore/ThirdParty/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 246,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 168,
+				"parent" : 1
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 93,
+				"parent" : 3
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 178,
+				"parent" : 1
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 182,
+				"parent" : 1
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 170,
+				"parent" : 1
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG  "
+				},
+				{
+					"backtrace" : 5,
+					"fragment" : "/wd4267"
+				},
+				{
+					"backtrace" : 5,
+					"fragment" : "/wd4996"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 6,
+					"define" : "SPIRV_CROSS_NAMESPACE_OVERRIDE=diligent_spirv_cross"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 7,
+					"path" : "D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Cross"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				6,
+				8,
+				10,
+				12
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "DiligentCore/ThirdParty/SPIRV-Cross"
+	},
+	"id" : "spirv-cross-core::@af3ac82b492d37f325e5",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 4,
+				"path" : "lib/dependencies/DiligentCore/RelWithDebInfo"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "D:/Envy/build/install"
+		}
+	},
+	"name" : "spirv-cross-core",
+	"nameOnDisk" : "spirv-cross-core.lib",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross",
+		"source" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				7,
+				9,
+				11
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				6,
+				8,
+				10,
+				12
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/GLSL.std.450.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_common.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cross_containers.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cross_error_handling.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cross.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cross.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_parser.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_parser.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cross_parsed_ir.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cross_parsed_ir.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cfg.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/DiligentCore/ThirdParty/SPIRV-Cross/spirv_cfg.cpp",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

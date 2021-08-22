@@ -1,0 +1,28 @@
+^D:\ENVY\BUILD\CMAKEFILES\A39EC46DEC5AAA51EA17F57CDCC0920B\DEBUGINFO.INSTS.INC.RULE
+setlocal
+"C:\Program Files\Python39\python.exe" D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/utils/generate_grammar_tables.py --extinst-vendor-grammar=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Headers/include/spirv/unified1/extinst.debuginfo.grammar.json --vendor-insts-output=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/debuginfo.insts.inc --vendor-operand-kind-prefix=
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\ENVY\BUILD\CMAKEFILES\FCEF286042334491DC0E311826DA82CC\SPV-TOOLS-DEBUGINFO.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\THIRDPARTY\SPIRV-TOOLS\SOURCE\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Envy -BD:/Envy/build --check-stamp-file D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/source/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

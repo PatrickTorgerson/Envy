@@ -1,0 +1,40 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"dependencies/DiligentCore/Graphics/GraphicsEngineD3DBase/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "Diligent-GraphicsEngineD3DBase::@02e396d421c3a7bdcce1"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "CMakePredefinedTargets"
+	},
+	"id" : "ALL_BUILD::@02e396d421c3a7bdcce1",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3DBase",
+		"source" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3DBase"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

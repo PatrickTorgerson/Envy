@@ -1,0 +1,458 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "D:/Envy/bin/Release/GraphicsEngineD3D11_64r.dll"
+		},
+		{
+			"path" : "D:/Envy/lib/Release/GraphicsEngineD3D11_64r.lib"
+		},
+		{
+			"path" : "D:/Envy/bin/Release/GraphicsEngineD3D11_64r.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"install_core_lib",
+			"target_link_libraries",
+			"target_compile_definitions"
+		],
+		"files" : 
+		[
+			"dependencies/DiligentCore/Graphics/GraphicsEngineD3D11/CMakeLists.txt",
+			"dependencies/DiligentCore/BuildUtils.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 96,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 158,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 275,
+				"parent" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 127,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 134,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG  "
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/W4"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/WX"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/wd4100"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/wd4505"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/wd4201"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/MP"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/wd4189"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/GR-"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/GL"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/GF"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/Ot"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/Oi"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/Ob2"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "/O2"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "D3D11_SUPPORTED=1"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "D3D12_SUPPORTED=1"
+				},
+				{
+					"define" : "Diligent_GraphicsEngineD3D11_shared_EXPORTS"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "ENGINE_DLL=1"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "GLES_SUPPORTED=0"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "GL_SUPPORTED=1"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "METAL_SUPPORTED=0"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "NDEBUG"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "PLATFORM_WIN32=1"
+				},
+				{
+					"backtrace" : 4,
+					"define" : "VULKAN_SUPPORTED=1"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 4,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsEngineD3D11/interface"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsEngineD3DBase/interface"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsEngine/interface"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "D:/Envy/dependencies/DiligentCore/Primitives/interface"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "SPIRV-Tools-static::@ce2186e0dc63bf178fb2"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "MachineIndependent::@47f9d5f1b17247f91f26"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "SPIRV-Tools-opt::@0d6536522cc281e132af"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "glslang::@47f9d5f1b17247f91f26"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "GenericCodeGen::@47f9d5f1b17247f91f26"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "OSDependent::@18eb8036bb2ea23edd54"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "OGLCompiler::@b288994eb55e1bb686e1"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-Win32Platform::@3bcd2bf23b47cefbbfaa"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "SPIRV::@f9d05f230af06b84a460"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-GraphicsEngine::@707f0e0ee125f6a9e7d9"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-HLSL2GLSLConverterLib::@a7a8ca90e0dd17f9d6d5"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-ShaderTools::@ef75b2959dcab9c6c671"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-Primitives::@0bc52b9c7097ac5e6f6f"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-Common::@fcb2ada088e21d3ba455"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-BasicPlatform::@c74375a2d18c1f66989d"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-GraphicsAccessories::@85cbc9ddc4e476754b2f"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "spirv-cross-core::@af3ac82b492d37f325e5"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-GraphicsEngineD3D11-static::@74b7a3a993c345d852df"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "Diligent-GraphicsEngineD3DBase::@02e396d421c3a7bdcce1"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "DiligentCore/Graphics"
+	},
+	"id" : "Diligent-GraphicsEngineD3D11-shared::@74b7a3a993c345d852df",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 3,
+				"path" : "lib/dependencies/DiligentCore/Release"
+			},
+			{
+				"backtrace" : 3,
+				"path" : "bin/dependencies/DiligentCore/Release"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "D:/Envy/build/install"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64 /INCREMENTAL:NO /DEF:D:\\Envy\\dependencies\\DiligentCore\\Graphics\\GraphicsEngineD3D11\\src\\GraphicsEngineD3D11.def /LTCG /OPT:REF /INCREMENTAL:NO",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-GraphicsEngineD3D11-static.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-GraphicsEngineD3DBase.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-ShaderTools.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-HLSL2GLSLConverterLib.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-GraphicsEngine.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-GraphicsAccessories.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-Common.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-Win32Platform.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-BasicPlatform.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "Shlwapi.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\Diligent-Primitives.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\spirv-cross-core.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\SPIRV.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\SPIRV-Tools-opt.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\SPIRV-Tools.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\glslang.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\MachineIndependent.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\GenericCodeGen.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\OGLCompiler.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\..\\lib\\Release\\OSDependent.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "dxgi.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "d3d11.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "d3dcompiler.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "Diligent-GraphicsEngineD3D11-shared",
+	"nameOnDisk" : "GraphicsEngineD3D11_64r.dll",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3D11",
+		"source" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3D11"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "dll",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		},
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				2
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3D11/src/DLLMain.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3D11/src/GraphicsEngineD3D11.def",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineD3D11/readme.md",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

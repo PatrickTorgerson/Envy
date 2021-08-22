@@ -1,0 +1,20 @@
+^D:\ENVY\BUILD\CMAKEFILES\019C79A74153CB99F3C67FDE8AC7FB78\SPIRV-TOOLS-PKG-CONFIG.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -DCHANGES_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CHANGES -DTEMPLATE_FILE=D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/SPIRV-Tools.pc.in -DOUT_FILE=D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/SPIRV-Tools.pc -DCMAKE_INSTALL_PREFIX=D:/Envy/build/install -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include "-DSPIRV_LIBRARIES=-lSPIRV-Tools-opt -lSPIRV-Tools -lSPIRV-Tools-link" -P D:/Envy/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/cmake/write_pkg_config.cmake
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\ENVY\DEPENDENCIES\DILIGENTCORE\THIRDPARTY\SPIRV-TOOLS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SD:/Envy -BD:/Envy/build --check-stamp-file D:/Envy/build/dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

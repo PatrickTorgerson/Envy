@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Envy\build\CMakeFiles\6ad6429d79ae2a2f31fc771096d5881e\DiligentCore.lib.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Envy\build\CMakeFiles\c1cb18b85c6dad978fd77e6f1424ff39\DiligentCore-static.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="D:\Envy\dependencies\DiligentCore\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="D:\Envy\build\dependencies\DiligentCore\CMakeFiles\DiligentCore-static" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{96A139D3-9953-308F-8C31-931719EA5B93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

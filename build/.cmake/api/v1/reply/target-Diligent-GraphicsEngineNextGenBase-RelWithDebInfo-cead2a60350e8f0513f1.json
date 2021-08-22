@@ -1,0 +1,292 @@
+{
+	"archive" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/machine:x64",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/LTCG",
+				"role" : "flags"
+			}
+		]
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "D:/Envy/lib/RelWithDebInfo/Diligent-GraphicsEngineNextGenBase.lib"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"target_link_libraries",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 15,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 18,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG  "
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/W4"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/WX"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/wd4100"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/wd4505"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/wd4201"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/MP"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/wd4189"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/GR-"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/GL"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/GF"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/Ot"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/Oi"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/Ob2"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "/O2"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 2,
+					"define" : "D3D11_SUPPORTED=1"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "D3D12_SUPPORTED=1"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "GLES_SUPPORTED=0"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "GL_SUPPORTED=1"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "METAL_SUPPORTED=0"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "NDEBUG"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "PLATFORM_WIN32=1"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "VULKAN_SUPPORTED=1"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 3,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Platforms/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Common/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Platforms/Win32/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Platforms/Basic/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Primitives/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsAccessories/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsEngine/interface"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "D:/Envy/dependencies/DiligentCore/Graphics/GraphicsEngine/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "Diligent-Win32Platform::@3bcd2bf23b47cefbbfaa"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Diligent-GraphicsEngine::@707f0e0ee125f6a9e7d9"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Diligent-Primitives::@0bc52b9c7097ac5e6f6f"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Diligent-Common::@fcb2ada088e21d3ba455"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Diligent-BasicPlatform::@c74375a2d18c1f66989d"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "Diligent-GraphicsAccessories::@85cbc9ddc4e476754b2f"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "DiligentCore/Graphics"
+	},
+	"id" : "Diligent-GraphicsEngineNextGenBase::@f5d3082422e4734193e9",
+	"name" : "Diligent-GraphicsEngineNextGenBase",
+	"nameOnDisk" : "Diligent-GraphicsEngineNextGenBase.lib",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase",
+		"source" : "dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "src",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "include",
+			"sourceIndexes" : 
+			[
+				1,
+				2,
+				3
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase/src/dummy.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase/include/DeviceContextNextGenBase.hpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase/include/DynamicHeap.hpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "dependencies/DiligentCore/Graphics/GraphicsEngineNextGenBase/include/RenderDeviceNextGenBase.hpp",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

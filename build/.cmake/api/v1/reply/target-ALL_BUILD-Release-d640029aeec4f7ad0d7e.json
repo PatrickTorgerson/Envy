@@ -1,0 +1,49 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"dependencies/DiligentCore/ThirdParty/SPIRV-Tools/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "spirv-tools-pkg-config::@0bb8c9fb5193a19a72bd"
+		},
+		{
+			"id" : "spirv-tools-shared-pkg-config::@0bb8c9fb5193a19a72bd"
+		},
+		{
+			"id" : "SPIRV-Tools-static::@ce2186e0dc63bf178fb2"
+		},
+		{
+			"id" : "SPIRV-Tools-opt::@0d6536522cc281e132af"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "CMakePredefinedTargets"
+	},
+	"id" : "ALL_BUILD::@0bb8c9fb5193a19a72bd",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/ThirdParty/SPIRV-Tools",
+		"source" : "dependencies/DiligentCore/ThirdParty/SPIRV-Tools"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

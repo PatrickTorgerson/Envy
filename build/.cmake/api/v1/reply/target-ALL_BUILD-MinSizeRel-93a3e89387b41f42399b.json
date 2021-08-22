@@ -1,0 +1,43 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"dependencies/DiligentCore/Graphics/GraphicsEngineOpenGL/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "Diligent-GraphicsEngineOpenGL-static::@8e56332e7eba1b6bb911"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineOpenGL-shared::@8e56332e7eba1b6bb911"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "CMakePredefinedTargets"
+	},
+	"id" : "ALL_BUILD::@8e56332e7eba1b6bb911",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/Graphics/GraphicsEngineOpenGL",
+		"source" : "dependencies/DiligentCore/Graphics/GraphicsEngineOpenGL"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

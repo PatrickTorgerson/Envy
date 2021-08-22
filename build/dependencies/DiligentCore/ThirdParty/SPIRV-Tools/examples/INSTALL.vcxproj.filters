@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Envy\build\CMakeFiles\38b60c27191d79963ec9eb0b06ccdb00\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{96A139D3-9953-308F-8C31-931719EA5B93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,40 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"dependencies/DiligentCore/Graphics/GraphicsTools/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "Diligent-GraphicsTools::@8ea3cd7a5c4f1d638544"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "CMakePredefinedTargets"
+	},
+	"id" : "ALL_BUILD::@8ea3cd7a5c4f1d638544",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore/Graphics/GraphicsTools",
+		"source" : "dependencies/DiligentCore/Graphics/GraphicsTools"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}

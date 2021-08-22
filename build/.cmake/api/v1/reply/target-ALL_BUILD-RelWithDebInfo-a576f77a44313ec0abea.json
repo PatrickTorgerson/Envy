@@ -1,0 +1,142 @@
+{
+	"backtrace" : 0,
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : 
+		[
+			"dependencies/DiligentCore/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			}
+		]
+	},
+	"dependencies" : 
+	[
+		{
+			"id" : "DiligentCore-static::@b64bf97af24ee6c959c4"
+		},
+		{
+			"id" : "DiligentCore-ValidateFormatting::@b64bf97af24ee6c959c4"
+		},
+		{
+			"id" : "glew-static::@f5526368d95362cacb5e"
+		},
+		{
+			"id" : "spirv-tools-pkg-config::@0bb8c9fb5193a19a72bd"
+		},
+		{
+			"id" : "spirv-tools-shared-pkg-config::@0bb8c9fb5193a19a72bd"
+		},
+		{
+			"id" : "SPIRV-Tools-static::@ce2186e0dc63bf178fb2"
+		},
+		{
+			"id" : "MachineIndependent::@47f9d5f1b17247f91f26"
+		},
+		{
+			"id" : "SPIRV-Tools-opt::@0d6536522cc281e132af"
+		},
+		{
+			"id" : "glslang::@47f9d5f1b17247f91f26"
+		},
+		{
+			"id" : "GenericCodeGen::@47f9d5f1b17247f91f26"
+		},
+		{
+			"id" : "OSDependent::@18eb8036bb2ea23edd54"
+		},
+		{
+			"id" : "OGLCompiler::@b288994eb55e1bb686e1"
+		},
+		{
+			"id" : "Diligent-Win32Platform::@3bcd2bf23b47cefbbfaa"
+		},
+		{
+			"id" : "SPIRV::@f9d05f230af06b84a460"
+		},
+		{
+			"id" : "Diligent-GraphicsEngine::@707f0e0ee125f6a9e7d9"
+		},
+		{
+			"id" : "Diligent-HLSL2GLSLConverterLib::@a7a8ca90e0dd17f9d6d5"
+		},
+		{
+			"id" : "Diligent-ShaderTools::@ef75b2959dcab9c6c671"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineNextGenBase::@f5d3082422e4734193e9"
+		},
+		{
+			"id" : "File2String::@3d4915b713f440bc5163"
+		},
+		{
+			"id" : "Diligent-Primitives::@0bc52b9c7097ac5e6f6f"
+		},
+		{
+			"id" : "Diligent-Common::@fcb2ada088e21d3ba455"
+		},
+		{
+			"id" : "HLSL::@b710cef9ff627f31947a"
+		},
+		{
+			"id" : "Diligent-BasicPlatform::@c74375a2d18c1f66989d"
+		},
+		{
+			"id" : "Diligent-GraphicsAccessories::@85cbc9ddc4e476754b2f"
+		},
+		{
+			"id" : "spirv-cross-core::@af3ac82b492d37f325e5"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineVk-shared::@899d38c8f1ddb883059b"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineD3D12-shared::@d9e3b3cd2779a43b4e00"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineD3D11-static::@74b7a3a993c345d852df"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineD3D12-static::@d9e3b3cd2779a43b4e00"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineOpenGL-static::@8e56332e7eba1b6bb911"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineD3DBase::@02e396d421c3a7bdcce1"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineVk-static::@899d38c8f1ddb883059b"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineOpenGL-shared::@8e56332e7eba1b6bb911"
+		},
+		{
+			"id" : "Diligent-GraphicsTools::@8ea3cd7a5c4f1d638544"
+		},
+		{
+			"id" : "Diligent-GraphicsEngineD3D11-shared::@74b7a3a993c345d852df"
+		},
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"folder" : 
+	{
+		"name" : "CMakePredefinedTargets"
+	},
+	"id" : "ALL_BUILD::@b64bf97af24ee6c959c4",
+	"isGeneratorProvided" : true,
+	"name" : "ALL_BUILD",
+	"paths" : 
+	{
+		"build" : "dependencies/DiligentCore",
+		"source" : "dependencies/DiligentCore"
+	},
+	"sources" : [],
+	"type" : "UTILITY"
+}
