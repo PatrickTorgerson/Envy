@@ -7,6 +7,9 @@ environment:
       CONFIG: Release
       ARCH_ARG: "-A x64"
 
+clone_script:
+  - cmd: git clone --recursive -q --branch=main https://github.com/PatrickTorgerson/Envy.git C:\projects\envy
+
 build_script:
   - cmake "-G%GENERATOR%" -H. -B_builds
   - cmake --build _builds --config "%CONFIG%"
