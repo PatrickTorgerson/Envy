@@ -6,8 +6,8 @@
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/include/Envy",
                 "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30037/include",
-                "${workspaceFolder}/dependencies/DiligentEngine/DiligentCore/Graphics/GraphicsEngineD3D11/interface",
-                "${workspaceFolder}/dependencies/DiligentEngine/DiligentCore/Graphics/GraphicsEngineD3D12/interface"
+                "${workspaceFolder}/dependencies/DiligentCore/Graphics/GraphicsEngineD3D11/interface",
+                "${workspaceFolder}/dependencies/DiligentCore/Graphics/GraphicsEngineD3D12/interface"
             ],
             "defines": [
                 "_DEBUG",
