@@ -28,8 +28,9 @@ void utf8_test(Envy::test_state& tests)
 
     tests.add_case(decode);
 
-    const u8* buffer_valid = (cu*)"€ello utf8 😊🍔🍳";
-    const u8* buffer_invalid = (cu*)"cs\u0098orrupted\u0098\u0090";
+    const u8* buffer_valid { (cu*)"€ello utf8 😊🍔🍳" };
+
+    const u8 buffer_invalid[] { 'a' , 0b11100000u , 0b10000000u , 0b11000010u , 'x' , '\0' };
 
     tests.add_case(Envy::utf8::is_valid_utf8(buffer_valid) && !Envy::utf8::is_valid_utf8(buffer_invalid), "Envy::utf8::is_valid_utf8");
     tests.add_case(Envy::utf8::count_code_points(buffer_valid) == 14, "Envy::utf8::count_characters(buffer_valid)");
@@ -48,7 +49,7 @@ void utf8_test(Envy::test_state& tests)
     Envy::utf8::code_unit* buffer {(cu*)".𐍈.𐍈.𐍈."};
 
     const Envy::utf8::iterator begin {buffer};
-    const Envy::utf8::iterator end {buffer + Envy::utf8::size_bytes(buffer)};
+    const Envy::utf8::iterator end   {buffer + Envy::utf8::size_bytes(buffer)};
     i32 index {};
 
     Envy::test_case itercase {"Envy::utf8::iterator"};

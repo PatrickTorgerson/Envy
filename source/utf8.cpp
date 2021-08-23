@@ -59,6 +59,25 @@ namespace Envy::utf8
     // ==== utf8 helper funcs ====
 
 
+    namespace
+    {
+        // these are used to mask off the encoding bits of the code units so we can get at that jucy unicode code point data
+        constexpr code_unit  c_mask {0b00111111}; // continuation unit
+        constexpr code_unit l2_mask {0b00011111}; // lead unit indicating 2 continuation units
+        constexpr code_unit l3_mask {0b00001111}; // lead unit indicating 3 continuation units
+        constexpr code_unit l4_mask {0b00000111}; // lead unit indicating 4 continuation units
+
+        // prefixes for unicode code units, used for encoding code points
+        constexpr code_unit  c_prefix {0b10000000}; // continuation unit
+        constexpr code_unit f2_prefix {0b11000000}; // lead unit indicating 2 continuation units
+        constexpr code_unit f3_prefix {0b11100000}; // lead unit indicating 3 continuation units
+        constexpr code_unit f4_prefix {0b11110000}; // lead unit indicating 4 continuation units
+
+        // All continuation units contain exactly six bits from the code point
+        constexpr i32 bits_per_continuation_unit {6};
+    }
+
+
     i32 code_units_encoded(const code_unit* lead) noexcept(!Envy::debug)
     {
         Envy::debug_assert(is_lead_unit(lead), "Invalid UTF-8");
@@ -117,8 +136,8 @@ namespace Envy::utf8
 
     bool is_lead_unit(const code_unit* unit) noexcept
     {
-        int ones {std::countl_one(*unit)};
-        // must begin with 0, 2, 3, or 4  1 bits
+        // must begin with 0, 2, 3, or 4 ones
+        i32 ones {std::countl_one(*unit)};
         return ones != 1 && ones < 5;
     }
 
@@ -126,7 +145,7 @@ namespace Envy::utf8
     bool is_continuation_unit(const code_unit* unit) noexcept
     {
         // first two bits must be '10'
-        return (*unit >> 6) == 0b10;
+        return (*unit >> bits_per_continuation_unit) == 0b10;
     }
 
 
@@ -138,6 +157,7 @@ namespace Envy::utf8
         { return false; }
 
         units -= (units?1:0);
+
         ++lead;
 
         for(int i {}; i < units; ++i)
@@ -159,7 +179,7 @@ namespace Envy::utf8
 
     void decrement_ptr(const code_unit** lead_ptr) noexcept(!Envy::debug)
     {
-        do { --(*lead_ptr); } while(is_continuation_unit(*lead_ptr));
+        do { --(*lead_ptr); } while (is_continuation_unit(*lead_ptr));
     }
 
 
@@ -171,25 +191,19 @@ namespace Envy::utf8
     {
         Envy::debug_assert(is_lead_unit(lead), "Invalid UTF-8");
 
-        code_point cp {};
+        u32 codepoint {};
 
         i32 units {code_units_encoded(lead)};
 
-        // these are used to mask off the encoding bits so we can get at that jucy unicode data
-        constexpr code_unit  c_mask {0b00111111}; // continuation unit
-        constexpr code_unit l2_mask {0b00011111}; // lead unit indicating 2 continuation units
-        constexpr code_unit l3_mask {0b00001111}; // lead unit indicating 3 continuation units
-        constexpr code_unit l4_mask {0b00000111}; // lead unit indicating 4 continuation units
-
         switch(units)
         {
-            // ascii character
+            // ascii
             case 1: return code_point {*lead};
 
             // mask off encoding data
-            case 2: cp = (code_unit) (*lead & l2_mask); break;
-            case 3: cp = (code_unit) (*lead & l3_mask); break;
-            case 4: cp = (code_unit) (*lead & l4_mask); break;
+            case 2: codepoint = static_cast<code_unit>(*lead & l2_mask); break;
+            case 3: codepoint = static_cast<code_unit>(*lead & l3_mask); break;
+            case 4: codepoint = static_cast<code_unit>(*lead & l4_mask); break;
         }
 
         ++lead;
@@ -200,40 +214,33 @@ namespace Envy::utf8
             Envy::debug_assert(is_continuation_unit(lead), "Invalid UTF-8, character missing code_units");
 
             // append data to code unit
-            cp.get() <<= 6;
-            cp.get() |= (u32)(*lead & c_mask);
+            codepoint <<= bits_per_continuation_unit;
+            codepoint |= static_cast<u32>(*lead & c_mask);
 
             ++lead;
             --units;
         }
 
-        return cp;
+        return code_point {codepoint};
     }
 
 
     void encode(code_point cp, code_unit* ptr)
     {
+        const u32 codepoint {cp.get()};
 
-        static constexpr code_unit  c_mask {0b00111111};
-        static constexpr code_unit f2_mask {0b00011111};
-        static constexpr code_unit f3_mask {0b00001111};
-        static constexpr code_unit f4_mask {0b00000111};
-
-        static constexpr code_unit  c_prefix {0b10000000};
-        static constexpr code_unit f2_prefix {0b11000000};
-        static constexpr code_unit f3_prefix {0b11100000};
-        static constexpr code_unit f4_prefix {0b11110000};
-
-        i32 continuation_units { code_units_required(cp) - 1 };
+        const i32 continuation_units { code_units_required(cp) - 1 };
+        const i32 continuation_bits  { bits_per_continuation_unit * continuation_units };
 
         // encode first code_unit
         switch(continuation_units)
         {
+            // ascii
             case 0: *ptr = (code_unit) cp.get(); return;
 
-            case 1: *ptr = f2_prefix | ((code_unit)(cp.get() >> 6)  & f2_mask); break;
-            case 2: *ptr = f3_prefix | ((code_unit)(cp.get() >> 12) & f3_mask); break;
-            case 3: *ptr = f4_prefix | ((code_unit)(cp.get() >> 18) & f4_mask); break;
+            case 1: *ptr = f2_prefix | (static_cast<code_unit>(codepoint >> continuation_bits) & l2_mask); break;
+            case 2: *ptr = f3_prefix | (static_cast<code_unit>(codepoint >> continuation_bits) & l3_mask); break;
+            case 3: *ptr = f4_prefix | (static_cast<code_unit>(codepoint >> continuation_bits) & l4_mask); break;
         }
 
         // encode continuation units
@@ -241,9 +248,10 @@ namespace Envy::utf8
         {
             ++ptr;
 
-            i32 bits { 6 * (continuation_units - i) };
+            // number of bits we need to shif to get to this code unit's data
+            i32 bits { bits_per_continuation_unit * (continuation_units - i) };
 
-            *ptr = c_prefix | ((code_unit)(cp.get() >> bits) & c_mask);
+            *ptr = c_prefix | ( static_cast<code_unit>(codepoint >> bits) & c_mask );
         }
     }
 
