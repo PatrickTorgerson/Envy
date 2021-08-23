@@ -1,6 +1,9 @@
 #include <utf8.hpp>
 #include <log.hpp>
 
+#include <cstring>
+#include <limits>
+
 namespace Envy::utf8
 {
 
@@ -101,9 +104,14 @@ namespace Envy::utf8
     }
 
 
-    usize byte_len(const code_unit* buffer) noexcept
+    usize size_bytes(const code_unit* buffer) noexcept
     {
-        return strlen((const char*)buffer);
+        return strlen( reinterpret_cast<const char*>(buffer) );
+    }
+
+    usize size_bytes(const char* buffer) noexcept
+    {
+        return strlen( buffer );
     }
 
 
@@ -168,10 +176,10 @@ namespace Envy::utf8
         i32 units {code_units_encoded(lead)};
 
         // these are used to mask off the encoding bits so we can get at that jucy unicode data
-        static constexpr code_unit  c_mask {0b00111111}; // continuation unit
-        static constexpr code_unit l2_mask {0b00011111}; // lead unit indicating 2 continuation units
-        static constexpr code_unit l3_mask {0b00001111}; // lead unit indicating 3 continuation units
-        static constexpr code_unit l4_mask {0b00000111}; // lead unit indicating 4 continuation units
+        constexpr code_unit  c_mask {0b00111111}; // continuation unit
+        constexpr code_unit l2_mask {0b00011111}; // lead unit indicating 2 continuation units
+        constexpr code_unit l3_mask {0b00001111}; // lead unit indicating 3 continuation units
+        constexpr code_unit l4_mask {0b00000111}; // lead unit indicating 4 continuation units
 
         switch(units)
         {

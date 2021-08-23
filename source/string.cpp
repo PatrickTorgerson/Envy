@@ -33,10 +33,10 @@ namespace Envy
 
 
     string::string(const char* cstr) :
-        string(size_tag{}, strlen(cstr))
+        string(size_tag{}, utf8::size_bytes(cstr))
     {
-        // +1 to copy null terminator as well
-        std::memcpy( buffer, cstr, buffer_size + 1);
+        // +1 to copy null-terminator
+        std::memcpy(buffer, cstr, buffer_size + 1u);
     }
 
 

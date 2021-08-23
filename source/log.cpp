@@ -108,7 +108,7 @@ namespace Envy
     }
 
 
-    std::string resolve_preamble(std::string_view name, log_severity severity, const char* file, u32 line, u32 col, const char* func, i32 preamble_size = 0)
+    std::string resolve_preamble(std::string_view name, log_severity severity, const char* file, u32 line, u32 col, const char* func)
     {
         macro_map preamble_macros;
 
@@ -293,7 +293,7 @@ namespace Envy
 
     void logger::seperator()
     {
-        static constexpr char sep[] {"======================================================================================================================================================"};
+        constexpr char sep[] {"======================================================================================================================================================"};
 
         if(console_logging)
         {

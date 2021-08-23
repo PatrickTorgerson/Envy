@@ -28,7 +28,7 @@ namespace Envy
 
 
     string_view::string_view(const utf8::code_unit* data) noexcept :
-        size_{ utf8::byte_len(data) },
+        size_{ utf8::size_bytes(data) },
         ptr_{data},
         code_point_count { string::npos }
     {}

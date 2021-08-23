@@ -67,7 +67,9 @@ namespace Envy::utf8
     [[nodiscard]] i32 code_units_required(code_point cp) noexcept;
     [[nodiscard]] i32 count_code_points(const code_unit* buffer) noexcept(!Envy::debug);
     [[nodiscard]] i32 count_code_points(const code_unit* buffer, usize size_bytes) noexcept(!Envy::debug);
-    [[nodiscard]] usize byte_len(const code_unit* buffer) noexcept;
+
+    [[nodiscard]] usize size_bytes(const code_unit* buffer) noexcept;
+    [[nodiscard]] usize size_bytes(const char* buffer) noexcept;
 
     [[nodiscard]] bool is_lead_unit(const code_unit* unit) noexcept;
     [[nodiscard]] bool is_continuation_unit(const code_unit* unit) noexcept;

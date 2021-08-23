@@ -48,7 +48,7 @@ void utf8_test(Envy::test_state& tests)
     Envy::utf8::code_unit* buffer {(cu*)".𐍈.𐍈.𐍈."};
 
     const Envy::utf8::iterator begin {buffer};
-    const Envy::utf8::iterator end {buffer + Envy::utf8::byte_len(buffer)};
+    const Envy::utf8::iterator end {buffer + Envy::utf8::size_bytes(buffer)};
     i32 index {};
 
     Envy::test_case itercase {"Envy::utf8::iterator"};
@@ -91,7 +91,7 @@ void string_test(Envy::test_state& tests)
     tests.add_case(str1.size() == 5 && str2.size() == 6, "Envy::string::size()", "str1:{}==5 , str2:{}==6"_f(str1.size(), str2.size()));
 
     Envy::string s2 {10, 'a'};
-    tests.add_case(strlen( (const char*) s2.data() ) == 10, "Envy::string(count, fill)", "s2.size():{}==10"_f(strlen( (const char*) s2.data() )));
+    tests.add_case(Envy::utf8::size_bytes(s2.data()) == 10, "Envy::string(count, fill)", "s2.size():{}==10"_f( Envy::utf8::size_bytes(s2.data())));
 
     Envy::string s3 {};
 
