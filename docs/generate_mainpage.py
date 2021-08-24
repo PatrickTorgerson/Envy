@@ -40,7 +40,7 @@ def generate_mainpage():
                 if line == "# Envy\n":
                     # Header ID, tells doxygen to use as main page
                     mainpage_md.write("# Envy Documentation {#mainpage}\n")
-                elif line == "[![Documentation](https://img.shields.io/github/v/release/PatrickTorgerson/Envy?color=blue&label=docs&logoColor=blue)](https://patricktorgerson.github.io/Envy-docs/)\n":
+                elif line == "[![Documentation](https://img.shields.io/github/v/release/patricktorgerson/envy?include_prereleases&label=docs)](https://patricktorgerson.github.io/Envy-docs/)":
                     # Replace link to documentation with link to repository
                     mainpage_md.write("[![GitHub](https://img.shields.io/badge/GitHub-Envy-blue)](https://github.com/PatrickTorgerson/Envy)\n")
                 else:

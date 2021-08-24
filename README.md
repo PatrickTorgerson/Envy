@@ -3,10 +3,10 @@
 [![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://www.mit.edu/~amini/LICENSE.md)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/PatrickTorgerson/Envy?svg=true)](https://ci.appveyor.com/project/PatrickTorgerson/Envy)
 [![Last Commit](https://img.shields.io/github/last-commit/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy/commits/main)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy/releases)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/patricktorgerson/envy?include_prereleases)](https://github.com/PatrickTorgerson/Envy/releases)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba76a4e0bbbf46b39fb04cd0b3788ce4)](https://www.codacy.com/gh/PatrickTorgerson/Envy/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PatrickTorgerson/Envy&amp;utm_campaign=Badge_Grade)
 
-[![Documentation](https://img.shields.io/github/v/release/PatrickTorgerson/Envy?color=blue&label=docs&logoColor=blue)](https://patricktorgerson.github.io/Envy-docs/)
+[![Documentation](https://img.shields.io/github/v/release/patricktorgerson/envy?include_prereleases&label=docs)](https://patricktorgerson.github.io/Envy-docs/)
 [![Lines of Code](https://tokei.rs/b1/github.com/PatrickTorgerson/Envy?category=code)](https://github.com/PatrickTorgerson/Envy)
 [![Code Size](https://img.shields.io/github/languages/code-size/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy)
 
