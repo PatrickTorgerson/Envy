@@ -40,9 +40,12 @@ def generate_mainpage():
                 if line == "# Envy\n":
                     # Header ID, tells doxygen to use as main page
                     mainpage_md.write("# Envy Documentation {#mainpage}\n")
-                elif line == "[![Documentation](https://img.shields.io/github/v/release/patricktorgerson/envy?include_prereleases&label=docs)](https://patricktorgerson.github.io/Envy-docs/)":
+                elif line == "[![Documentation](https://img.shields.io/github/v/release/patricktorgerson/envy?include_prereleases&label=docs)](https://patricktorgerson.github.io/Envy-docs/)\n":
                     # Replace link to documentation with link to repository
                     mainpage_md.write("[![GitHub](https://img.shields.io/badge/GitHub-Envy-blue)](https://github.com/PatrickTorgerson/Envy)\n")
+                elif line == "[![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/PatrickTorgerson/Envy/blob/main/LICENSE)\n":
+                    # Have license badge link to license section of the mainpaige rather thatn the repo
+                    mainpage_md.write("[![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](#licenseinfo)\n")
                 else:
                     # no change neccessary
                     mainpage_md.write(line)

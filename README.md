@@ -1,6 +1,6 @@
 # Envy
 
-[![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://www.mit.edu/~amini/LICENSE.md)
+[![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/PatrickTorgerson/Envy/blob/main/LICENSE)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/PatrickTorgerson/Envy?svg=true)](https://ci.appveyor.com/project/PatrickTorgerson/Envy)
 [![Last Commit](https://img.shields.io/github/last-commit/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy/commits/main)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/patricktorgerson/envy?include_prereleases)](https://github.com/PatrickTorgerson/Envy/releases)
