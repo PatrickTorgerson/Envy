@@ -6,6 +6,7 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy/releases)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba76a4e0bbbf46b39fb04cd0b3788ce4)](https://www.codacy.com/gh/PatrickTorgerson/Envy/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=PatrickTorgerson/Envy&amp;utm_campaign=Badge_Grade)
 
+[![Documentation](https://img.shields.io/github/v/release/PatrickTorgerson/Envy?color=blue&label=docs&logoColor=blue)](https://patricktorgerson.github.io/Envy-docs/)
 [![Lines of Code](https://tokei.rs/b1/github.com/PatrickTorgerson/Envy?category=code)](https://github.com/PatrickTorgerson/Envy)
 [![Code Size](https://img.shields.io/github/languages/code-size/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy)
 
@@ -52,15 +53,15 @@ Envy's dependencies are either included in source or as submodules, so if clonin
 Or you can download an archive from the github site.
 Once you have the source you can generate build files with cmake. First navigate to a build directory
 
-` cd ${ENVY_SOURCE_DIR}/build `
+`cd ${ENVY_SOURCE_DIR}/build`
 
 Where **${ENVY_SOURCE_DIR}** is the directory you have Envy's source. Now we can run cmake.
 
-` cmake -G "Visual Studio 16 2019" .. `
+`cmake -G "Visual Studio 16 2019" ..`
 
 Now you can either oppen EnvyEngine.sln with Visual Studio, or run MSBuild form the commandline.
 
-` msbuild EnvyEngine.sln /p:Configuration=Debug `
+`msbuild EnvyEngine.sln /p:Configuration=Debug`
 
 This should produce a **Envy.lib** that you can link with your own project.
 

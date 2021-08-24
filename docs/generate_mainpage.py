@@ -39,16 +39,12 @@ def generate_mainpage():
 
                 if line == "# Envy\n":
                     # Header ID, tells doxygen to use as main page
-                    mainpage_md.write("# Envy {#mainpage}\n")
-                elif line == "[![Lines of Code](https://tokei.rs/b1/github.com/PatrickTorgerson/Envy?category=code)](https://github.com/PatrickTorgerson/Envy)\n":
-                    # Add a badge to ling to the github repo
+                    mainpage_md.write("# Envy Documentation {#mainpage}\n")
+                elif line == "[![Documentation](https://img.shields.io/github/v/release/PatrickTorgerson/Envy?color=blue&label=docs&logoColor=blue)](https://patricktorgerson.github.io/Envy-docs/)\n":
+                    # Replace link to documentation with link to repository
                     mainpage_md.write("[![GitHub](https://img.shields.io/badge/GitHub-Envy-blue)](https://github.com/PatrickTorgerson/Envy)\n")
-                    mainpage_md.write(line)
-                elif line.startswith('` '):
-                    # Block quote code line cuz it looks better in the html
-                    mainpage_md.write('> ')
-                    mainpage_md.write(line)
                 else:
+                    # no change neccessary
                     mainpage_md.write(line)
 
     return
