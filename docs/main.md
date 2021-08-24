@@ -1,6 +1,6 @@
-# Envy
+# Envy                {#mainpage}
 
-[![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](LICENSE)
+![License](https://img.shields.io/apm/l/atomic-design-ui.svg?)
 [![Appveyor Build Status](https://ci.appveyor.com/api/projects/status/github/PatrickTorgerson/Envy?svg=true)](https://ci.appveyor.com/project/PatrickTorgerson/Envy)
 [![Last Commit](https://img.shields.io/github/last-commit/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/PatrickTorgerson/Envy)
@@ -8,8 +8,6 @@
 
 [![Lines of Code](https://tokei.rs/b1/github.com/PatrickTorgerson/Envy?category=code)](https://github.com/PatrickTorgerson/Envy)
 [![Code Size](https://img.shields.io/github/languages/code-size/PatrickTorgerson/Envy)](https://github.com/PatrickTorgerson/Envy)
-
-A lite game engine written in C++20 for Windows.
 
 ## Example
 
@@ -39,14 +37,16 @@ Envy's dependencies are either included in source or as submodules, so if clonin
 Or you can download an archive from the github site.
 Once you have the source you can generate build files with cmake. First navigate to a build directory
 
-`cd ${ENVY_SOURCE_DIR}/build`
+> `cd ${ENVY_SOURCE_DIR}/build`
 
 Where **${ENVY_SOURCE_DIR}** is the directory you have Envy's source. Now we can run cmake.
 
-`cmake -G "Visual Studio 16 2019" ..`
+> `cmake -G "Visual Studio 16 2019" ..`
 
 Now you can either oppen EnvyEngine.sln with Visual Studio, or run MSBuild form the commandline.
 
-`msbuild EnvyEngine.sln /p:Configuration=Debug`
+> `msbuild EnvyEngine.sln /p:Configuration=Debug`
 
 This should produce a **Envy.lib** that you can link with your own project.
+
+

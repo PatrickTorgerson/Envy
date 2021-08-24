@@ -32,17 +32,56 @@
 #include "window.hpp"
 #include "graphics.hpp"
 
+/********************************************************************************
+ * \file engine.hpp
+ * \brief Envy's entry point
+ ********************************************************************************/
+
 namespace Envy::engine
 {
+    /********************************************************************************
+     * \brief Class containing information used to configure Envy
+     *
+     * To start the engine you must create one of these and pass it into
+     * \ref Envy::engine::run().
+     ********************************************************************************/
     struct description
     {
-        window::description window {};
-        graphics::description graphics {};
+        window::description window {};      ///< Used to configure the window
+        graphics::description graphics {};  ///< Used to configure graphics options
         // log
         // cli
         // roots
         // rootstack
     };
 
+
+    /********************************************************************************
+     * \brief The entry point for Envy
+     *
+     * ```cpp
+     * #include <Envy.hpp>
+     *
+     * int main()
+     * {
+     *      Envy::engine::description envydesc {};
+     *
+     *      envydesc.window.tile = L"My Envy App";
+     *      envydesc.window.minimum_size = {500,500};
+     *
+     *      Envy::engine::run(envydesc);
+     *
+     *      return 0;
+     * }
+     * ```
+     *
+     * \param [in] engdesc A description object used to configure Envy
+     * \param [in] argc Optional command line argument count, usually forwarded from main()
+     * \param [in] argv Optional command line argument values, usually forwarded from main()
+     *
+     * \see Envy::engine::description
+     * \see Envy::window::description
+     * \see Envy::graphics::description
+     ********************************************************************************/
     void run(const description& engdesc, int argc = 0, char** argv = nullptr);
 }
