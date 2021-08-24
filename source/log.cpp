@@ -110,12 +110,13 @@ namespace Envy
 
     std::string resolve_preamble(std::string_view name, log_severity severity, const char* file, u32 line, u32 col, const char* func)
     {
+        // TODO: make global, build in init_logging()
         macro_map preamble_macros;
 
         constexpr const char* severities_short[]
         {"scp", "ast", "err", "wrn", "nte", "inf"};
         constexpr const char* severities[]
-        {" scope", "assert", " error", "  warn", "  note", "  info"};
+        {"  scope", " assert", "  error", "warning", "   note", "   info"};
         constexpr const char* severity_colors[]
         {"{BBLK}", "{RED}", "{BRED}", "{BYEL}", "{BMAG}", "{BCYN}"};
 
@@ -156,12 +157,6 @@ namespace Envy
     void set_preamble_pattern(std::string_view pattern)
     {
         preamble = std::move(preamble);
-    }
-
-
-    void print_preamble(const std::string& name, log_severity severity, std::source_location l)
-    {
-        print( resolve_local(resolve_preamble(name, severity, l.file_name(), l.line(), l.column(), l.function_name()), colors) );
     }
 
 
@@ -330,7 +325,7 @@ namespace Envy
     { console_logging = b; }
 
 
-    void logger::set_file(std::string file)
+    void logger::set_file(std::string file) noexcept
     { logfile = std::move(file); }
 
 

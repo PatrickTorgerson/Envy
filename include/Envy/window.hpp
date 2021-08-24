@@ -25,6 +25,11 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 
+/********************************************************************************
+ * \file window.hpp
+ * \brief Utilities for Window creation and configuration
+ ********************************************************************************/
+
 #pragma once
 
 #include "common.hpp"
@@ -40,36 +45,115 @@
 namespace Envy::window
 {
 
+    /********************************************************************************
+     * \brief Class containing information used to configure the Window
+     *
+     * Describe window options for Envy to use when creating the window.
+     * This is passed to Envy in a \ref Envy::engine::description object to
+     * the \ref Envy::engine::run() function
+     *
+     * \see Envy::engine::description
+     * \see Envy::engine::run()
+     * \see Envy::graphics::description
+     ********************************************************************************/
     struct description
     {
-        std::wstring title {L"Envy Application"};
-
-        Envy::vector2<i32> minimum_window_size {300,300};
-        Envy::vector2<i32> maximum_window_size {0,0};
+        std::wstring title {L"Envy Application"};          ///< Text displayed in the Window's Title Bar
+        Envy::vector2<i32> minimum_window_size {300,300};  ///< Minimum width and height the window can be
+        Envy::vector2<i32> maximum_window_size {0,0};      ///< Maximum width and height the window can be
 
         // TODO: border, resizable, confine cursor, etc
     };
 
+    /********************************************************************************
+     * \brief Pauses execution until Window is created
+     *
+     * Pauses execution of the current thred until the window thread has successfully
+     * created the Window. Envy will call this in the \ref Envy::engine::run() function
+     * to ensure the Window is created before initializing the graphics. You shouldn't
+     * need to call this function yourself
+     *
+     * \see Envy::engine::run()
+     ********************************************************************************/
     void wait_for_creation();
 
+    /********************************************************************************
+     * \brief Launches the Window thread
+     *
+     * Envy will call this function in the \ref Envy::engine::run() function.
+     * Do not call this function yourself.
+     *
+     * \param [in] stop_token Used to request the thread spot executing
+     * \param [in] windesc The window description forwarded from \ref Envy::engine::run()
+     *
+     * \see Envy::engine::run()
+     ********************************************************************************/
     void run(std::stop_token stop_token, const description& windesc);
 
+    /********************************************************************************
+     * \brief Returns whether the window is open
+     *
+     * The Window is considered to be closed when the program has posted a WM_CLOSE message
+     * is processed. You can use \ref Envy::window::request_close() to post such a message
+     *
+     * \return true if the Window hasn't been closed
+     * \return false if the window has been closed
+     *
+     * \see Envy::window::request_close()
+     ********************************************************************************/
     bool is_open();
+
+    /********************************************************************************
+     * \brief Requests the window be closed
+     *
+     * This will post a WM_CLOSE message. Because Envy only supports one window this
+     * will cause the message loop to break and the Window thread to stop execution.
+     * \ref Envy::engine::run() will detect this and return. execution will resume
+     * in main.
+     *
+     * \see Envy::window::is_open()
+     ********************************************************************************/
     void request_close();
 
+    /********************************************************************************
+     * \brief Returns the native Win32 window handle
+     *
+     * \return HWND the native Win32 window handle
+     ********************************************************************************/
     HWND get_hwnd();
 
+    /********************************************************************************
+     * \brief Sets the Window's size constraints
+     *
+     * You can also set the window constraints in the \ref Envy::engine::description
+     * you pass to \ref Envy::engine::run()
+     *
+     * \param [in] min Minimum width and height
+     * \param [in] max Maximum width and height
+     *
+     * \see Envy::engine::description
+     * \see Envy::window::description
+     * \see Envy::vector2
+     ********************************************************************************/
     void set_size_constraints(Envy::vector2<i32> min, Envy::vector2<i32> max);
 
 
-    // event types
+    // ==== event types ====
 
 
+    /********************************************************************************
+     * \brief Window resized event
+     *
+     * Envy will post this event when the size of the window has been changed
+     *
+     * \see Envy::listener
+     * \see Envy::register_callback()
+     ********************************************************************************/
     class resized : public Envy::event
     {
     public:
 
-        Envy::vector2<i32> size;
+        Envy::vector2<i32> size; ///< The new size of the Window
 
         resized(Envy::vector2<i32> s) : size {s} {}
     };

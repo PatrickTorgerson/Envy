@@ -25,17 +25,17 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 
+/********************************************************************************
+ * \file engine.hpp
+ * \brief Envy's entry point
+ ********************************************************************************/
+
 #pragma once
 
 #include "common.hpp"
 #include "log.hpp"
 #include "window.hpp"
 #include "graphics.hpp"
-
-/********************************************************************************
- * \file engine.hpp
- * \brief Envy's entry point
- ********************************************************************************/
 
 namespace Envy::engine
 {
@@ -44,6 +44,9 @@ namespace Envy::engine
      *
      * To start the engine you must create one of these and pass it into
      * \ref Envy::engine::run().
+     *
+     * \see Envy::window::description
+     * \see Envy::graphics::description
      ********************************************************************************/
     struct description
     {
