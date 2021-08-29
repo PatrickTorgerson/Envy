@@ -189,7 +189,8 @@ namespace Envy::utf8
 
     code_point decode(const code_unit* lead) noexcept(!Envy::debug)
     {
-        Envy::debug_assert(is_lead_unit(lead), "Invalid UTF-8");
+        Envy::debug_assert(lead != nullptr, "Trying to decode nullptr");
+        Envy::debug_assert(is_lead_unit(lead), "Trying to decode invalid UTF-8");
 
         u32 codepoint {};
 
@@ -225,8 +226,10 @@ namespace Envy::utf8
     }
 
 
-    void encode(code_point cp, code_unit* ptr)
+    void encode(code_point cp, code_unit* ptr) noexcept(!Envy::debug)
     {
+        Envy::debug_assert(lead != nullptr, "Trying to encode to nullptr");
+
         const u32 codepoint {cp.get()};
 
         const i32 continuation_units { code_units_required(cp) - 1 };
