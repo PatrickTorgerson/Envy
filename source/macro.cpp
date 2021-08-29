@@ -7,58 +7,111 @@
 
 namespace Envy
 {
+
     namespace
     {
         macro_map global_macros;
+
+        struct macro_tag
+        {
+            std::string name;
+            std::string param;
+            usize size;
+        };
     }
 
-    void macro(macro_map& map, std::string_view name, macro_t m)
-    { map[std::string(name)] = m; }
+
+    void macro_map::add(std::string_view name, macro_t m)
+    {
+        macros[std::string(name)] = m;
+    }
+
+
+    void macro_map::remove(const std::string& name)
+    {
+        macros.erase(name);
+    }
+
+
+    void macro_map::clear()
+    {
+        macros.clear();
+    }
+
+
+    macro_expantion_result macro_map::expand(const std::string& name, std::string_view fmt) const
+    {
+        auto it {macros.find(name)};
+
+        if(it == macros.end())
+        { return { "", false }; }
+
+        return { it->second(fmt), true };
+    }
 
 
     void macro(std::string_view name, macro_t m)
-    { macro(global_macros, name, m); }
+    { global_macros.add(name, m); }
 
 
-    std::tuple<std::string,std::string,usize> read_tag(std::string_view::const_iterator start, std::string_view::const_iterator end)
+    macro_tag read_tag(std::string_view::const_iterator start, std::string_view::const_iterator end)
     {
-        std::tuple<std::string,std::string,usize> tag;
+        macro_tag tag;
 
-        auto i {start};
+        // jump over open curly
+        auto i {++start};
 
-        // tag identifier
+        // -- read identifier
+
         for(; i != end; ++i)
         {
+            // beak to read param
             if(*i == ':')
             { break; }
 
+            // no param, return tag
             if(*i == '}')
             {
-                std::get<1>(tag) = "{}";
-                std::get<2>(tag) = i - start;
+                tag.param = "";
+                tag.size = i - start;
                 return tag;
             }
 
-            std::get<0>(tag).push_back(*i);
+            tag.name.push_back(*i);
         }
 
+        // tag end or param start not found, return invalid tag
         if(i == end)
-        { return std::tuple<std::string,std::string,usize> {}; }
+        { return {}; }
 
-        // fmt specifier
-        std::get<1>(tag).push_back('{');
+        // jump over colon
+        ++i;
+
+        // -- read param
+
+        int nest {};
+
         for(; i != end; ++i)
         {
-            std::get<1>(tag).push_back(*i);
-
+            if(*i == '{')
+            {
+                ++nest;
+            }
             if(*i == '}')
             {
-                std::get<2>(tag) = i - start;
-                return tag;
+                if(nest == 0)
+                {
+                    tag.size = i - start;
+                    return tag;
+                }
+                else --nest;
             }
+
+            tag.param.push_back(*i);
         }
 
-        return std::tuple<std::string,std::string,usize> {};
+        // tag end not found, return invalid tag
+        return {};
     }
 
 
@@ -72,7 +125,7 @@ namespace Envy
 
         for(auto c : s)
         {
-            if(!isalnum((int)c) && c != '_')
+            if(!isalnum((int)c) && c != '_' && c != '-')
             { return false; }
         }
 
@@ -80,78 +133,76 @@ namespace Envy
     }
 
 
-    std::string resolve_local(std::string_view s, const macro_map& map)
+    char peek(std::string_view::const_iterator i, std::string_view::const_iterator end)
     {
-        // TODO: escaped macro tags?
+        if(i+1 == end)
+        { return '\0'; }
+        else return *(i+1);
+    }
 
+
+    macro_expantion_result expand_local_macros(std::string_view s, const macro_map& map)
+    {
         std::string result;
-        result.reserve(s.size());
+        result.reserve(s.size() + 10u);
+
+        bool success {true};
 
         for(auto i {s.begin()}; i != s.end(); ++i)
         {
             if(*i == '{')
             {
-                ++i;
-
-                if(*i == '}')
+                // peek for escapededness
+                if( peek(i,s.end()) == '{')
                 {
-                    // empty tag, probably a placeholder for std::format() so we ignore
-                    result += "{}";
+                    result.push_back(*i);
+                    ++i;
+                    continue;
                 }
-                else
+
+                // read the tag mofo
+                auto [identifier,fmt,tag_size] { read_tag(i,s.end()) };
+
+                if(is_identifier_string(identifier))
                 {
-                    // possible macro tag
-                    auto [identifier,fmt,tag_size] {read_tag(i,s.end())};
+                    // expand nested macros
+                    fmt = expand_local_macros(fmt, map);
 
-                    if(is_identifier_string(identifier))
+                    auto replacement { map.expand(identifier, fmt) };
+
+                    if(replacement.success)
                     {
-                        // yes, a valid macro tag (we just assume fmt is valid, let std::format() deal with it)
-
-                        auto macro_it {map.find(identifier)};
-
-                        if(macro_it == map.end())
-                        {
-                            // macro does not exist, let's just write it to the result as-is
-                            result.push_back('{');
-                            --i;
-                        }
-                        else
-                        {
-                            // let the replacement occur
-                            std::string replacement;
-
-                            replacement = resolve_local(macro_it->second(), map);
-                            replacement = std::format(fmt, replacement);
-
-                            result += replacement;
-                            i += tag_size;
-                        }
+                        // expand recursive macros , append to result
+                        result += expand_local_macros(replacement, map);
+                        i += tag_size + 1;
                     }
                     else
-                    {
-                        // invalid tag, let's just write it to the result as-is
-                        result.push_back('{');
-                        --i;
-                    }
+                    { result.push_back(*i); success = false; }
                 }
+                else // invalid macro tag, write it to the result as-is
+                { result.push_back(*i); success = false; }
             }
-            else
+            // handle end of escape sequence
+            // TODO: could break in edge case : "{x:{y}}" where both x and y don't exist
+            else if(*i == '}' && peek(i,s.end()) == '}')
+            { result.push_back(*i); ++i; }
+            else // reqular character, add to result
             { result.push_back(*i); }
         }
 
-        return result;
+        return { std::move(result), success };
     }
 
 
-    std::string resolve(std::string_view s)
+    macro_expantion_result expand_macros(std::string_view s)
     {
-        return resolve_local(s, global_macros);
+        return expand_local_macros(s, global_macros);
     }
 
 
-    std::string resolve(std::string_view s, const macro_map& additional)
+    macro_expantion_result expand_macros(std::string_view s, const macro_map& additional)
     {
-        return resolve_local( resolve_local(s, additional), global_macros);
+        return expand_local_macros( expand_local_macros(s, global_macros), additional);
     }
 
 }

@@ -192,23 +192,40 @@ void macro_test(Envy::test_state& tests)
 
     Envy::macro_map macros;
 
-    Envy::macro(macros, "test", "beans");
-    Envy::macro(macros, "answer", 42);
-    Envy::macro(macros, "boolean", true);
+    macros.add("test", "beans");
+    macros.add("answer", 42);
+    macros.add("boolean", true);
+    macros.add("pi", 3.1415926535);
+
+    macros.add("first-name", "Patrick");
+    macros.add("last-name", "Torgerson");
+    macros.add("full-name", "{first-name} {last-name}");
 
     std::source_location loc {std::source_location::current()};
 
-    Envy::macro(macros, "func", [loc](){ return loc.function_name(); } );
+    macros.add("func", [loc](std::string_view){ return loc.function_name(); } );
 
-    std::string beans     {Envy::resolve_local("{test}", macros)};
-    std::string forty2    {Envy::resolve_local("{answer}", macros)};
-    std::string notfalse  {Envy::resolve_local("{boolean}", macros)};
-    std::string macrotest {Envy::resolve_local("{func}", macros)};
+    macros.add("len", [](std::string_view p){ return Envy::to_string(p.size()); });
 
-    // tests.require_equality(beans,     "beans",      beans);
-    // tests.require_equality(forty2,    "42",         forty2);
-    // tests.require_equality(notfalse,  "true",       notfalse);
-    // tests.require_equality(macrotest, "macro_test", macrotest);
+    std::string beans     {Envy::expand_local_macros("{test}", macros)};
+    std::string forty2    {Envy::expand_local_macros("{answer}", macros)};
+    std::string notfalse  {Envy::expand_local_macros("{boolean}", macros)};
+    std::string macrotest {Envy::expand_local_macros("{func}", macros)};
+    std::string pi        {Envy::expand_local_macros("{pi:.2f}", macros)};
+    std::string torgerson {Envy::expand_local_macros("{len:{last-name}}", macros)};
+    std::string name      {Envy::expand_local_macros("{full-name}", macros)};
+    std::string beanlen   {Envy::expand_local_macros("{len:{test}}", macros)};
+
+    tests.add_case(beans == "beans",              "test -> beans = {}"_f(beans));
+    tests.add_case(forty2 == "42",                "answer -> 42 = {}"_f(forty2));
+    tests.add_case(notfalse == "true",            "boolean -> true = {}"_f(notfalse));
+    tests.add_case(macrotest == "macro_test",     "func -> macro_test = {}"_f(macrotest));
+    tests.add_case(pi == "3.14",                  "pi -> pi = {}"_f(pi));
+    tests.add_case(torgerson == "9",              "len:last-name -> 9 = {}"_f(torgerson));
+    tests.add_case(name == "Patrick Torgerson",   "full-name -> Patrick Torgerson = {}"_f(name));
+    tests.add_case(beanlen == "5",                "len:test -> 5 = {}"_f(beanlen));
+
+    // TODO: test expanding with multiple macro_maps
 
     tests.submit();
 }

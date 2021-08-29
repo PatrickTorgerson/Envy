@@ -63,8 +63,8 @@ namespace Envy
         if constexpr (std::same_as<T,bool>)
         { std::cout << std::boolalpha << v; }
 
-        else if constexpr (stream_insertable<T>)
-        { std::cout << std::forward<T>(v); }
+        // else if constexpr (stream_insertable<T>)
+        // { std::cout << std::forward<T>(v); }
 
         else
         { std::cout << Envy::to_string(std::forward<T>(v)); }
