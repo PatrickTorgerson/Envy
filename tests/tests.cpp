@@ -203,9 +203,9 @@ void macro_test(Envy::test_state& tests)
 
     std::source_location loc {std::source_location::current()};
 
-    macros.add("func", [loc](std::string_view){ return loc.function_name(); } );
+    macros.add("func", [loc](Envy::string_view){ return loc.function_name(); } );
 
-    macros.add("len", [](std::string_view p){ return Envy::to_string(p.size()); });
+    macros.add("len", [](Envy::string_view p){ return Envy::to_string(p.size()); });
 
     std::string beans     {Envy::expand_local_macros("{test}", macros)};
     std::string forty2    {Envy::expand_local_macros("{answer}", macros)};

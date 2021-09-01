@@ -38,8 +38,6 @@
 
 #include <functional>
 #include <unordered_map>
-#include <string>
-#include <string_view>
 #include <optional>
 
 namespace Envy
@@ -49,7 +47,11 @@ namespace Envy
     /********************************************************************************
      * \brief The type for a macro function
      ********************************************************************************/
-    using macro_t = std::function<std::string(std::string_view)>;
+    using macro_t = std::function<Envy::string(Envy::string_view)>;
+
+
+    Envy::string build_fmt(Envy::string_view fmt);
+
 
     /********************************************************************************
      * \brief Return type for macro expantion functions
@@ -64,8 +66,10 @@ namespace Envy
     class macro_expantion_result final
     {
     public:
-        std::string result;  ///< The result of the macro expantion, unexpanded macros will be left as is.
+
+        Envy::string result;  ///< The result of the macro expantion, unexpanded macros will be left as is.
         const bool success;  ///< Success flag, true if all macros were expanded, false otherwise
+
 
         /********************************************************************************
          * \brief Constructs a macro expantion result
@@ -73,30 +77,40 @@ namespace Envy
          * \param [in] str rvalue ref, result string
          * \param [in] s success flag
          ********************************************************************************/
-        macro_expantion_result(std::string&& str, bool s) : result{std::move(str)} , success{s} {}
+        macro_expantion_result(Envy::string&& str, bool s) : result{std::move(str)} , success{s} {}
+
 
         /********************************************************************************
-         * \brief Implicit cast to string with macros expanded
+         * \brief Implicit cast to Envy::string with macros expanded
          *
          * This overload is called on rvalue macro_expantion_result 's and will move
          * the result string.
          *
-         * \return std::string&& The result of the macro expantion, unexpanded macros will be left as is.
+         * \return Envy::string&& The result of the macro expantion, unexpanded macros will be left as is.
          ********************************************************************************/
-        operator std::string&& () && { return std::move(result); }
+        operator Envy::string&& () && { return std::move(result); }
+
 
         /********************************************************************************
-         * \brief Implicit cast to string with macros expanded
+         * \brief Implicit cast to Envy::string with macros expanded
          *
          * This overload is called on lvalue macro_expantion_result 's and will copy
          * the result string.
          *
-         * \return std::string&& The result of the macro expantion, unexpanded macros will be left as is.
+         * \return Envy::string&& The result of the macro expantion, unexpanded macros will be left as is.
          ********************************************************************************/
-        operator std::string   () const &  { return result; }
+        operator Envy::string   () const &  { return result; }
+
 
         /********************************************************************************
-         * \brief Implicit cast to string_view with macros expanded
+         * \brief Implicit cast to std::string with macros expanded
+         * \return std::string, The result of the macro expantion, unexpanded macros will be left as is.
+         ********************************************************************************/
+        operator std::string() const { return static_cast<std::string>(result); }
+
+
+        /********************************************************************************
+         * \brief Implicit cast to Envy::string_view with macros expanded
          *
          * It is the programmer's responsibility to ensure that the resulting string view does not outlive the string.
          *
@@ -105,23 +119,26 @@ namespace Envy
          * std::string_view sv = Envy::expand_macros("Hello {player}, want to {activity}?");
          * ```
          *
-         * \return std::string_view A view into the result string
+         * \return Envy::string_view A view into the result string
          ********************************************************************************/
-        operator std::string_view() const& { return static_cast<std::string_view>(result); }
+        operator Envy::string_view() const& { return static_cast<Envy::string_view>(result); }
+
 
         /********************************************************************************
          * \brief Grants access to the result string without having to cast to string
          *
-         * \return std::string* pointer to result string
+         * \return Envy::string* pointer to result string
          ********************************************************************************/
-        std::string* operator->() { return &result; }
+        Envy::string* operator->() { return &result; }
+
 
         /********************************************************************************
          * \brief Grants access to the result string without having to cast to string
          *
-         * \return const std::string* pointer to const result string
+         * \return const Envy::string* pointer to const result string
          ********************************************************************************/
-        const std::string* operator->() const { return &result; }
+        const Envy::string* operator->() const { return &result; }
+
     };
 
 
@@ -132,14 +149,16 @@ namespace Envy
      ********************************************************************************/
     class macro_map final
     {
-        std::unordered_map<std::string,macro_t> macros; ///<< underlying map of macros
+
+        std::unordered_map<Envy::string,macro_t> macros; ///<< underlying map of macros
+
     public:
 
         /********************************************************************************
          * \brief Adds a function macro to the map
          *
          * Adds a macro that expands to a the returned string of a macro function.
-         * A macro function has the signiture "std::string(std::string param)"
+         * A macro function has the signiture "Envy::string(Envy::string_view param)"
          * where param is the text after the colon in a macro tag, "{name:param}"
          *
          * ```cpp
@@ -157,7 +176,8 @@ namespace Envy
          * \param [in] name name of the new macro
          * \param [in] m macro function
          ********************************************************************************/
-        void add(std::string_view name, macro_t m);
+        void add(Envy::string_view name, macro_t m);
+
 
         /********************************************************************************
          * \brief Adds a value macro to the map
@@ -177,13 +197,14 @@ namespace Envy
          * \param [in] v value
          ********************************************************************************/
         template <convertable_to_string T>
-        void add(std::string_view name, T&& v)
+        void add(Envy::string_view name, T&& v)
         {
             add( name,
-                [ t = std::forward<T>(v) ] (std::string_view fmt)
-                { return std::format( "{" + std::format(":{}",fmt) + "}" , t); }
+                [ t = std::forward<T>(v) ] (Envy::string_view fmt)
+                { return std::format( build_fmt(fmt) , t); }
             );
         }
+
 
         /********************************************************************************
          * \brief Removes a macro from the map
@@ -192,12 +213,14 @@ namespace Envy
          *
          * \param [in] name macro to remove
          ********************************************************************************/
-        void remove(const std::string& name);
+        void remove(const Envy::string& name);
+
 
         /********************************************************************************
          * \brief Removes all macros from the map
          ********************************************************************************/
         void clear();
+
 
         /********************************************************************************
          * \brief Returns the value of a macro
@@ -220,8 +243,10 @@ namespace Envy
          *
          * \see Envy::macro_expantion_result
          ********************************************************************************/
-        macro_expantion_result expand(const std::string& name, std::string_view fmt = "") const;
+        macro_expantion_result expand(const Envy::string& name, Envy::string_view fmt = "") const;
+
     };
+
 
     /********************************************************************************
      * \brief Adds a function macro to the global macro map
@@ -245,7 +270,8 @@ namespace Envy
      * \param [in] name name of the new macro
      * \param [in] m
      ********************************************************************************/
-    void macro(std::string_view name, macro_t m);
+    void macro(Envy::string_view name, macro_t m);
+
 
     /********************************************************************************
      * \brief Adds a value macro to the global macro map
@@ -265,13 +291,14 @@ namespace Envy
      * \param [in] v value
      ********************************************************************************/
     template <convertable_to_string T>
-    void macro(std::string_view name, T&& v)
+    void macro(Envy::string_view name, T&& v)
     {
         macro( name,
-            [ t = std::forward<T>(v) ] (std::string_view fmt)
-            { return std::format( "{" + std::format(":{}",fmt) + "}" , t); }
+            [ t = std::forward<T>(v) ] (Envy::string_view fmt)
+            { return std::format( build_fmt(fmt) , t); }
         );
     }
+
 
     /********************************************************************************
      * \brief Expands a string with macros from a macro_map
@@ -286,7 +313,8 @@ namespace Envy
      * \see Envy::macro_map::expand()
      * \see Envy::macro_expantion_result
      ********************************************************************************/
-    [[nodiscard]] macro_expantion_result expand_local_macros(std::string_view s, const macro_map& map);
+    [[nodiscard]] macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map);
+
 
     /********************************************************************************
      * \brief Expands a string with macros from a set macro_map 's
@@ -305,10 +333,11 @@ namespace Envy
      * \see Envy::macro_expantion_result
      ********************************************************************************/
     template < std::same_as<macro_map> ... Maps >
-    [[nodiscard]] macro_expantion_result expand_local_macros(std::string_view s, const macro_map& map, Maps&& ... maps)
+    [[nodiscard]] macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map, Maps&& ... maps)
     {
         return expand_local_macros( expand_local_macros(s,map) , std::forward<Maps>(maps)...);
     }
+
 
     /********************************************************************************
      * \brief Expands a string with macros from the global macro_map
@@ -323,7 +352,8 @@ namespace Envy
      * \see Envy::macro_map::expand()
      * \see Envy::macro_expantion_result
      ********************************************************************************/
-    [[nodiscard]] macro_expantion_result expand_macros(std::string_view s);
+    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s);
+
 
     /********************************************************************************
      * \brief Expands a string with macros from the global macro_map and an additional macro_map
@@ -339,7 +369,8 @@ namespace Envy
      * \see Envy::macro_map::expand()
      * \see Envy::macro_expantion_result
      ********************************************************************************/
-    [[nodiscard]] macro_expantion_result expand_macros(std::string_view s, const macro_map& additional);
+    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, const macro_map& additional);
+
 
     /********************************************************************************
      * \brief Expands a string with macros from the global macro_map and a set of additional macro_map 's
@@ -358,8 +389,9 @@ namespace Envy
      * \see Envy::macro_expantion_result
      ********************************************************************************/
     template < std::same_as<macro_map> ... Maps >
-    [[nodiscard]] macro_expantion_result expand_macros(std::string_view s, const macro_map& additional, Maps&& ... additionals)
+    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, const macro_map& additional, Maps&& ... additionals)
     {
         return expand_local_macros( expand_macros(s,additional) , std::forward<Maps>(additionals)...);
     }
+
 }

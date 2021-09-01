@@ -228,14 +228,15 @@ namespace Envy::utf8
 
     void encode(code_point cp, code_unit* ptr) noexcept(!Envy::debug)
     {
-        Envy::debug_assert(lead != nullptr, "Trying to encode to nullptr");
+        Envy::debug_assert(ptr != nullptr, "Trying to encode to nullptr");
 
         const u32 codepoint {cp.get()};
 
         const i32 continuation_units { code_units_required(cp) - 1 };
         const i32 continuation_bits  { bits_per_continuation_unit * continuation_units };
 
-        // encode first code_unit
+        // -- encode first code_unit
+
         switch(continuation_units)
         {
             // ascii
@@ -246,12 +247,13 @@ namespace Envy::utf8
             case 3: *ptr = f4_prefix | (static_cast<code_unit>(codepoint >> continuation_bits) & l4_mask); break;
         }
 
-        // encode continuation units
+        // -- encode continuation units
+
         for(i32 i {1}; i <= continuation_units; ++i)
         {
             ++ptr;
 
-            // number of bits we need to shif to get to this code unit's data
+            // number of bits we need to shift to get to this code unit's data
             i32 bits { bits_per_continuation_unit * (continuation_units - i) };
 
             *ptr = c_prefix | ( static_cast<code_unit>(codepoint >> bits) & c_mask );

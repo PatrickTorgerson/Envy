@@ -363,6 +363,9 @@ namespace Envy::utf8
          ********************************************************************************/
         [[nodiscard]] bool operator==(const iterator&) const noexcept;
 
+        auto operator <=> (const iterator& other) const
+        { return ptr <=> other.ptr; }
+
         // iterator non-member funcs
 
         /********************************************************************************
