@@ -30,7 +30,7 @@ namespace Envy
     {
         if(verbose_flag)
         {
-             log.info(" {YEL}Running tests{BWHT}", loc)(current_test);
+             log.info("{LYEL}===== Running tests ====={WHT}", loc)(current_test);
         }
     }
 
@@ -41,7 +41,7 @@ namespace Envy
     {
         if(verbose_flag)
         {
-             log.info(" {YEL}Running tests{BWHT}", loc)(current_test);
+             log.info(" {LYEL}===== Running tests ====={WHT}", loc)(current_test);
         }
     }
 
@@ -62,7 +62,8 @@ namespace Envy
 
         if(verbose_flag)
         {
-            log.info(" {BYEL}--{BWHT} {} {BYEL}--{BWHT}", loc)(current_test);
+            log.info(" {LYEL}-- {} --{WHT}", loc)(current_test);
+            Envy::indent_log();
         }
     }
 
@@ -73,7 +74,7 @@ namespace Envy
 
         if(!condition)
         {
-            log.error("Case failed '{}'", loc)(name);
+            log.error("{LGRY}Case failed '{}'", loc)(name);
 
             if(!msg.empty())
             {
@@ -84,7 +85,7 @@ namespace Envy
         }
         else if(verbose_flag)
         {
-            log.info("Case passed '{}'", loc)(name);
+            log.info("{LGRY}Case passed '{}'", loc)(name);
         }
     }
 
@@ -98,12 +99,12 @@ namespace Envy
         {
             if(verbose_flag)
             {
-                log.info("Case passed '{}'", c.loc)(c.name);
+                log.info("{LGRY}Case passed '{}'", c.loc)(c.name);
             }
         }
         else
         {
-            log.error("Case failed '{}'", c.loc)(c.name);
+            log.error("{LGRY}Case failed '{}'", c.loc)(c.name);
             current_status = false;
 
             for(usize i {}; i < c.failure_msgs.size(); ++i)
@@ -128,12 +129,17 @@ namespace Envy
 
             if(verbose_flag)
             {
-                log.info(" {BGRN}>{WHT} Passed '{}'", loc)(current_test);
+                log.info("{LGRN}>{WHT} Passed '{}'", loc)(current_test);
             }
         }
         else
         {
-            log.error(" {BRED}>{WHT} Failed '{}'", loc)(current_test);
+            log.error("{LRED}>{WHT} Failed '{}'", loc)(current_test);
+        }
+
+        if(verbose_flag)
+        {
+            Envy::unindent_log();
         }
 
         current_test.clear();
@@ -150,12 +156,12 @@ namespace Envy
 
         if(success)
         {
-            log.info(" {BGRN}All tests passed{BWHT} ({BCYN}{}{BWHT}) {BBLK}{}", loc)(total, duration);
+            log.info("{LGRN}All tests passed{WHT} ({LCYN}{}{WHT}) {DGRY}{}", loc)(total, duration);
         }
         else
         {
             u32 failed {total - passed};
-            log.error(" {BRED}{} test{} failed{BWHT} ({BCYN}{}{BWHT}) {BBLK}{}", loc)(failed, (failed>1)?"s":"", total, duration);
+            log.error("{LRED}{} test{} failed{WHT} ({LCYN}{}{WHT}) {DGRY}{}", loc)(failed, (failed>1)?"s":"", total, duration);
         }
 
         return success;

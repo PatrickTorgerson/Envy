@@ -507,7 +507,7 @@ namespace Envy
         explicit scope_logger(std::string msg, logger& l = Envy::log, std::source_location loc = std::source_location::current()) :
             log {l}
         {
-            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), log_severity::scope, "{ {BBLK}" + msg, loc.file_name(), loc.line(), loc.column(), loc.function_name());
+            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), log_severity::scope, "{{{{ {DGRY}" + msg, loc.file_name(), loc.line(), loc.column(), loc.function_name());
             indent_log();
             t = std::chrono::high_resolution_clock::now();
         }
@@ -521,7 +521,7 @@ namespace Envy
         {
             std::chrono::duration<f64> delta { std::chrono::high_resolution_clock::now() - t };
             unindent_log();
-            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), log_severity::scope, "} " + std::format("{{BBLK}}{}{{BWHT}}", delta), "", 0, 0, "");
+            raw_log(log.get_name(), log.get_file(), log.logs_to_console(), log_severity::scope, "} " + std::format("{{DGRY}}{}{{WHT}}", delta), "", 0, 0, "");
         }
     };
 

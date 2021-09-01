@@ -18,8 +18,8 @@ namespace Envy
 {
     namespace
     {
-        std::string preamble {"{BBLK}[{datetime}] {file: >20} LN{line:0>4} | {name: >10} {severity_color}{severity}{BBLK} : {BWHT}"};
-        std::string note_preamble {" {BMAG}note{BBLK} : "};
+        std::string preamble {"{DGRY}[{datetime}] {file: >20} LN{line:0>4} | {name: >10} {severity_color}{severity}{DGRY} : {WHT}"};
+        std::string note_preamble {" {MAG}note{DGRY} : "};
 
         macro_map colors;
         macro_map colors_nop;
@@ -48,15 +48,18 @@ namespace Envy
         colors.add("BLU", "\x1b[34m");
         colors.add("MAG", "\x1b[35m");
         colors.add("CYN", "\x1b[36m");
-        colors.add("WHT", "\x1b[37m");
-        colors.add("BBLK", "\x1b[1;30m");
-        colors.add("BRED", "\x1b[1;31m");
-        colors.add("BGRN", "\x1b[1;32m");
-        colors.add("BYEL", "\x1b[1;33m");
-        colors.add("BBLU", "\x1b[1;34m");
-        colors.add("BMAG", "\x1b[1;35m");
-        colors.add("BCYN", "\x1b[1;36m");
-        colors.add("BWHT", "\x1b[1;37m");
+        colors.add("LGRY", "\x1b[37m");
+
+        colors.add("DGRY", "\x1b[90m");
+        colors.add("LRED", "\x1b[91m");
+        colors.add("LGRN", "\x1b[92m");
+        colors.add("LYEL", "\x1b[93m");
+        colors.add("LBLU", "\x1b[94m");
+        colors.add("LMAG", "\x1b[95m");
+        colors.add("LCYN", "\x1b[96m");
+        colors.add("WHT", "\x1b[97m");
+
+        colors.add("DEF", "\x1b[39m");
         colors.add("CLR", "\x1b[0m");
 
         colors_nop.add("BLK", "");
@@ -66,16 +69,19 @@ namespace Envy
         colors_nop.add("BLU", "");
         colors_nop.add("MAG", "");
         colors_nop.add("CYN", "");
+        colors_nop.add("LGYR", "");
+
+        colors_nop.add("DGRY", "");
+        colors_nop.add("LRED", "");
+        colors_nop.add("LGRN", "");
+        colors_nop.add("LYEL", "");
+        colors_nop.add("LBLU", "");
+        colors_nop.add("LMAG", "");
+        colors_nop.add("LCYN", "");
         colors_nop.add("WHT", "");
-        colors_nop.add("BBLK", "");
-        colors_nop.add("BRED", "");
-        colors_nop.add("BGRN", "");
-        colors_nop.add("BYEL", "");
-        colors_nop.add("BBLU", "");
-        colors_nop.add("BMAG", "");
-        colors_nop.add("BCYN", "");
-        colors_nop.add("BWHT", "");
+
         colors_nop.add("CLR", "");
+        colors_nop.add("DEF", "");
     }
 
 
@@ -96,13 +102,13 @@ namespace Envy
         result.reserve(indent_count * indent_str.size());
 
         if(forconsole)
-        { result += "{BBLK}"; }
+        { result += "{DGRY}"; }
 
         for(int i {}; i < indent_count; ++i)
         { result += indent_str; }
 
         if(forconsole)
-        { result += "{BWHT}"; }
+        { result += "{WHT}"; }
 
         return result;
     }
@@ -118,7 +124,7 @@ namespace Envy
         constexpr const char* severities[]
         {"  scope", " assert", "  error", "warning", "   note", "   info"};
         constexpr const char* severity_colors[]
-        {"{BBLK}", "{RED}", "{BRED}", "{BYEL}", "{BMAG}", "{BCYN}"};
+        {"{DGRY}", "{LRED}", "{RED}", "{LYEL}", "{LMAG}", "{LCYN}"};
 
         std::filesystem::path path {file};
 
@@ -140,14 +146,14 @@ namespace Envy
 
     std::string resolve_note_preamble(u64 fill_count)
     {
-        std::string result {"\n{BBLK}"};
+        std::string result {"\n{DGRY}"};
 
         // pads note premble with dashes
         result += std::format("{:->{}}", "", fill_count);
 
         result += note_preamble;
 
-        result += "{BBLK}";
+        result += "{DGRY}";
         result += generate_indent(false) + indent_str;
 
         return result;
@@ -179,7 +185,7 @@ namespace Envy
         std::string msgstr {};
 
         if(severity == log_severity::note)
-        { indent_log(); msgstr += "{BBLK}"; }
+        { indent_log(); msgstr += "{DGRY}"; }
 
         msgstr += Envy::replace(msg, "\n", resolved_note_preamble);
 
@@ -294,9 +300,9 @@ namespace Envy
         if(console_logging)
         {
             std::scoped_lock l {console_mutex};
-            print(colors.expand("BBLK"));
+            print(colors.expand("DGRY"));
             print(sep);
-            print(colors.expand("BWHT"));
+            print(colors.expand("WHT"));
         }
 
         if(!logfile.empty())

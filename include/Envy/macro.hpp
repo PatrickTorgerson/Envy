@@ -50,7 +50,7 @@ namespace Envy
     using macro_t = std::function<Envy::string(Envy::string_view)>;
 
 
-    Envy::string build_fmt(Envy::string_view fmt);
+    Envy::string build_fmt_str(Envy::string_view fmt);
 
 
     /********************************************************************************
@@ -201,7 +201,7 @@ namespace Envy
         {
             add( name,
                 [ t = std::forward<T>(v) ] (Envy::string_view fmt)
-                { return std::format( build_fmt(fmt) , t); }
+                { return std::format( build_fmt_str(fmt) , t); }
             );
         }
 
@@ -295,7 +295,7 @@ namespace Envy
     {
         macro( name,
             [ t = std::forward<T>(v) ] (Envy::string_view fmt)
-            { return std::format( build_fmt(fmt) , t); }
+            { return std::format( build_fmt_str(fmt) , t); }
         );
     }
 

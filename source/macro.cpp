@@ -23,7 +23,7 @@ namespace Envy
         };
     }
 
-    Envy::string build_fmt(Envy::string_view fmt)
+    Envy::string build_fmt_str(Envy::string_view fmt)
     {
         Envy::string result { Envy::string::reserve_tag, fmt.size_bytes() + 3u };
         result += "{:";
@@ -75,6 +75,7 @@ namespace Envy
     macro_tag read_tag(utf8::iterator start, utf8::iterator end);
     bool is_identifier_string(Envy::string_view s) noexcept;
     char peek(utf8::iterator i, utf8::iterator end);
+    Envy::string escape_macros(Envy::string s);
 
 
     //**********************************************************************
@@ -119,12 +120,15 @@ namespace Envy
                         // expand recursive macros , append to result
                         result += expand_local_macros(replacement, map);
                         i = tag_end;
+
+                        continue;
                     }
-                    else
-                    { result += *i; success = false; }
                 }
-                else // invalid macro tag, write it to the result as-is
-                { result += *i; success = false; }
+
+                // invalid macro tag, write it to the result as-is
+                result.append(i,++tag_end);
+                i = --tag_end;
+                success = false;
             }
             // handle end of escape sequence
             // TODO: could break in edge case : "{x:{y}}" where both x and y don't exist
@@ -136,6 +140,14 @@ namespace Envy
 
         return { std::move(result), success };
     }
+
+
+    //**********************************************************************
+    // macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map)
+    // {
+    //     auto result { expand_impl(s,map) };
+    //     return { escape_macros(result) , result.success };
+    // }
 
 
     //**********************************************************************

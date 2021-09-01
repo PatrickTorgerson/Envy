@@ -280,12 +280,14 @@ namespace Envy
 
         // [[nodiscard]] const code_point* code_points() const;
 
+
         /********************************************************************************
          * \brief Returs the string as a string of code units
          *
          * \return std::basic_string_view<utf8::code_unit> code units
          ********************************************************************************/
         [[nodiscard]] std::basic_string_view<utf8::code_unit> code_units() const;
+
 
         /********************************************************************************
          * \brief Returns the string as a pointer to char
@@ -294,7 +296,9 @@ namespace Envy
          ********************************************************************************/
         [[nodiscard]] const char* c_str() const;
 
+
         // code_point code_point_at(usize i) const;
+
 
         /********************************************************************************
          * \brief Returns a sub string_view from the string with the range [first,last)
@@ -305,6 +309,7 @@ namespace Envy
          ********************************************************************************/
         string_view view(utf8::iterator first, utf8::iterator last) const;
 
+
         /********************************************************************************
          * \brief Returns a sub string_view from the string with the range [first,string.end())
          *
@@ -312,6 +317,7 @@ namespace Envy
          * \return Envy::string_view
          ********************************************************************************/
         string_view view_from(utf8::iterator first) const;
+
 
         /********************************************************************************
          * \brief Returns a sub string_view from the string with the range [string.end(),last)
@@ -321,8 +327,10 @@ namespace Envy
          ********************************************************************************/
         string_view view_until(utf8::iterator last) const;
 
+
         // string sub(utf8::iterator first, utf8::iterator last) const;
         // string sub(utf8::iterator first, usize count) const;
+
 
         /********************************************************************************
          * \brief Returns if the string is empty
@@ -331,12 +339,14 @@ namespace Envy
          ********************************************************************************/
         [[nodiscard]] bool empty() const noexcept;
 
+
         /********************************************************************************
          * \brief Returns the size of the string in code points
          *
          * \return usize Size
          ********************************************************************************/
         [[nodiscard]] usize size() const noexcept(!Envy::debug);
+
 
         /********************************************************************************
          * \brief Returns the cpacity of the string in bytes
@@ -345,10 +355,12 @@ namespace Envy
          ********************************************************************************/
         [[nodiscard]] usize capacity() const noexcept;
 
+
         /********************************************************************************
          * \brief Clears the string
          ********************************************************************************/
         void clear() noexcept;
+
 
         /********************************************************************************
          * \brief Request the buffer has a minimum capacity
@@ -357,12 +369,14 @@ namespace Envy
          ********************************************************************************/
         void reserve(usize bytes);
 
+
         /********************************************************************************
          * \brief Appends a c string
          *
          * \param [in] cstr string to append
          ********************************************************************************/
         string& append(const char* cstr);
+
 
         /********************************************************************************
          * \brief Appends a string_view
@@ -371,12 +385,14 @@ namespace Envy
          ********************************************************************************/
         string& append(Envy::string_view str);
 
+
         /********************************************************************************
          * \brief Appends a code point
          *
          * \param [in] cp code point to append
          ********************************************************************************/
         string& append(utf8::code_point cp);
+
 
         /********************************************************************************
          * \brief Appends an ascii character
@@ -385,12 +401,31 @@ namespace Envy
          ********************************************************************************/
         string& append(char c);
 
+
+        /********************************************************************************
+         * \brief Appends a range
+         *
+         * \param [in] first iterator to first character
+         * \param [in] last iterator to one past the last character
+         * \return Envy::string& ref to this
+         ********************************************************************************/
+        template <std::forward_iterator Iterator, std::sentinel_for<Iterator> Sentinel>
+        requires requires(Envy::string s, typename std::iter_value_t<Iterator> v) { s.append(v); }
+        string& append(Iterator first, Sentinel last)
+        {
+            for(;first < last; ++first)
+            { this->append(*first); }
+            return *this;
+        }
+
+
         /********************************************************************************
          * \brief Appends a c string
          *
          * \param [in] cstr string to append
          ********************************************************************************/
         string& operator+=(const char* cstr);
+
 
         /********************************************************************************
          * \brief Appends a string_view
@@ -399,6 +434,7 @@ namespace Envy
          ********************************************************************************/
         string& operator+=(Envy::string_view str);
 
+
         /********************************************************************************
          * \brief Appends a code point
          *
@@ -406,12 +442,14 @@ namespace Envy
          ********************************************************************************/
         string& operator+=(utf8::code_point cp);
 
+
         /********************************************************************************
          * \brief Appends an ascii character
          *
          * \param [in] c character to append
          ********************************************************************************/
         string& operator+=(char c);
+
 
         // iterator insert(utf8::iterator pos, utf8::iterator first, utf8::iterator last);
         // iterator insert(utf8::iterator pos, utf8::iterator first, usize count);
