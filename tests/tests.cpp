@@ -167,6 +167,7 @@ void string_view_test(Envy::test_state& tests)
 void vector_test(Envy::test_state& tests)
 {
     tests.start();
+    tests.add_case(false,"TODO: write vector tests");
     tests.submit();
 }
 

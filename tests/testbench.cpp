@@ -45,7 +45,10 @@ void run_tests()
 {
     Envy::log.seperator();
 
-    Envy::test_state tests;
+    Envy::test_state tests {Envy::test_state::verbose};
+
+    tests.get_logger().info("{BLK}████{BLU}████{GRN}████{CYN}████{RED}████{MAG}████{YEL}████{WHT}████");
+    tests.get_logger().info("{DGRY}████{LBLU}████{LGRN}████{LCYN}████{LRED}████{LMAG}████{LYEL}████{LGRY}████");
 
     utf8_test(tests);
     string_test(tests);

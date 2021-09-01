@@ -4,12 +4,14 @@
 #include <event.hpp>
 
 #include <thread>
+#include <chrono>
 
 namespace Envy::engine
 {
 
     void run(const description& engdesc, int argc, char** argv)
     {
+        std::chrono::high_resolution_clock::time_point start { std::chrono::high_resolution_clock::now() };
 
         // Launch message thread
         // responsible for creating the window, and handaling Windows Messages
@@ -33,6 +35,13 @@ namespace Envy::engine
             graphics::clear();
             graphics::present();
         }
+
+        std::chrono::duration<f64> runtime { std::chrono::high_resolution_clock::now() - start };
+
+        Envy::info("Application exited")
+        .note("runtime: {}", runtime);
+
+        Envy::log.seperator();
     }
 
 }
