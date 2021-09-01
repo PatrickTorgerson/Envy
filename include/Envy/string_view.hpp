@@ -51,16 +51,19 @@ namespace Envy
         string_view() = default;
 
         // implicit converting constructors
+        string_view(const char* data) noexcept;
         string_view(const Envy::string& str) noexcept;
         string_view(const std::string& str) noexcept;
         string_view(const std::string_view& str) noexcept;
         string_view(const utf8::code_unit* data) noexcept;
 
         // size is in bytes, not characters, be carefull not to cut a char in twine
-        // reccomended you use Envy::string::view()
+        // recomended you use Envy::string::view()
         string_view(const char* data, usize size) noexcept;
         string_view(const utf8::code_unit* data, usize size) noexcept;
         string_view(utf8::iterator first, utf8::iterator last) noexcept;
+
+        operator std::string_view() const;
 
         [[nodiscard]] const utf8::code_unit* data() const noexcept;
         [[nodiscard]] usize size_bytes() const noexcept;
@@ -81,7 +84,22 @@ namespace Envy
 
         [[nodiscard]] usize size() const noexcept(!Envy::debug);
 
+        [[nodiscard]] utf8::code_point front() const noexcept(!Envy::debug);
+        [[nodiscard]] utf8::code_point back() const noexcept(!Envy::debug);
+
         [[nodiscard]] bool operator==(const Envy::string_view&) const noexcept;
     };
 
+}
+
+namespace std
+{
+    template <>
+    struct hash<Envy::string_view>
+    {
+        std::size_t operator()(const Envy::string_view& s) const noexcept
+        {
+            return std::hash<std::basic_string_view<Envy::utf8::code_unit>>{}( { s.data() , s.size_bytes() } );
+        }
+    };
 }
