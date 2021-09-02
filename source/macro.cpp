@@ -8,12 +8,12 @@
 namespace Envy
 {
 
-    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ TU Locals ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Macro State ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 
     namespace
     {
-        macro_map global_macros;
+        Envy::macro_map global_macros;
 
         struct macro_tag
         {
@@ -21,15 +21,6 @@ namespace Envy
             Envy::string param;
             utf8::iterator end;
         };
-    }
-
-    Envy::string build_fmt_str(Envy::string_view fmt)
-    {
-        Envy::string result { Envy::string::reserve_tag, fmt.size_bytes() + 3u };
-        result += "{:";
-        result += fmt;
-        result += '}';
-        return result;
     }
 
 
@@ -72,24 +63,60 @@ namespace Envy
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Macro Functions ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
     // -- Helper forwards
-    macro_tag read_tag(utf8::iterator start, utf8::iterator end);
-    bool is_identifier_string(Envy::string_view s) noexcept;
-    char peek(utf8::iterator i, utf8::iterator end);
-    Envy::string escape_macros(Envy::string s);
+
+    // Implements logic ffor expanding macros, 'use_global' determines whether the global macro map is searched for macros as well
+    static [[nodiscard]] macro_expantion_result expand_macros_impl(Envy::string_view s, std::initializer_list<std::reference_wrapper<const macro_map>> maps, bool use_global);
+
+    // Searches maps for macro m, returns result of expantion, 'use_global' determines whether the global macro map is searched for macros as well
+    static [[nodiscard]] macro_expantion_result expand_macro(macro_tag m, std::initializer_list<std::reference_wrapper<const macro_map>> maps, bool use_global);
+
+    // reads tag a position 'start', returns macro_tag containing parsed information
+    static [[nodiscard]] macro_tag read_tag(utf8::iterator start, utf8::iterator end);
+
+    // Returns whether s represents a valid macro identifier
+    static [[nodiscard]] bool is_identifier_string(Envy::string_view s) noexcept;
+
+    // returns one code_unit past 'i' or '\0' if i is the last code unit
+    static [[nodiscard]] char peek(utf8::iterator i, utf8::iterator end);
 
 
     //**********************************************************************
     void macro(Envy::string_view name, macro_t m)
-    {
-        global_macros.add(name, m);
-    }
+    { global_macros.add(name, m); }
+
+
+    //**********************************************************************
+    macro_expantion_result expand_local_macros(Envy::string_view s, std::initializer_list<std::reference_wrapper<const macro_map>> maps)
+    { return expand_macros_impl(s, maps, false); }
 
 
     //**********************************************************************
     macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map)
+    { return expand_macros_impl(s, {std::cref(map)}, false); }
+
+
+    //**********************************************************************
+    macro_expantion_result expand_macros(Envy::string_view s, std::initializer_list<std::reference_wrapper<const macro_map>> maps)
+    { return expand_macros_impl(s, maps, true); }
+
+
+    //**********************************************************************
+    macro_expantion_result expand_macros(Envy::string_view s, const macro_map& map)
+    { return expand_macros_impl(s, {std::cref(map)}, true); }
+
+
+    //**********************************************************************
+    macro_expantion_result expand_macros(Envy::string_view s)
+    { return expand_macros_impl(s, {}, true); }
+
+
+    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Helper Functions ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+
+    //**********************************************************************
+    macro_expantion_result expand_macros_impl(Envy::string_view s, std::initializer_list<std::reference_wrapper<const macro_map>> maps, bool use_global)
     {
-        Envy::string result;
-        result.reserve(s.size_bytes() + 10u);
+        Envy::string result {Envy::string::reserve_tag, s.size_bytes() + 10u};
 
         bool success {true};
 
@@ -97,44 +124,70 @@ namespace Envy
         {
             if(*i == '{')
             {
-                // peek for escapededness
-                if( peek(i,s.end()) == '{')
+                // check for open escape sequence '{{'
+                if( peek(i,s.end()) == '{' )
                 {
-                    result += *i;
+                    // we simply replace '{{' with '{'
+                    result += '{';
                     ++i;
                     continue;
                 }
 
                 // read the tag mofo
-                auto [identifier,fmt,tag_end] { read_tag(i,s.end()) };
+                auto tag { read_tag(i,s.end()) };
 
-                if(is_identifier_string(identifier))
+                if(is_identifier_string(tag.name))
                 {
                     // expand nested macros
-                    fmt = expand_local_macros(fmt, map);
+                    auto fmt = expand_macros_impl(tag.param, maps, use_global);
 
-                    auto replacement { map.expand(identifier, fmt) };
-
-                    if(replacement.success)
+                    if(fmt.success)
                     {
-                        // expand recursive macros , append to result
-                        result += expand_local_macros(replacement, map);
-                        i = tag_end;
+                        tag.param = std::move(fmt.result);
 
-                        continue;
+                        // Search maps for macro, expand
+                        auto replacement { expand_macro(tag, maps, use_global) };
+
+                        if(replacement.success)
+                        {
+                            // expand recursive macros , append to result
+                            result += expand_macros_impl(replacement, maps, use_global);
+                            i = tag.end;
+                            continue;
+                        }
                     }
                 }
 
-                // invalid macro tag, write it to the result as-is
-                result.append(i,++tag_end);
-                i = --tag_end;
+                // -- If we reached this point it means this tag in not valid
+
+                // if(tag.name.empty() || tag.name.contains_only("0123456789"))
+                // {
+                //     // probably std::format() replacement field
+                //     // write to result as-is for std::format to do it's thing
+                //     result.append(i,++tag.end);
+                // }
+                // else
+                // {
+                //     // probably not std::format() replacement field
+                //     // escape so subsequent calls to std::format() don't throw
+                //     result += '{';
+                //     result.append(i,++tag.end);
+                //     result += '}';
+                // }
+
+                // write to result as-is
+                result.append(i,++tag.end);
+
+                // jump over bad tag, clear success flag
+                i = --tag.end;
                 success = false;
             }
-            // handle end of escape sequence
-            // TODO: could break in edge case : "{x:{y}}" where both x and y don't exist
+
+            // check for close escape sequence '}}'
             else if(*i == '}' && peek(i,s.end()) == '}')
-            { result += *i; ++i; }
-            else // reqular character, add to result
+            { result += '}'; ++i; }
+
+            else // reqular character, add to result as-is
             { result += *i; }
         }
 
@@ -143,28 +196,29 @@ namespace Envy
 
 
     //**********************************************************************
-    // macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map)
-    // {
-    //     auto result { expand_impl(s,map) };
-    //     return { escape_macros(result) , result.success };
-    // }
-
-
-    //**********************************************************************
-    macro_expantion_result expand_macros(Envy::string_view s)
+    macro_expantion_result expand_macro(macro_tag m, std::initializer_list<std::reference_wrapper<const macro_map>> maps, bool use_global)
     {
-        return expand_local_macros(s, global_macros);
+        macro_expantion_result r {};
+
+        if(use_global)
+        {
+            r = std::move( global_macros.expand(m.name, m.param));
+
+            if(r.success)
+            { return r; }
+        }
+
+        for(const auto& map : maps)
+        {
+            r = std::move( map.get().expand(m.name, m.param));
+
+            if(r.success)
+            { return r; }
+        }
+
+        return {};
+
     }
-
-
-    //**********************************************************************
-    macro_expantion_result expand_macros(Envy::string_view s, const macro_map& additional)
-    {
-        return expand_local_macros( expand_local_macros(s, global_macros), additional);
-    }
-
-
-    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Helper Functions ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 
     //**********************************************************************
@@ -196,7 +250,7 @@ namespace Envy
 
         // tag end or param start not found, return invalid tag
         if(i == end)
-        { return {"","",end}; }
+        { return {"!!","",end}; }
 
 
         // -- read param
@@ -228,7 +282,7 @@ namespace Envy
         }
 
         // tag end not found, return invalid tag
-        return {"","",end};
+        return {"!!","",end};
     }
 
 
@@ -258,6 +312,17 @@ namespace Envy
         if(i >= end)
         { return '\0'; }
         else return (char) *utf8::iterator_ptr(i);
+    }
+
+
+    //**********************************************************************
+    Envy::string build_fmt_str(Envy::string_view fmt)
+    {
+        Envy::string result { Envy::string::reserve_tag, fmt.size_bytes() + 3u };
+        result += "{:";
+        result += fmt;
+        result += '}';
+        return result;
     }
 
 }

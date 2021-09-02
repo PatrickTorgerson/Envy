@@ -98,6 +98,7 @@ namespace Envy
         code_point_count  { npos }
     {
         std::copy(from.data(), from.data() + buffer_size, this->buffer);
+
         buffer[buffer_size] = '\0';
     }
 
@@ -123,12 +124,16 @@ namespace Envy
     {
         if(&from != this)
         {
+            if(buffer)
+            { delete[] buffer; }
+
             buffer_size       = from.buffer_size;
             buffer_capacity   = from.buffer_capacity;
             buffer            = new utf8::code_unit[buffer_capacity];
             code_point_count  = from.code_point_count;
 
             std::copy(from.buffer, from.buffer + buffer_size, this->buffer);
+
             buffer[buffer_size] = '\0';
         }
         return *this;
@@ -140,6 +145,9 @@ namespace Envy
     {
         if(&from != this)
         {
+            if(buffer)
+            { delete[] buffer; }
+
             buffer_size       = from.buffer_size;
             buffer_capacity   = from.buffer_capacity;
             buffer            = from.buffer;
@@ -374,6 +382,93 @@ namespace Envy
     string& string::operator+=(char c)
     {
         return this->append(c);
+    }
+
+
+    //**********************************************************************
+    bool string::contains(string_view sv) const noexcept
+    {
+        return ! std::ranges::search(*this, sv).empty();
+    }
+
+
+    //**********************************************************************
+    bool string::contains(code_point cp) const noexcept
+    {
+        for(const auto& this_cp : *this)
+        {
+            if(this_cp == cp)
+            { return true; }
+        }
+
+        return false;
+    }
+
+
+    //**********************************************************************
+    bool string::contains_any(string_view sv) const noexcept
+    {
+        if(sv.empty())
+        { return true; }
+
+        for(const auto& cp : *this)
+        {
+            for(const auto& sv_cp : sv)
+            {
+                if(cp == sv_cp)
+                { return true; }
+            }
+        }
+
+        return false;
+    }
+
+
+    //**********************************************************************
+    bool string::contains_all(string_view sv) const noexcept
+    {
+        if(sv.empty())
+        { return true; }
+
+        for(const auto& sv_cp : sv)
+        {
+            bool in {false};
+
+            for(const auto& cp : *this)
+            {
+                if(cp == sv_cp)
+                { in = true; }
+            }
+
+            if(!in)
+            { return false; }
+        }
+
+        return true;
+    }
+
+
+    //**********************************************************************
+    bool string::contains_only(string_view sv) const noexcept
+    {
+        if(sv.empty())
+        { return this->empty(); }
+
+        for(const auto& cp : *this)
+        {
+            bool in {false};
+
+            for(const auto& sv_cp : sv)
+            {
+                if(cp == sv_cp)
+                { in = true; }
+            }
+
+            if(!in)
+            { return false; }
+        }
+
+        return true;
     }
 
 

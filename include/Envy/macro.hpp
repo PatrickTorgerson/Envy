@@ -67,9 +67,11 @@ namespace Envy
     {
     public:
 
-        Envy::string result;  ///< The result of the macro expantion, unexpanded macros will be left as is.
-        const bool success;  ///< Success flag, true if all macros were expanded, false otherwise
+        Envy::string result {""};  ///< The result of the macro expantion, unexpanded macros will be left as is.
+        bool success  {false};     ///< Success flag, true if all macros were expanded, false otherwise
 
+
+        macro_expantion_result() = default;
 
         /********************************************************************************
          * \brief Constructs a macro expantion result
@@ -78,6 +80,9 @@ namespace Envy
          * \param [in] s success flag
          ********************************************************************************/
         macro_expantion_result(Envy::string&& str, bool s) : result{std::move(str)} , success{s} {}
+
+        macro_expantion_result(macro_expantion_result&&) = default;
+        macro_expantion_result& operator=(macro_expantion_result&&) = default;
 
 
         /********************************************************************************
@@ -301,97 +306,105 @@ namespace Envy
 
 
     /********************************************************************************
-     * \brief Expands a string with macros from a macro_map
+     * \brief Expand macros in string, excluding global macros
      *
-     * *s* may contain zero of more **Macro Tags**, which if corresponding to a macro
-     * in *map*, will be replaced thith the expanded result of that macro.
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
      *
-     * \param [in] s string to expand
-     * \param [in] map macros to expand
-     * \return Envy::macro_expantion_result, result of the macro expantion
+     * \param [in] s String to expand
+     * \param [in] maps List of \ref Envy::macro_map 's to search when expanding macros
+     * \return Envy::macro_expantion_result
+     ********************************************************************************/
+    [[nodiscard]] macro_expantion_result expand_local_macros(Envy::string_view s, std::initializer_list<std::reference_wrapper<const macro_map>> maps);
+
+
+    /********************************************************************************
+     * \brief Expand macros in string, excluding global macros
      *
-     * \see Envy::macro_map::expand()
-     * \see Envy::macro_expantion_result
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
+     *
+     * \param [in] s String to expand
+     * \param [in] map \ref Envy::macro_map to search when expanding macros
+     * \return Envy::macro_expantion_result
      ********************************************************************************/
     [[nodiscard]] macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map);
 
 
     /********************************************************************************
-     * \brief Expands a string with macros from a set macro_map 's
+     * \brief Expand macros in string, excluding global macros
      *
-     * *s* may contain zero of more **Macro Tags**, which if corresponding to a macro
-     * in any of the given macro_map 's, will be replaced with the expanded result of
-     * that macro.
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
      *
-     * \tparam Maps template parameter pack, must be Envy::macro_map
-     * \param [in] s string to expand
-     * \param [in] map macros to expand
-     * \param [in] maps macros to expand
-     * \return Envy::macro_expantion_result, result of the macro expantion
-     *
-     * \see Envy::macro_map::expand()
-     * \see Envy::macro_expantion_result
+     * \tparam Maps template parameter pack of Envy::macro_map 's
+     * \param [in] s
+     * \param [in] maps List of \ref Envy::macro_map 's to search when expanding macros
+     * \return Envy::macro_expantion_result
      ********************************************************************************/
     template < std::same_as<macro_map> ... Maps >
-    [[nodiscard]] macro_expantion_result expand_local_macros(Envy::string_view s, const macro_map& map, Maps&& ... maps)
-    {
-        return expand_local_macros( expand_local_macros(s,map) , std::forward<Maps>(maps)...);
-    }
+    [[nodiscard]] macro_expantion_result expand_local_macros(Envy::string_view s, const Maps& ... maps)
+    { return expand_local_macros(s, {std::cref(maps)...}); }
 
 
     /********************************************************************************
-     * \brief Expands a string with macros from the global macro_map
+     * \brief Expand macros in string, including global macros
      *
-     * *s* may contain zero of more **Macro Tags**, which if corresponding to a macro
-     * in the global macro_map, will be replaced with the expanded result of
-     * that macro.
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
      *
-     * \param [in] s string to expand
-     * \return Envy::macro_expantion_result, result of the macro expantion
+     * \param [in] s String to expand
+     * \param [in] maps List of additional \ref Envy::macro_map 's to search when expanding macros
+     * \return Envy::macro_expantion_result
+     ********************************************************************************/
+    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, std::initializer_list<std::reference_wrapper<const macro_map>> maps);
+
+
+    /********************************************************************************
+     * \brief Expand macros in string, including global macros
      *
-     * \see Envy::macro_map::expand()
-     * \see Envy::macro_expantion_result
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
+     *
+     * \param [in] s String to expand
+     * \param [in] map Additional \ref Envy::macro_map to search when expanding macros
+     * \return Envy::macro_expantion_result
+     ********************************************************************************/
+    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, const macro_map& map);
+
+
+    /********************************************************************************
+     * \brief Expand macros in string, including global macros
+     *
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
+     *
+     * \param [in] s String to expand
+     * \return Envy::macro_expantion_result
      ********************************************************************************/
     [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s);
 
 
     /********************************************************************************
-     * \brief Expands a string with macros from the global macro_map and an additional macro_map
+     * \brief Expand macros in string, including global macros
      *
-     * *s* may contain zero of more **Macro Tags**, which if corresponding to a macro
-     * in the global macro_map or *additional*, will be replaced with the expanded result of
-     * that macro.
+     * *s* may contain zero of more **Macro Tags**
+     * which if found in any of the provided Envy::macro_map 's will be replaced
+     * with the expanded result of that macro.
      *
-     * \param [in] s string to expand
-     * \param [in] additional additional macros to expand
-     * \return Envy::macro_expantion_result, result of the macro expantion
-     *
-     * \see Envy::macro_map::expand()
-     * \see Envy::macro_expantion_result
-     ********************************************************************************/
-    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, const macro_map& additional);
-
-
-    /********************************************************************************
-     * \brief Expands a string with macros from the global macro_map and a set of additional macro_map 's
-     *
-     * *s* may contain zero of more **Macro Tags**, which if corresponding to a macro
-     * in the global macro_map or any of the given macro_map 's, will be replaced with the expanded result of
-     * that macro.
-     *
-     * \tparam Maps
-     * \param [in] s string to expand
-     * \param [in] additional additional macros to expand
-     * \param [in] additionals additional macros to expand
-     * \return Envy::macro_expantion_result, result of the macro expantion
-     *
-     * \see Envy::macro_map::expand()
-     * \see Envy::macro_expantion_result
+     * \tparam Maps template parameter pack of Envy::macro_map 's
+     * \param [in] s String to expand
+     * \param [in] maps List of additional Envy::macro_map 's to search when expanding macros
+     * \return Envy::macro_expantion_result
      ********************************************************************************/
     template < std::same_as<macro_map> ... Maps >
-    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, const macro_map& additional, Maps&& ... additionals)
-    {
-        return expand_local_macros( expand_macros(s,additional) , std::forward<Maps>(additionals)...);
-    }
+    [[nodiscard]] macro_expantion_result expand_macros(Envy::string_view s, const Maps& ... maps)
+    { return expand_macros(s, {std::cref(maps)...}); }
 
 }

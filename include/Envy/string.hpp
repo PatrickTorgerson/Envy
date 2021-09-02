@@ -475,12 +475,12 @@ namespace Envy
         // [[nodiscard]] i32 count(char c) const;
         // [[nodiscard]] i32 count(code_point cp) const;
 
-        // [[nodiscard]] bool contains(string_view sv) const;
-        // [[nodiscard]] bool contains(char c) const;
-        // [[nodiscard]] bool contains(code_point cp) const;
+        [[nodiscard]] bool contains(string_view sv) const noexcept;
+        [[nodiscard]] bool contains(code_point cp) const noexcept;
 
-        // [[nodiscard]] bool contains_any(string_view sv) const;
-        // [[nodiscard]] bool contains_all(string_view sv) const;
+        [[nodiscard]] bool contains_any(string_view sv) const noexcept;
+        [[nodiscard]] bool contains_all(string_view sv) const noexcept;
+        [[nodiscard]] bool contains_only(string_view sv) const noexcept;
 
         // template <typename T>
         // T parse_as()
