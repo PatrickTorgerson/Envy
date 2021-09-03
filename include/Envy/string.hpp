@@ -307,7 +307,7 @@ namespace Envy
          * \param [in] last One past the last character of the view
          * \return Envy::string_view
          ********************************************************************************/
-        string_view view(utf8::iterator first, utf8::iterator last) const;
+        [[nodiscard]] string_view view(utf8::iterator first, utf8::iterator last) const;
 
 
         /********************************************************************************
@@ -316,7 +316,7 @@ namespace Envy
          * \param [in] first First character of the view
          * \return Envy::string_view
          ********************************************************************************/
-        string_view view_from(utf8::iterator first) const;
+        [[nodiscard]] string_view view_from(utf8::iterator first) const;
 
 
         /********************************************************************************
@@ -325,7 +325,7 @@ namespace Envy
          * \param [in] last One past the last character of the view
          * \return Envy::string_view
          ********************************************************************************/
-        string_view view_until(utf8::iterator last) const;
+        [[nodiscard]] string_view view_until(utf8::iterator last) const;
 
 
         // string sub(utf8::iterator first, utf8::iterator last) const;

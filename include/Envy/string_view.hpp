@@ -87,6 +87,10 @@ namespace Envy
         [[nodiscard]] utf8::code_point front() const noexcept(!Envy::debug);
         [[nodiscard]] utf8::code_point back() const noexcept(!Envy::debug);
 
+        [[nodiscard]] string_view view(utf8::iterator first, utf8::iterator last) const;
+        [[nodiscard]] string_view view_from(utf8::iterator first) const;
+        [[nodiscard]] string_view view_until(utf8::iterator last) const;
+
         [[nodiscard]] bool operator==(const Envy::string_view&) const noexcept;
     };
 

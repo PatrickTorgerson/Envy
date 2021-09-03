@@ -160,6 +160,27 @@ namespace Envy
 
 
     //**********************************************************************
+    string_view string_view::view(utf8::iterator first, utf8::iterator last) const
+    {
+        return { first, last };
+    }
+
+
+    //**********************************************************************
+    string_view string_view::view_from(utf8::iterator first) const
+    {
+        return { first, end() };
+    }
+
+
+    //**********************************************************************
+    string_view string_view::view_until(utf8::iterator last) const
+    {
+        return { begin(), last };
+    }
+
+
+    //**********************************************************************
     bool string_view::operator==(const Envy::string_view& other) const noexcept
     {
         return

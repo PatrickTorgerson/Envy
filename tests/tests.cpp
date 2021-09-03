@@ -74,10 +74,12 @@ void string_test(Envy::test_state& tests)
     Envy::string str1 {"hello"};
 
     Envy::test_case asciichars {"ascii characters"};
+
     for(auto c : str1)
     {
         asciichars.require( c < 128u, "{} < 128"_f((u32)c));
     }
+
     tests.add_case(asciichars);
 
     Envy::string str2 {"¢😊한🍔🍳𐍈"};

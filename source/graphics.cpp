@@ -42,9 +42,14 @@ namespace Envy::graphics
             case Diligent::DEBUG_MESSAGE_SEVERITY_FATAL_ERROR: severity = log_severity::error; break;
         }
 
-        std::source_location loc = std::source_location::current();
-        
-        Envy::raw_log("Diligent", "", true, severity, std::string_view(Message?Message:""), File?File:loc.file_name(), (u32) (Line>0)?Line:loc.line(), 0u, Function?Function:loc.function_name());
+        Envy::log_message_source src {};
+
+        if(File)     src.file = File;
+        if(Function) src.func = Function;
+        if(Line > 0) src.line = Line;
+
+        Envy::update_log_state("Diligent", severity, src);
+        Envy::raw_log("", true, std::string_view(Message?Message:""));
     }
 
 

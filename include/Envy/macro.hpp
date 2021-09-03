@@ -49,6 +49,11 @@ namespace Envy
      ********************************************************************************/
     using macro_t = std::function<Envy::string(Envy::string_view)>;
 
+    /********************************************************************************
+     * \brief Function pointer type for macro function, used to aid overload resolution
+     ********************************************************************************/
+    using raw_macro_t = Envy::string (*) (Envy::string_view);
+
 
     Envy::string build_fmt_str(Envy::string_view fmt);
 
@@ -112,6 +117,13 @@ namespace Envy
          * \return std::string, The result of the macro expantion, unexpanded macros will be left as is.
          ********************************************************************************/
         operator std::string() const { return static_cast<std::string>(result); }
+
+
+        /********************************************************************************
+         * \brief Implicit cast to std::string with macros expanded
+         * \return std::string, The result of the macro expantion, unexpanded macros will be left as is.
+         ********************************************************************************/
+        operator std::string_view() const { return static_cast<std::string_view>(result); }
 
 
         /********************************************************************************
@@ -182,6 +194,8 @@ namespace Envy
          * \param [in] m macro function
          ********************************************************************************/
         void add(Envy::string_view name, macro_t m);
+        void add(Envy::string_view name, raw_macro_t m)
+        { add(name, macro_t {m}); }
 
 
         /********************************************************************************
@@ -276,6 +290,8 @@ namespace Envy
      * \param [in] m
      ********************************************************************************/
     void macro(Envy::string_view name, macro_t m);
+    inline void macro(Envy::string_view name, raw_macro_t m)
+    { macro(name, macro_t {m}); }
 
 
     /********************************************************************************
