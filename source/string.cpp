@@ -253,23 +253,23 @@ namespace Envy
 
 
     //**********************************************************************
-    string_view string::view(utf8::iterator first, utf8::iterator last) const
+    string_view string::view(utf8::iterator first, utf8::iterator last) const noexcept
     {
-        return string_view(first,last);
+        return { first, last };
     }
 
 
     //**********************************************************************
-    string_view string::view_from(utf8::iterator first) const
+    string_view string::view_from(utf8::iterator first) const noexcept
     {
-        return view(first, end());
+        return { first, end() };
     }
 
 
     //**********************************************************************
-    string_view string::view_until(utf8::iterator last) const
+    string_view string::view_until(utf8::iterator last) const noexcept
     {
-        return view(begin(), last);
+        return { begin(), last };
     }
 
 

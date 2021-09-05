@@ -163,21 +163,21 @@ namespace Envy
 
 
     //**********************************************************************
-    string_view string_view::view(utf8::iterator first, utf8::iterator last) const
+    string_view string_view::view(utf8::iterator first, utf8::iterator last) const noexcept
     {
         return { first, last };
     }
 
 
     //**********************************************************************
-    string_view string_view::view_from(utf8::iterator first) const
+    string_view string_view::view_from(utf8::iterator first) const noexcept
     {
         return { first, end() };
     }
 
 
     //**********************************************************************
-    string_view string_view::view_until(utf8::iterator last) const
+    string_view string_view::view_until(utf8::iterator last) const noexcept
     {
         return { begin(), last };
     }

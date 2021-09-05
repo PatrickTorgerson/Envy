@@ -306,7 +306,7 @@ namespace Envy
          * \param [in] last One past the last character of the view
          * \return Envy::string_view
          ********************************************************************************/
-        [[nodiscard]] string_view view(utf8::iterator first, utf8::iterator last) const;
+        [[nodiscard]] string_view view(utf8::iterator first, utf8::iterator last) const noexcept;
 
 
         /********************************************************************************
@@ -315,16 +315,16 @@ namespace Envy
          * \param [in] first First character of the view
          * \return Envy::string_view
          ********************************************************************************/
-        [[nodiscard]] string_view view_from(utf8::iterator first) const;
+        [[nodiscard]] string_view view_from(utf8::iterator first) const noexcept;
 
 
         /********************************************************************************
-         * \brief Returns a sub string_view from the string with the range [string.end(),last)
+         * \brief Returns a sub string_view from the string with the range [string.begin(),last)
          *
          * \param [in] last One past the last character of the view
          * \return Envy::string_view
          ********************************************************************************/
-        [[nodiscard]] string_view view_until(utf8::iterator last) const;
+        [[nodiscard]] string_view view_until(utf8::iterator last) const noexcept;
 
 
         // string sub(utf8::iterator first, utf8::iterator last) const;
@@ -333,16 +333,12 @@ namespace Envy
 
         /********************************************************************************
          * \brief Returns if the string is empty
-         *
-         * \return true if the string is empty
          ********************************************************************************/
         [[nodiscard]] bool empty() const noexcept;
 
 
         /********************************************************************************
          * \brief Returns the size of the string in code points
-         *
-         * \return usize Size
          ********************************************************************************/
         [[nodiscard]] usize size() const noexcept(!Envy::debug);
 

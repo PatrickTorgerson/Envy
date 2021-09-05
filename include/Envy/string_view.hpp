@@ -51,84 +51,75 @@ namespace Envy
     public:
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a null string_view
          *
          ********************************************************************************/
         string_view() = default;
 
-        // implicit converting constructors
-
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a string_view from a c string
          *
-         * \param [in] data
+         * \param [in] data c string
          ********************************************************************************/
         string_view(const char* data) noexcept;
 
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a string_view from a Envy::string
          *
-         * \param [in] str
+         * \param [in] str Envy::string
          ********************************************************************************/
         string_view(const Envy::string& str) noexcept;
 
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a string_view from a std::string
          *
-         * \param [in] str
+         * \param [in] str std::string
          ********************************************************************************/
         string_view(const std::string& str) noexcept;
 
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a string_view from a std::string_view
          *
-         * \param [in] str
+         * \param [in] str std::string_view
          ********************************************************************************/
         string_view(const std::string_view& str) noexcept;
 
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a string_view from a code_unit buffer
          *
-         * \param [in] data
+         * \param [in] data Valid UTF-8 buffer
          ********************************************************************************/
         string_view(const utf8::code_unit* data) noexcept;
 
-        // size is in bytes, not characters, be carefull not to cut a char in twine
-        // recomended you use Envy::string::view()
+
         /********************************************************************************
-         * \brief Constructs a string view
-         *
-         * \param [in] data
-         * \param [in] size
+         * \brief Constructs a string_view from a c string and a size
          ********************************************************************************/
         string_view(const char* data, usize size) noexcept;
 
 
         /********************************************************************************
-         * \brief Constructs a string view
-         *
-         * \param [in] data
-         * \param [in] size
+         * \brief Constructs a string_view
          ********************************************************************************/
         string_view(const utf8::code_unit* data, usize size) noexcept;
 
 
         /********************************************************************************
-         * \brief Constructs a string view
+         * \brief Constructs a string_view from an iterator pair
          *
-         * \param [in] first
-         * \param [in] last
+         * \param [in] first first character of view
+         * \param [in] last one past las character of view
          ********************************************************************************/
         string_view(utf8::iterator first, utf8::iterator last) noexcept;
 
 
         /********************************************************************************
-         * \brief
+         * \brief Implicit convertion to std::string_view
          *
          * \return std::string_view
          ********************************************************************************/
@@ -136,7 +127,11 @@ namespace Envy
 
 
         /********************************************************************************
-         * \brief
+         * \brief Returns the data buffer
+         *
+         * Because a string_view can view a substring of a string the null-terminator
+         * will be the end of the viewed string but not necesarily the view. That is to say,
+         * `strlen(sv.data()) != sv.size_bytes()`
          *
          * \return const utf8::code_unit*
          ********************************************************************************/
@@ -144,143 +139,115 @@ namespace Envy
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return usize
+         * \brief size of viewed buffer in bytes
          ********************************************************************************/
         [[nodiscard]] usize size_bytes() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return std::basic_string_view<utf8::code_unit>
+         * \brief Returs the string as a string of code units
          ********************************************************************************/
         [[nodiscard]] std::basic_string_view<utf8::code_unit> code_units() const;
 
+
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::iterator
+         * \brief Returns an iterator pointing to the first character
          ********************************************************************************/
         [[nodiscard]] utf8::iterator begin() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::iterator
+         * \brief Returns an iterator pointing to one past the last character
          ********************************************************************************/
         [[nodiscard]] utf8::iterator end() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::iterator
+         * \brief Returns an iterator pointing to the first character
          ********************************************************************************/
         [[nodiscard]] utf8::iterator cbegin() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::iterator
+         * \brief Returns an iterator pointing to one past the last character
          ********************************************************************************/
         [[nodiscard]] utf8::iterator cend() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::reverse_iterator
+         * \brief Returns a reverse iterator pointing to the last character
          ********************************************************************************/
         [[nodiscard]] utf8::reverse_iterator rbegin() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::reverse_iterator
+         * \brief Returns a reverse iterator pointing to one before the first character
          ********************************************************************************/
         [[nodiscard]] utf8::reverse_iterator rend() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::reverse_iterator
+         * \brief Returns a reverse iterator pointing to the last character
          ********************************************************************************/
         [[nodiscard]] utf8::reverse_iterator crbegin() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::reverse_iterator
+         * \brief Returns a reverse iterator pointing to one before the first character
          ********************************************************************************/
         [[nodiscard]] utf8::reverse_iterator crend() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return true
-         * \return false
+         * \brief Returns if the view is empty
          ********************************************************************************/
         [[nodiscard]] bool empty() const noexcept;
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return usize
+         * \brief Returns the size of the view in code points
          ********************************************************************************/
         [[nodiscard]] usize size() const noexcept(!Envy::debug);
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::code_point
+         * \brief Returns the first character in the view
          ********************************************************************************/
         [[nodiscard]] utf8::code_point front() const noexcept(!Envy::debug);
 
 
         /********************************************************************************
-         * \brief
-         *
-         * \return utf8::code_point
+         * \brief Returns the last character in the view
          ********************************************************************************/
         [[nodiscard]] utf8::code_point back() const noexcept(!Envy::debug);
 
 
         /********************************************************************************
-         * \brief
+         * \brief Returns a sub string_view from the view with the range [first,last)
          *
-         * \param [in] first
-         * \param [in] last
-         * \return string_view
+         * \param [in] first First character of the view
+         * \param [in] last One past the last character of the view
+         * \return Envy::string_view
          ********************************************************************************/
-        [[nodiscard]] string_view view(utf8::iterator first, utf8::iterator last) const;
+        [[nodiscard]] string_view view(utf8::iterator first, utf8::iterator last) const noexcept;
 
 
         /********************************************************************************
-         * \brief
+         * \brief Returns a sub string_view from the view with the range [first,view.end())
          *
-         * \param [in] first
-         * \return string_view
+         * \param [in] first First character of the view
+         * \return Envy::string_view
          ********************************************************************************/
-        [[nodiscard]] string_view view_from(utf8::iterator first) const;
+        [[nodiscard]] string_view view_from(utf8::iterator first) const noexcept;
 
 
         /********************************************************************************
-         * \brief
+         * \brief Returns a sub string_view from the view with the range [view.begin(),last)
          *
-         * \param [in] last
+         * \param [in] last One past the last character of the view
          * \return string_view
          ********************************************************************************/
-        [[nodiscard]] string_view view_until(utf8::iterator last) const;
+        [[nodiscard]] string_view view_until(utf8::iterator last) const noexcept;
 
 
         /********************************************************************************
