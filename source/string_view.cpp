@@ -1,6 +1,9 @@
 #include <string_view.hpp>
 #include <string.hpp>
 
+#include <ranges>
+#include <algorithm>
+
 namespace Envy
 {
 
@@ -177,6 +180,41 @@ namespace Envy
     string_view string_view::view_until(utf8::iterator last) const
     {
         return { begin(), last };
+    }
+
+
+    //**********************************************************************
+    bool string_view::contains(string_view sv) const noexcept
+    {
+        return ! std::ranges::search(*this, sv).empty();
+    }
+
+
+    //**********************************************************************
+    bool string_view::contains(utf8::code_point cp) const noexcept
+    {
+        return std::ranges::any_of(*this, [&cp](const utf8::code_point& this_cp){ return this_cp == cp; });
+    }
+
+
+    //**********************************************************************
+    bool string_view::contains_any(string_view sv) const noexcept
+    {
+        return std::ranges::any_of(*this, [&sv](const utf8::code_point& cp){ return sv.contains(cp); });
+    }
+
+
+    //**********************************************************************
+    bool string_view::contains_all(string_view sv) const noexcept
+    {
+        return std::ranges::all_of(sv, [this](const utf8::code_point& cp){ return this->contains(cp); });
+    }
+
+
+    //**********************************************************************
+    bool string_view::contains_only(string_view sv) const noexcept
+    {
+        return std::ranges::all_of(*this, [&sv](const utf8::code_point& cp){ return sv.contains(cp); });
     }
 
 

@@ -43,7 +43,6 @@
 #include <format>
 #include <sstream>
 #include <type_traits>
-#include <ranges>
 
 namespace Envy
 {
@@ -475,11 +474,49 @@ namespace Envy
         // [[nodiscard]] i32 count(char c) const;
         // [[nodiscard]] i32 count(code_point cp) const;
 
-        [[nodiscard]] bool contains(string_view sv) const noexcept;
-        [[nodiscard]] bool contains(code_point cp) const noexcept;
 
+        /********************************************************************************
+         * \brief Determines if a string contains a given substring
+         *
+         * \param [in] sv Substring to find
+         * \return true if *sv* is a substring of the string
+         ********************************************************************************/
+        [[nodiscard]] bool contains(string_view sv) const noexcept;
+
+
+        /********************************************************************************
+         * \brief Determines if a string contains a given code point
+         *
+         * \param [in] cp Code point to search for
+         * \return true is string contains *cp*
+         ********************************************************************************/
+        [[nodiscard]] bool contains(utf8::code_point cp) const noexcept;
+
+
+        /********************************************************************************
+         * \brief Determines if a string contains any of the characters in *sv*
+         *
+         * \param [in] sv Characters to search for
+         * \return true if any character in *sv* is found in the string
+         ********************************************************************************/
         [[nodiscard]] bool contains_any(string_view sv) const noexcept;
+
+
+        /********************************************************************************
+         * \brief Determines if a string contains all of the characters in *sv*
+         *
+         * \param [in] sv Characters to search for
+         * \return true if all characters in *sv* were found in the string
+         ********************************************************************************/
         [[nodiscard]] bool contains_all(string_view sv) const noexcept;
+
+
+        /********************************************************************************
+         * \brief Determines if a string contains only characters found in *sv*
+         *
+         * \param [in] sv Characters to search for
+         * \return true if all characters in the string were found in *sv*
+         ********************************************************************************/
         [[nodiscard]] bool contains_only(string_view sv) const noexcept;
 
         // template <typename T>

@@ -7,6 +7,7 @@
 #include <bit>
 #include <cstring>
 #include <algorithm>
+#include <ranges>
 
 namespace Envy
 {
@@ -393,82 +394,82 @@ namespace Envy
 
 
     //**********************************************************************
-    bool string::contains(code_point cp) const noexcept
+    bool string::contains(utf8::code_point cp) const noexcept
     {
-        for(const auto& this_cp : *this)
-        {
-            if(this_cp == cp)
-            { return true; }
-        }
+        // for(const auto& this_cp : *this)
+        // {
+        //     if(this_cp == cp)
+        //     { return true; }
+        // }
 
-        return false;
+        return std::ranges::any_of(*this, [&cp](const utf8::code_point& this_cp){ return this_cp == cp; });
     }
 
 
     //**********************************************************************
     bool string::contains_any(string_view sv) const noexcept
     {
-        if(sv.empty())
-        { return true; }
+        // if(sv.empty())
+        // { return true; }
 
-        for(const auto& cp : *this)
-        {
-            for(const auto& sv_cp : sv)
-            {
-                if(cp == sv_cp)
-                { return true; }
-            }
-        }
+        // for(const auto& cp : *this)
+        // {
+        //     for(const auto& sv_cp : sv)
+        //     {
+        //         if(cp == sv_cp)
+        //         { return true; }
+        //     }
+        // }
 
-        return false;
+        return std::ranges::any_of(*this, [&sv](const utf8::code_point& cp){ return sv.contains(cp); });
     }
 
 
     //**********************************************************************
     bool string::contains_all(string_view sv) const noexcept
     {
-        if(sv.empty())
-        { return true; }
+        // if(sv.empty())
+        // { return true; }
 
-        for(const auto& sv_cp : sv)
-        {
-            bool in {false};
+        // for(const auto& sv_cp : sv)
+        // {
+        //     bool in {false};
 
-            for(const auto& cp : *this)
-            {
-                if(cp == sv_cp)
-                { in = true; }
-            }
+        //     for(const auto& cp : *this)
+        //     {
+        //         if(cp == sv_cp)
+        //         { in = true; }
+        //     }
 
-            if(!in)
-            { return false; }
-        }
+        //     if(!in)
+        //     { return false; }
+        // }
 
-        return true;
+        return std::ranges::all_of(sv, [this](const utf8::code_point& cp){ return this->contains(cp); });
     }
 
 
     //**********************************************************************
     bool string::contains_only(string_view sv) const noexcept
     {
-        if(sv.empty())
-        { return this->empty(); }
+        // if(sv.empty())
+        // { return this->empty(); }
 
-        for(const auto& cp : *this)
-        {
-            bool in {false};
+        // for(const auto& cp : *this)
+        // {
+        //     bool in {false};
 
-            for(const auto& sv_cp : sv)
-            {
-                if(cp == sv_cp)
-                { in = true; }
-            }
+        //     for(const auto& sv_cp : sv)
+        //     {
+        //         if(cp == sv_cp)
+        //         { in = true; }
+        //     }
 
-            if(!in)
-            { return false; }
-        }
+        //     if(!in)
+        //     { return false; }
+        // }
 
-        return true;
+        return std::ranges::all_of(*this, [&sv](const utf8::code_point& cp){ return sv.contains(cp); });
     }
 
 

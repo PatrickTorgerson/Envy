@@ -111,9 +111,6 @@ using f64 = double;
 
 using usize = std::size_t;
 
-using code_point = u32;
-using char8 = char8_t;
-
 static_assert(sizeof(f32) == 4u && sizeof(f64) == 8u , "Compiler not supported!");
 
 namespace Envy
