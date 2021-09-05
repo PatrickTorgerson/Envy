@@ -528,14 +528,22 @@ namespace Envy
          ********************************************************************************/
         [[nodiscard]] bool operator==(const Envy::string&) const noexcept;
 
+
+        friend Envy::string operator+(Envy::string,Envy::string);
+
     private:
 
         [[nodiscard]] usize new_capacity(usize required_size) noexcept;
         void adjust_buffer(usize required_size);
     };
 
+
     static_assert(std::ranges::range<string>);
     static_assert(std::ranges::bidirectional_range<string>);
+
+
+    Envy::string operator+(Envy::string,Envy::string);
+
 
     class format
     {

@@ -484,6 +484,16 @@ namespace Envy
 
 
     //**********************************************************************
+    Envy::string operator+(Envy::string left, Envy::string right)
+    {
+        Envy::string s { Envy::String::reserve_tag , left.size_bytes() + right.size_bytes() };
+        s += left;
+        s += right;
+        return s;
+    }
+
+
+    //**********************************************************************
     usize string::new_capacity(usize required_size) noexcept
     {
         // plus one to accomodate for null-terminator
