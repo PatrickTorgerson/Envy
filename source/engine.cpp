@@ -41,7 +41,9 @@ namespace Envy::engine
         std::chrono::duration<f64> runtime { std::chrono::high_resolution_clock::now() - start };
 
         Envy::info("Application exited")
-        .note("runtime: {}", runtime);
+             .note("runtime: {}", runtime)
+             .note("{LRED}errors: {}",   Envy::log::errors())
+             .note("{LYEL}warnings: {}", Envy::log::warnings());
     }
 
 }

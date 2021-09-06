@@ -43,6 +43,8 @@
 #include <format>
 #include <sstream>
 #include <type_traits>
+#include <ostream>
+#include <filesystem>
 
 namespace Envy
 {
@@ -208,6 +210,14 @@ namespace Envy
          * \return std::string
          ********************************************************************************/
         operator std::string() const;
+
+
+        /********************************************************************************
+         * \brief Implicit conversion to std::string
+         *
+         * \return std::string
+         ********************************************************************************/
+        operator std::filesystem::path () const;
 
 
         /********************************************************************************
@@ -530,6 +540,7 @@ namespace Envy
 
 
         friend Envy::string operator+(Envy::string,Envy::string);
+        friend std::ostream& operator<<(std::ostream&,Envy::string);
 
     private:
 
@@ -543,6 +554,7 @@ namespace Envy
 
 
     Envy::string operator+(Envy::string,Envy::string);
+    std::ostream& operator<<(std::ostream&,Envy::string);
 
 
     class format

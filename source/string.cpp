@@ -193,6 +193,13 @@ namespace Envy
 
 
     //**********************************************************************
+    string::operator std::filesystem::path () const
+    {
+        return { static_cast<std::string_view>(*this) };
+    }
+
+
+    //**********************************************************************
     const utf8::code_unit* string::data() const noexcept
     { return buffer; }
 
@@ -490,6 +497,13 @@ namespace Envy
         s += left;
         s += right;
         return s;
+    }
+
+
+    std::ostream& operator<<(std::ostream& os, Envy::string str)
+    {
+        os << (std::string_view) str;
+        return os;
     }
 
 

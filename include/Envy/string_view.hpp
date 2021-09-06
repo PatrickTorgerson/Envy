@@ -32,6 +32,7 @@
 
 #include <string>
 #include <string_view>
+#include <filesystem>
 
 
 namespace Envy
@@ -124,6 +125,14 @@ namespace Envy
          * \return std::string_view
          ********************************************************************************/
         operator std::string_view() const;
+
+
+        /********************************************************************************
+         * \brief Implicit convertion to std::string_view
+         *
+         * \return std::string_view
+         ********************************************************************************/
+        operator std::filesystem::path() const;
 
 
         /********************************************************************************

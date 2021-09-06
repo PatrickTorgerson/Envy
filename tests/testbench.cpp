@@ -27,8 +27,8 @@ int main(int argc, char** argv)
 
     Envy::engine::description engdesc {};
 
-    engdesc.log.preamble = { Envy::log::column::logger_name };
-    engdesc.log.logger_column_desc.color = Envy::log::color::severity;
+    // engdesc.log.preamble = { Envy::log::column::logger_name };
+    // engdesc.log.logger_column_desc.color = Envy::log::color::severity;
 
     // pre-init logger for tests
     Envy::log::init(engdesc.log);

@@ -77,6 +77,13 @@ namespace Envy
 
 
     //**********************************************************************
+    string_view::operator std::filesystem::path() const
+    {
+        return { static_cast<std::string_view>(*this) };
+    }
+
+
+    //**********************************************************************
     const utf8::code_unit* string_view::data() const noexcept
     { return ptr_; }
 
