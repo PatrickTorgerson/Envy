@@ -63,7 +63,7 @@ namespace Envy
         if(verbose_flag)
         {
             log.info(" {LYEL}-- {} --{WHT}", loc)(current_test);
-            Envy::indent_log();
+            Envy::log::indent_log();
         }
     }
 
@@ -74,7 +74,7 @@ namespace Envy
 
         if(!condition)
         {
-            log.error("{LGRY}Case failed '{}'", loc)(name);
+            log.error("{BRD}Case failed '{}'", loc)(name);
 
             if(!msg.empty())
             {
@@ -85,7 +85,7 @@ namespace Envy
         }
         else if(verbose_flag)
         {
-            log.info("{LGRY}Case passed '{}'", loc)(name);
+            log.info("{BRD}Case passed '{}'", loc)(name);
         }
     }
 
@@ -99,12 +99,12 @@ namespace Envy
         {
             if(verbose_flag)
             {
-                log.info("{LGRY}Case passed '{}'", c.loc)(c.name);
+                log.info("{BRD}Case passed '{}'", c.loc)(c.name);
             }
         }
         else
         {
-            log.error("{LGRY}Case failed '{}'", c.loc)(c.name);
+            log.error("{BRD}Case failed '{}'", c.loc)(c.name);
             current_status = false;
 
             for(usize i {}; i < c.failure_msgs.size(); ++i)
@@ -129,17 +129,17 @@ namespace Envy
 
             if(verbose_flag)
             {
-                log.info("{LGRN}>{WHT} Passed '{}'", loc)(current_test);
+                log.info("{LGRN}>{MSG} Passed '{}'", loc)(current_test);
             }
         }
         else
         {
-            log.error("{LRED}>{WHT} Failed '{}'", loc)(current_test);
+            log.error("{LRED}>{MSG} Failed '{}'", loc)(current_test);
         }
 
         if(verbose_flag)
         {
-            Envy::unindent_log();
+            Envy::log::unindent_log();
         }
 
         current_test.clear();
@@ -156,12 +156,12 @@ namespace Envy
 
         if(success)
         {
-            log.info("{LGRN}All tests passed{WHT} ({LCYN}{}{WHT}) {DGRY}{}", loc)(total, duration);
+            log.info("{LGRN}All tests passed{MSG} ({LCYN}{}{MSG}) {BRD}{}", loc)(total, duration);
         }
         else
         {
             u32 failed {total - passed};
-            log.error("{LRED}{} test{} failed{WHT} ({LCYN}{}{WHT}) {DGRY}{}", loc)(failed, (failed>1)?"s":"", total, duration);
+            log.error("{LRED}{} test{} failed{MSG} ({LCYN}{}{MSG}) {BRD}{}", loc)(failed, (failed>1)?"s":"", total, duration);
         }
 
         return success;

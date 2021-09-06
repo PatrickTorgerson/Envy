@@ -52,7 +52,7 @@ namespace Envy::engine
     {
         window::description window {};      ///< Used to configure the window
         graphics::description graphics {};  ///< Used to configure graphics options
-        // log
+        log::description log {};            ///< Used to configure logging options
         // cli
         // roots
         // rootstack

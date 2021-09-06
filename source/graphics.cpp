@@ -32,24 +32,24 @@ namespace Envy::graphics
 
     void diligent_log_callback(Diligent::DEBUG_MESSAGE_SEVERITY Severity, const Diligent::Char *Message, const Diligent::Char *Function, const Diligent::Char *File, int Line)
     {
-        Envy::log_severity severity;
+        Envy::log::severity severity;
 
         switch(Severity)
         {
-            case Diligent::DEBUG_MESSAGE_SEVERITY_INFO: severity = log_severity::info; break;
-            case Diligent::DEBUG_MESSAGE_SEVERITY_WARNING: severity = log_severity::warning; break;
-            case Diligent::DEBUG_MESSAGE_SEVERITY_ERROR: severity = log_severity::error; break;
-            case Diligent::DEBUG_MESSAGE_SEVERITY_FATAL_ERROR: severity = log_severity::error; break;
+            case Diligent::DEBUG_MESSAGE_SEVERITY_INFO: severity = log::severity::info; break;
+            case Diligent::DEBUG_MESSAGE_SEVERITY_WARNING: severity = log::severity::warning; break;
+            case Diligent::DEBUG_MESSAGE_SEVERITY_ERROR: severity = log::severity::error; break;
+            case Diligent::DEBUG_MESSAGE_SEVERITY_FATAL_ERROR: severity = log::severity::error; break;
         }
 
-        Envy::log_message_source src {};
+        Envy::log::message_source src {};
 
         if(File)     src.file = File;
         if(Function) src.func = Function;
         if(Line > 0) src.line = Line;
 
-        Envy::update_log_state("Diligent", severity, src);
-        Envy::raw_log("", true, std::string_view(Message?Message:""));
+        Envy::log::update_log_state("Diligent", severity, src);
+        Envy::log::raw_log("", true, std::string_view(Message?Message:""));
     }
 
 

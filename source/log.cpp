@@ -14,7 +14,7 @@
 #include <macro.hpp>
 #include <exception.hpp>
 
-namespace Envy
+namespace Envy::log
 {
 
     // TODO: global log file
@@ -27,40 +27,53 @@ namespace Envy
     // TODO: Every log destination has its own indent count
 
 
-    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Log State ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ TU locals ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 
     namespace
     {
-        // -- preamble
+        // +------------------------------------------------------------------------------------------------------------------------------------ - - - -  -  -   -
+        // | Date Time                 | File            | Line | Severity | Tests
+        // |---------------------------|-----------------|------|----------|-------------------------------------------------------------------- - - - -  -  -   -
+        // | 09-03-2021  15:11:35.2495 |   testbench.cpp | 0086 |    scope | { Init diligent
+        // | 09-03-2021  15:11:35.2495 |   testbench.cpp | 0086 |     info | |   Context
+        // | 09-03-2021  15:11:35.2495 |   testbench.cpp | 0086 |     info | |   bean pole
+        // | 09-03-2021  15:11:35.2495 |   testbench.cpp | 0086 |     info | |   Mock up banana
+        // | 09-03-2021  15:11:35.2495 |       tests.cpp | 0086 |    scope | } 0.053s
+        // | 09-03-2021  15:11:35.2495 |    graphics.cpp | 0084 |     info | Window resized
+        // | 09-03-2021  15:11:35.2495 |   testbench.cpp | 0086 |     note | |   window size: {640,480}
+        // | 09-03-2021  15:11:35.2495 |   testbench.cpp | 0086 |     note | |   buffer size: {640,480}
+        // +------------------------------------------------------------------------------------------------------------------------------------ - - - -  -  -   -
 
-        std::string preamble {"{DGRY}[{datetime:%T}] {file} LN{line} | {severity_color}{severity}{DGRY} : {WHT}"};
+        description desc;
 
-        i32 func_width            {15};
-        i32 file_width            {15};
-        i32 line_width            {4};
-        i32 col_width             {4};
-        i32 datetime_width        {16};
-        i32 logger_width          {10};
-        i32 severity_width        {7};
-        i32 severity_short_width  {3};
+        i32 preamble_width;
+
+        std::string border_color;
+        std::string message_color;
+
+        std::vector<std::string> column_colors;
+
+        color severity_colors[]
+        { color::dark_gray , color::red , color::light_red , color::light_yellow , color::light_magenta , color::light_cyan };
+
+        std::string header;
+        std::string header_underline;
+        std::string note_preamble;
+
+        // -- log state
 
         bool resolving_preamble {false};
-
-        constexpr i32 align_left   {0};
-        constexpr i32 align_center {1};
-        constexpr i32 align_right  {2};
 
         // -- indent
 
         i32 indent_count {};
-        std::string indent_str {"|   "};
 
         // -- message state
 
-        log_message_source  msg_source;
-        log_severity        msg_severity;
-        Envy::string        msg_logger;
+        message_source  msg_source;
+        severity        msg_severity;
+        Envy::string    msg_logger;
 
         // -- macros
 
@@ -71,6 +84,32 @@ namespace Envy
 
         std::mutex console_mutex;
     }
+
+
+    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Helper Forwards ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+
+
+    static [[nodiscard]] std::string indent_string();
+    static [[nodiscard]] std::string process_message(std::string_view msg);
+
+    static [[nodiscard]] std::string build_preamble();
+    static [[nodiscard]] std::string expand_column(column column, std::string macro, column_description desc);
+    static [[nodiscard]] std::string color_str(color c);
+
+    static [[nodiscard]] void build_column_color_cache();
+    static [[nodiscard]] void determine_preamble_width();
+    static [[nodiscard]] void build_header();
+
+    static [[nodiscard]] Envy::string func_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string file_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string line_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string col_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string datetime_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string severity_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string severity_short_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string severity_color_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string logger_name_macro(Envy::string_view param);
+    static [[nodiscard]] Envy::string clamp(Envy::string_view s, i32 width, alignment align, char fill);
 
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Envy::logger ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -98,14 +137,14 @@ namespace Envy
 
 
     //**********************************************************************
-    log_message logger::message(log_severity severity, std::string_view fmt, std::source_location loc)
+    message logger::make_message(severity sev, std::string_view fmt, std::source_location loc)
     {
-        update_log_state(name, severity, loc);
+        update_log_state(name, sev, loc);
 
-        return log_message
+        return message
         {
             *this,
-            severity,
+            sev,
             std::move(loc),
             Envy::expand_macros(fmt, log_macros)
         };
@@ -117,8 +156,8 @@ namespace Envy
     {
         if(!test)
         {
-            update_log_state(name, log_severity::assert, loc);
-            Envy::raw_log(logfile, console_logging, msg);
+            update_log_state(name, severity::assert, loc);
+            Envy::log::raw_log(logfile, console_logging, msg);
             throw Envy::assertion(msg, loc);
         }
     }
@@ -132,45 +171,53 @@ namespace Envy
 
 
     //**********************************************************************
-    log_message logger::error(std::string_view fmt, std::source_location loc)
+    message logger::error(std::string_view fmt, std::source_location loc)
     {
-        return message(log_severity::error, fmt, loc);
+        return make_message(severity::error, fmt, loc);
     }
 
 
     //**********************************************************************
-    log_message logger::warning(std::string_view fmt, std::source_location loc)
+    message logger::warning(std::string_view fmt, std::source_location loc)
     {
-        return message(log_severity::warning, fmt, loc);
+        return make_message(severity::warning, fmt, loc);
     }
 
 
     //**********************************************************************
-    log_message logger::note(std::string_view fmt, std::source_location loc)
+    message logger::note(std::string_view fmt, std::source_location loc)
     {
-        return message(log_severity::note, fmt, loc);
+        return make_message(severity::note, fmt, loc);
     }
 
 
     //**********************************************************************
-    log_message logger::info(std::string_view fmt, std::source_location loc)
+    message logger::info(std::string_view fmt, std::source_location loc)
     {
-        return message(log_severity::info, fmt, loc);
+        return make_message(severity::info, fmt, loc);
     }
 
 
     //**********************************************************************
-    void logger::seperator()
+    void logger::print_header(std::string name)
     {
-        // TODO: make 'sep' global, add set_sperator()
-        constexpr char sep[] {"======================================================================================================================================================\n"};
-
         if(console_logging)
         {
             std::scoped_lock l {console_mutex};
-            print(log_macros.expand("DGRY"));
-            print(sep);
-            print(log_macros.expand("WHT"));
+
+            // headers don't have a severity , Add Header color?
+            if(desc.border_color == log::color::severity)
+            {
+                print(color_str(log::color::dark_gray));
+            }
+            else
+            {
+                print(color_str(desc.border_color));
+            }
+
+            printl(header_underline);
+            printl(header + name);
+            printl(header_underline);
         }
 
         if(!logfile.empty())
@@ -178,7 +225,9 @@ namespace Envy
             std::ofstream fs;
             fs.open(logfile, std::ios::app);
 
-            fs << sep;
+            fs << header_underline << '\n';
+            fs << header << name <<'\n';
+            fs << header_underline << '\n';
 
             fs.close();
         }
@@ -229,8 +278,8 @@ namespace Envy
     scope_logger::scope_logger(std::string msg, logger& l, std::source_location loc) :
         log {l}
     {
-        update_log_state(log.get_name(), log_severity::scope, loc);
-        raw_log(log.get_file(), log.logs_to_console(), expand_macros("{{ {DGRY}" + msg, log_macros));
+        update_log_state(log.get_name(), severity::scope, loc);
+        raw_log(log.get_file(), log.logs_to_console(), expand_macros("{{ " + color_str(desc.border_color) + msg, log_macros));
         indent_log();
         t = std::chrono::high_resolution_clock::now();
     }
@@ -241,36 +290,26 @@ namespace Envy
     {
         std::chrono::duration<f64> delta { std::chrono::high_resolution_clock::now() - t };
         unindent_log();
-        update_log_state(log.get_name(), log_severity::scope, {});
-        raw_log(log.get_file(), log.logs_to_console(), expand_macros("} {DGRY}" + std::format("{}", delta), log_macros));
+        update_log_state(log.get_name(), severity::scope, {});
+        raw_log(log.get_file(), log.logs_to_console(), expand_macros("} " + color_str(desc.border_color) + std::format("{}", delta), log_macros));
     }
-
-
-    // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Helper Forwards ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-
-
-    std::string indent_string();
-    std::string process_message(std::string_view msg);
-
-    Envy::string func_macro(Envy::string_view param);
-    Envy::string file_macro(Envy::string_view param);
-    Envy::string line_macro(Envy::string_view param);
-    Envy::string col_macro(Envy::string_view param);
-    Envy::string datetime_macro(Envy::string_view param);
-    Envy::string severity_macro(Envy::string_view param);
-    Envy::string severity_short_macro(Envy::string_view param);
-    Envy::string severity_color_macro(Envy::string_view param);
-    Envy::string logger_name_macro(Envy::string_view param);
-
-    Envy::string clamp(Envy::string_view s, i32 width, i32 align, char fill);
 
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ Global log functions ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
 
 
     //**********************************************************************
-    void init_logging()
+    void init(const description& logdesc)
     {
+        desc = logdesc;
+
+        border_color = color_str(desc.border_color);
+        message_color = color_str(desc.message_color);
+
+        build_column_color_cache();
+        determine_preamble_width();
+        build_header();
+
         // -- Color macros
 
         log_macros.add("BLK", "\x1b[30m");
@@ -293,6 +332,10 @@ namespace Envy
 
         log_macros.add("DEF", "\x1b[39m");
         log_macros.add("CLR", "\x1b[0m");
+
+        log_macros.add("MSG", [](Envy::string fmt){ return color_str(desc.message_color); });
+        log_macros.add("BRD", [](Envy::string fmt){ return color_str(desc.border_color); });
+        log_macros.add("SEV", [](Envy::string fmt){ return color_str(severity_colors[static_cast<u8>(msg_severity)]); });
 
         // -- color stripping macros
 
@@ -346,47 +389,10 @@ namespace Envy
 
 
     //**********************************************************************
-    log_message error(std::string fmt, std::source_location loc)
-    { return log.message(log_severity::error, std::move(fmt), loc); }
-
-
-    //**********************************************************************
-    log_message warning(std::string fmt, std::source_location loc)
-    { return log.message(log_severity::warning, std::move(fmt), loc); }
-
-
-    //**********************************************************************
-    log_message note(std::string fmt, std::source_location loc)
-    { return log.message(log_severity::note, std::move(fmt), loc); }
-
-
-    //**********************************************************************
-    log_message info(std::string fmt, std::source_location loc)
-    { return log.message(log_severity::info, std::move(fmt), loc); }
-
-
-    //**********************************************************************
-    void assert(bool test, std::string_view msg, std::source_location loc)
-    { log.assert(test,msg,loc); }
-
-
-    //**********************************************************************
-    void debug_assert(bool test, std::string_view msg, std::source_location loc) noexcept(!Envy::debug)
-    { log.debug_assert(test,msg,loc); }
-
-
-    //**********************************************************************
-    void set_preamble_pattern(std::string_view pattern)
-    {
-        preamble = std::move(preamble);
-    }
-
-
-    //**********************************************************************
-    void update_log_state(std::string_view logger_name, log_severity severity, log_message_source loc)
+    void update_log_state(std::string_view logger_name, severity sev, message_source loc)
     {
         msg_source = loc;
-        msg_severity = severity;
+        msg_severity = sev;
 
         // TODO: Envy::string copy asign from std::strin and std::string_view
         msg_logger = Envy::string(logger_name);
@@ -425,6 +431,175 @@ namespace Envy
 
 
     //**********************************************************************
+    void build_column_color_cache()
+    {
+        column_colors.reserve(static_cast<u8>(column::COUNT));
+
+        // The order of these is very important
+        column_colors.push_back(color_str(desc.func_column_desc.color));
+        column_colors.push_back(color_str(desc.file_column_desc.color));
+        column_colors.push_back(color_str(desc.line_column_desc.color));
+        column_colors.push_back(color_str(desc.col_column_desc.color));
+        column_colors.push_back(color_str(desc.datetime_column_desc.color));
+        column_colors.push_back(color_str(desc.logger_column_desc.color));
+        column_colors.push_back(color_str(desc.severity_column_desc.color));
+    }
+
+
+    //**********************************************************************
+    void determine_preamble_width()
+    {
+        preamble_width = 0;
+
+        for(auto column : desc.preamble)
+        {
+            preamble_width += 2; // "| "
+
+            switch(column)
+            {
+            case column::source_function:  preamble_width += desc.func_column_desc.width;     break;
+            case column::source_file:      preamble_width += desc.file_column_desc.width;     break;
+            case column::source_line:      preamble_width += desc.line_column_desc.width;     break;
+            case column::source_column:    preamble_width += desc.col_column_desc.width;      break;
+            case column::datetime:         preamble_width += desc.datetime_column_desc.width; break;
+            case column::logger_name:      preamble_width += desc.logger_column_desc.width;   break;
+            case column::severity:         preamble_width += desc.severity_column_desc.width; break;
+            }
+
+            preamble_width += 1; // " "
+        }
+        preamble_width += 4; // "| : "
+    }
+
+
+    //**********************************************************************
+    void build_header()
+    {
+        header.clear();
+        header_underline.clear();
+        note_preamble.clear();
+
+        header.reserve(preamble_width + 140);
+        header_underline.reserve(preamble_width + 140);
+        note_preamble.reserve(preamble_width);
+
+        for(auto column : desc.preamble)
+        {
+            header += "| ";
+            header_underline += "+-";
+            note_preamble += "|";
+
+            switch(column)
+            {
+            case column::source_function:
+                header += clamp("Function", desc.func_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.func_column_desc.width,'-');
+                note_preamble += std::string ((std::size_t)desc.func_column_desc.width+2u,'.');
+                break;
+
+            case column::source_file:
+                header += clamp("File", desc.file_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.file_column_desc.width,'-');
+                note_preamble += std::string ((std::size_t)desc.file_column_desc.width+2u,'.');
+                break;
+
+            case column::source_line:
+                header += clamp("Line", desc.line_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.line_column_desc.width,'-');
+                note_preamble += std::string ((std::size_t)desc.line_column_desc.width+2u,'.');
+                break;
+
+            case column::source_column:
+                header += clamp("Col", desc.col_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.col_column_desc.width,'-');
+                note_preamble += std::string ((std::size_t)desc.col_column_desc.width+2u,'.');
+                break;
+
+            case column::datetime:
+                header += clamp("Datetime", desc.datetime_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.datetime_column_desc.width,'-');
+                note_preamble += std::string ((std::size_t)desc.datetime_column_desc.width+2u,'.');
+                break;
+
+            case column::logger_name:
+                header += clamp("Logger", desc.logger_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.logger_column_desc.width,'-');
+                note_preamble += std::string ((std::size_t)desc.logger_column_desc.width+2u,'.');
+                break;
+
+            case column::severity:
+                header += clamp("Severity", desc.severity_column_desc.width, alignment::left, ' ');
+                header_underline += std::string ((std::size_t)desc.severity_column_desc.width,'-');
+
+                msg_severity = log::severity::note;
+                note_preamble += " " + clamp(log_macros.expand("severity",desc.severity_column_desc.fmt_spec), desc.severity_column_desc.width, desc.severity_column_desc.align, ' ') + " ";
+                break;
+
+            }
+
+            header += " ";
+            header_underline += "-";
+        }
+
+        header += "| ";
+        header_underline += "+-" + std::string(130,'-');
+        note_preamble += "| : ";
+    }
+
+
+    //**********************************************************************
+    std::string build_preamble()
+    {
+        std::string preamble;
+
+        for(auto column : desc.preamble)
+        {
+            preamble += color_str(desc.border_color) + "| ";
+
+            switch(column)
+            {
+            case column::source_function:  preamble += expand_column(column::source_function, "func",     desc.func_column_desc);     break;
+            case column::source_file:      preamble += expand_column(column::source_file,     "file",     desc.file_column_desc);     break;
+            case column::source_line:      preamble += expand_column(column::source_line,     "line",     desc.line_column_desc);     break;
+            case column::source_column:    preamble += expand_column(column::source_column,   "col",      desc.col_column_desc);      break;
+            case column::datetime:         preamble += expand_column(column::datetime,        "datetime", desc.datetime_column_desc); break;
+            case column::logger_name:      preamble += expand_column(column::logger_name,     "logger",   desc.logger_column_desc);   break;
+            case column::severity:         preamble += expand_column(column::severity,        "severity", desc.severity_column_desc); break;
+            }
+
+            preamble += color_str(desc.border_color) + " ";
+        }
+
+        preamble += color_str(desc.border_color) + "| : " + message_color;
+
+        return preamble;
+    }
+
+
+    //**********************************************************************
+    std::string expand_column(column column, std::string macro, column_description desc)
+    {
+        auto expantion { log_macros.expand(macro, desc.fmt_spec) };
+
+        // severity color changes per message, so we can't use the cached color string edit
+        std::string color { /* (macro=="severity") ? */ color_str(desc.color) /* : column_colors[static_cast<u8>(column)] */ };
+
+        return color + clamp(expantion, desc.width, desc.align, ' ');
+    }
+
+
+    //**********************************************************************
+    std::string color_str(color c)
+    {
+        if(c == color::severity)
+        {
+            return color_str(severity_colors[static_cast<u8>(msg_severity)]);
+        }
+        else return "\x1b[" + Envy::to_string( static_cast<u8>(c) ) + "m";
+    }
+
+
+    //**********************************************************************
     std::string process_message(std::string_view msg)
     {
 
@@ -437,31 +612,30 @@ namespace Envy
         // // pads note premble with gray dots, adds necessary indents
         // std::string resolved_note_preamble { resolve_note_preamble(fill_count) };
 
-        resolving_preamble = true;
-        std::string resolved_preamble { Envy::expand_macros(preamble, log_macros) };
-        resolving_preamble = false;
+        std::string resolved_preamble { build_preamble() };
 
         std::string logmsg { };
-        logmsg.reserve( msg.size() * 2u );
+        logmsg.reserve( resolved_preamble.size() + msg.size() * 2u );
 
         logmsg += resolved_preamble;
 
-        logmsg += Envy::expand_macros(indent_string(), log_macros);
+        logmsg += indent_string();
 
-        if(msg_severity == log_severity::note)
+        if(msg_severity == severity::note)
         {
-            logmsg += "{DGRY}";
+            logmsg += color_str(desc.border_color);
+        }
+        else
+        {
+            logmsg += color_str(desc.message_color);
         }
 
-        msg_severity = log_severity::note;
-        resolving_preamble = true;
         indent_log();
 
         // every newline is a note, so add the note preamble
-        logmsg += Envy::replace(msg, "\n", "\n" + (std::string) Envy::expand_macros(preamble + indent_string() + "{DGRY}", log_macros)) + "\x1b[0m\n";
+        logmsg += Envy::replace(msg, "\n", "\n" + (std::string) Envy::expand_macros(color_str(desc.border_color) + note_preamble + indent_string() + color_str(desc.border_color), log_macros)) + "\x1b[0m\n";
 
         unindent_log();
-        resolving_preamble = false;
 
         return logmsg;
     }
@@ -474,14 +648,12 @@ namespace Envy
         { return ""; }
 
         std::string result;
-        result.reserve(indent_count * indent_str.size());
+        result.reserve(indent_count * desc.indent.size());
 
-        result += "{DGRY}";
+        result += color_str(desc.border_color);
 
         for(int i {}; i < indent_count; ++i)
-        { result += indent_str; }
-
-        result += "{WHT}";
+        { result += desc.indent; }
 
         return result;
     }
@@ -490,44 +662,28 @@ namespace Envy
     //**********************************************************************
     Envy::string func_macro(Envy::string_view param)
     {
-        Envy::string r { std::format( build_fmt_str(param) , msg_source.func ) };
-
-        if(resolving_preamble)
-        { return clamp(r, func_width, align_right, ' '); }
-        else return r;
+        return std::format( build_fmt_str(param) , msg_source.func );
     }
 
 
     //**********************************************************************
     Envy::string file_macro(Envy::string_view param)
     {
-        Envy::string r { std::format( build_fmt_str(param) , std::filesystem::path {msg_source.file} .filename().string() ) };
-
-        if(resolving_preamble)
-        { return clamp(r, file_width, align_right, ' '); }
-        else return r;
+       return std::format( build_fmt_str(param) , std::filesystem::path {msg_source.file} .filename().string() );
     }
 
 
     //**********************************************************************
     Envy::string line_macro(Envy::string_view param)
     {
-        Envy::string r { std::format( build_fmt_str(param) , msg_source.line ) };
-
-        if(resolving_preamble)
-        { return clamp(r, line_width, align_right, '0'); }
-        else return r;
+        return std::format( build_fmt_str(param) , msg_source.line );
     }
 
 
     //**********************************************************************
     Envy::string col_macro(Envy::string_view param)
     {
-        Envy::string r { std::format( build_fmt_str(param) , msg_source.col ) };
-
-        if(resolving_preamble)
-        { return clamp(r, col_width, align_right, '0'); }
-        else return r;
+        return std::format( build_fmt_str(param) , msg_source.col );
     }
 
 
@@ -536,11 +692,7 @@ namespace Envy
     {
         std::chrono::zoned_time time {std::chrono::current_zone(), std::chrono::system_clock::now()};
 
-        Envy::string r { std::format( build_fmt_str(param) , time ) };
-
-        if(resolving_preamble)
-        { return clamp(r, datetime_width, align_left, ' '); }
-        else return r;
+        return std::format( build_fmt_str(param) , time );
     }
 
 
@@ -550,11 +702,7 @@ namespace Envy
         constexpr const char* severities[]
         {"scope", "assert", "error", "warning", "note", "info"};
 
-        Envy::string r { std::format( build_fmt_str(param) , severities[static_cast<i32>(msg_severity)] ) };
-
-        if(resolving_preamble)
-        { return clamp(r, severity_width, align_right, ' '); }
-        else return r;
+        return std::format( build_fmt_str(param) , severities[static_cast<i32>(msg_severity)] );
     }
 
 
@@ -564,11 +712,7 @@ namespace Envy
         constexpr const char* severities_short[]
         {"scp", "asr", "err", "wrn", "nte", "inf"};
 
-        Envy::string r { std::format( build_fmt_str(param) , severities_short[static_cast<i32>(msg_severity)] ) };
-
-        if(resolving_preamble)
-        { return clamp(r, severity_short_width, align_right, ' '); }
-        else return r;
+        return std::format( build_fmt_str(param) , severities_short[static_cast<i32>(msg_severity)] );
     }
 
 
@@ -585,16 +729,12 @@ namespace Envy
     //**********************************************************************
     Envy::string logger_name_macro(Envy::string_view param)
     {
-        Envy::string r { std::format( build_fmt_str(param) , (std::string) msg_logger ) };
-
-        if(resolving_preamble)
-        { return clamp(r, logger_width, align_right, ' '); }
-        else return r;
+        return std::format( build_fmt_str(param) , (std::string) msg_logger );
     }
 
 
     //**********************************************************************
-    Envy::string clamp(Envy::string_view s, i32 width, i32 align, char fill)
+    Envy::string clamp(Envy::string_view s, i32 width, alignment align, char fill)
     {
         if(width <= 2)
         { return Envy::string { (usize) width, '.' }; }
@@ -614,7 +754,7 @@ namespace Envy
         {
             // fill to width
 
-            f64 a { align / 2.0 };
+            f64 a { static_cast<u8>(align) / 2.0 };
             i32 f { width - (i32) s.size() };
 
             i32 fill_right { (i32) std::floor( f * (1.0-a)) };
@@ -632,7 +772,7 @@ namespace Envy
 
             i32 c { (i32) s.size() - (width - ((i32) std::size(cut)-1)) };
 
-            if(align == align_right)
+            if(align == alignment::right)
             {
                 auto it {s.begin()};
 
@@ -658,4 +798,38 @@ namespace Envy
 
 
     }
+}
+
+namespace Envy
+{
+
+    //**********************************************************************
+    log::message error(std::string fmt, std::source_location loc)
+    { return log::global.make_message(log::severity::error, std::move(fmt), loc); }
+
+
+    //**********************************************************************
+    log::message warning(std::string fmt, std::source_location loc)
+    { return log::global.make_message(log::severity::warning, std::move(fmt), loc); }
+
+
+    //**********************************************************************
+    log::message note(std::string fmt, std::source_location loc)
+    { return log::global.make_message(log::severity::note, std::move(fmt), loc); }
+
+
+    //**********************************************************************
+    log::message info(std::string fmt, std::source_location loc)
+    { return log::global.make_message(log::severity::info, std::move(fmt), loc); }
+
+
+    //**********************************************************************
+    void assert(bool test, std::string_view msg, std::source_location loc)
+    { log::global.assert(test,msg,loc); }
+
+
+    //**********************************************************************
+    void debug_assert(bool test, std::string_view msg, std::source_location loc) noexcept(!Envy::debug)
+    { log::global.debug_assert(test,msg,loc); }
+
 }

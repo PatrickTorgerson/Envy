@@ -24,11 +24,17 @@ int main(int argc, char** argv)
 {
     SetConsoleOutputCP(CP_UTF8);
 
-    Envy::init_logging();
+
+    Envy::engine::description engdesc {};
+
+    engdesc.log.preamble = { Envy::log::column::logger_name };
+    engdesc.log.logger_column_desc.color = Envy::log::color::severity;
+
+    // pre-init logger for tests
+    Envy::log::init(engdesc.log);
 
     run_tests();
 
-    Envy::engine::description engdesc {};
     Envy::engine::run(engdesc, argc, argv);
 
     return 0;
@@ -43,7 +49,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 void run_tests()
 {
-    Envy::log.seperator();
+    Envy::log::global.print_header(" Tests ");
 
     Envy::test_state tests {Envy::test_state::verbose};
 
@@ -60,5 +66,9 @@ void run_tests()
 
     tests.report();
 
-    Envy::log.seperator();
+    Envy::log::global.print_header();
+
+    Envy::warning("Get off your ass and do the god damn dishes");
+    Envy::note("No one even loves you").note("(cuz u fat)");
+    Envy::error("404 : affection not found");
 }

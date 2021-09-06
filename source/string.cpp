@@ -486,7 +486,7 @@ namespace Envy
     //**********************************************************************
     Envy::string operator+(Envy::string left, Envy::string right)
     {
-        Envy::string s { Envy::String::reserve_tag , left.size_bytes() + right.size_bytes() };
+        Envy::string s { Envy::string::reserve_tag , left.size_bytes() + right.size_bytes() };
         s += left;
         s += right;
         return s;

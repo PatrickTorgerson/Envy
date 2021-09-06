@@ -11,6 +11,8 @@ namespace Envy::engine
 
     void run(const description& engdesc, int argc, char** argv)
     {
+        log::init(engdesc.log);
+
         std::chrono::high_resolution_clock::time_point start { std::chrono::high_resolution_clock::now() };
 
         // Launch message thread
@@ -40,8 +42,6 @@ namespace Envy::engine
 
         Envy::info("Application exited")
         .note("runtime: {}", runtime);
-
-        Envy::log.seperator();
     }
 
 }

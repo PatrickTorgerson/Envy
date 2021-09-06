@@ -25,10 +25,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 
+
 /********************************************************************************
  * \file log.hpp
  * \brief Envy's logging library
  ********************************************************************************/
+
 
 #pragma once
 
@@ -40,13 +42,13 @@
 #include <filesystem>
 #include <chrono>
 
-namespace Envy
+namespace Envy::log
 {
 
     /********************************************************************************
      * \brief Log severity levels
      ********************************************************************************/
-    enum class log_severity : u8
+    enum class severity : u8
     {
         scope,    //< Used by Envy to log scope specifiers
         assert,   //< Used by Envy to log assertion messages
@@ -57,9 +59,180 @@ namespace Envy
     };
 
 
+    /********************************************************************************
+     * \brief Logger colors
+     * \see Envy::log::description
+     ********************************************************************************/
+    enum class color : u8
+    {
+        black          =  30,
+        red            =  31,
+        green          =  32,
+        yellow         =  33,
+        blue           =  34,
+        magenta        =  35,
+        cyan           =  36,
+        light_gray     =  37,
+        dark_gray      =  90,
+        light_red      =  91,
+        light_green    =  92,
+        light_yellow   =  93,
+        light_blue     =  94,
+        light_magenta  =  95,
+        light_cyan     =  96,
+        white          =  97,
+        def            =  39,
+        clear          =  0,
+        severity       =  255
+    };
+
+
+    /********************************************************************************
+     * \brief Logger alignment
+     * \see Envy::log::description
+     ********************************************************************************/
+    enum class alignment : u8
+    {
+        left   = 0,
+        center = 1,
+        right  = 2
+    };
+
+
+    /********************************************************************************
+     * \brief Logger column
+     * \see Envy::log::description
+     ********************************************************************************/
+    enum class column : u8
+    {
+        source_function,
+        source_file,
+        source_line,
+        source_column,
+        datetime,
+        logger_name,
+        severity,
+        COUNT
+    };
+
+
+    /********************************************************************************
+     * \brief Configures how a log column should be formatted
+     * \see Envy::log::description
+     ********************************************************************************/
+    struct column_description
+    {
+        i32 width;             ///< Fixed width of the column
+        std::string fmt_spec;  ///< fmt specifier passed to std::format()
+        alignment align;       ///< alignment of the text within the column
+        color color;           ///< color of the text within the column
+    };
+
+
+    /********************************************************************************
+     * \brief Allows you to configure logger output
+     *
+     * This is passed to Envy in a \ref Envy::engine::description object to
+     * the \ref Envy::engine::run() function.
+     *
+     * \see Envy::engine::description
+     * \see Envy::engine::run()
+     ********************************************************************************/
+    struct description
+    {
+
+        /********************************************************************************
+         * \brief Specify what information you want to apear in the preamble
+         *
+         * | Type                               | Information                                      |
+         * | ---------------------------------- | ------------------------------------------------ |
+         * | Envy::log::column::source_function | Name of the function the message was logged from |
+         * | Envy::log::column::source_file     | File the message was logged from                 |
+         * | Envy::log::column::source_line     | Line the message was logged on                   |
+         * | Envy::log::column::source_column   | Colume the message was logged on                 |
+         * | Envy::log::column::datetime        | Date and Time the message was logged at          |
+         * | Envy::log::column::logger_name     | Name of the logger that jogged the message       |
+         * | Envy::log::column::severity        | Severity of the message                          |
+         *
+         * You can configure each column indevidually with their respective Envy::log::column_description.
+         *
+         * \see Envy::log::column_description
+         * \see Envy::log::column
+         ********************************************************************************/
+        std::vector<column> preamble {column::datetime, column::source_file, column::source_line, column::severity};
+
+
+        /********************************************************************************
+         * \brief Configure how the function column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description func_column_desc {15, "",   alignment::left,   color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Configure how the file column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description file_column_desc {15, "",   alignment::right,  color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Configure how the line column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description line_column_desc {4,  "04", alignment::right,  color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Configure how the col column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description col_column_desc  {4,  "04", alignment::right,  color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Configure how the datetime column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description datetime_column_desc {16, "%T", alignment::left,  color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Configure how the logger column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description logger_column_desc   {10, "",   alignment::right, color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Configure how the severity column should be formatted
+         * \see Envy::log::column_description
+         ********************************************************************************/
+        column_description severity_column_desc {8,  "",   alignment::right, color::severity};
+
+
+        /********************************************************************************
+         * \brief String to use per indent
+         ********************************************************************************/
+        std::string indent {"|   "};
+
+
+        /********************************************************************************
+         * \brief Color of border characters
+         ********************************************************************************/
+        color border_color {color::dark_gray};
+
+
+        /********************************************************************************
+         * \brief Color of message characters
+         ********************************************************************************/
+        color message_color {color::white};
+    };
+
+
     class logger;
-    class log_message;
-    class log_message_source;
+    class message;
+    class message_source;
 
 
     /********************************************************************************
@@ -69,7 +242,7 @@ namespace Envy
      *
      * \see Envy::resolve()
      ********************************************************************************/
-    void init_logging();
+    void init(const description& logdesc);
 
 
     /********************************************************************************
@@ -92,144 +265,6 @@ namespace Envy
      * \see Envy::indent_log()
      ********************************************************************************/
     void unindent_log();
-
-
-    /********************************************************************************
-     * \brief Sets the preamble pattern
-     *
-     * This function allows you to change what information is printed before every
-     * log message. The preamble is a string that can contain; regular text, which will
-     * be logged as-is; zero or more preamble macros, which will be expanded with
-     * message-specific information; and zero or more color macros, which will change the color
-     * of text printed to the console.
-     *
-     * Here are the available preamble macros:
-     *
-     *  - **{file}** : The file the message was logged from
-     *  - **{line}** : Line number the message logged from
-     *  - **{col}** : Column number the message logged from
-     *  - **{func}** : Function name that the message was logged in
-     *  - **{severity_short}** : Abreiviated log severity name (scp, ast, err, wrn, nte, inf)
-     *  - **{severity}** : Log severity name (scope, assert, error, warning, note, info)
-     *  - **{severity_color}** : Color macro for the log severity
-     *  - **{datetime}** : Date and time the message was logged
-     *  - **{logger}** : Name of the logger used to log the message
-     *
-     * Here are the available color macros:
-     *
-     *  - **{RED}** : Red
-     *  - **{GRN}** : Green
-     *  - **{BLU}** : Blue
-     *  - **{YEL}** : Yellow
-     *  - **{CYN}** : Cyan
-     *  - **{MAG}** : Magenta
-     *  - **{WHT}** : White
-     *  - **{BLK}** : Black
-     *  - **{BRED}** : Bright Red
-     *  - **{BGRN}** : Bright Green
-     *  - **{BBLU}** : Bright Blue
-     *  - **{BYEL}** : Bright Yellow
-     *  - **{BCYN}** : Bright Cyan
-     *  - **{BMAG}** : Bright Magenta
-     *  - **{BWHT}** : Bright White
-     *  - **{BBLK}** : Bright Black (Gray)
-     *  - **{CLR}** : Default console color
-     *
-     * Actual color may vary depending on your terminal settings
-     *
-     * Macros are expanded using \ref std::format() and as such can include a [format specifier](https://en.cppreference.com/w/cpp/utility/format/formatter#Standard_format_specification)
-     * here is an example of a preamble pattern:
-     *
-     * `"{BBLK}[{datetime}] {file: >20} LN{line:0>4} | {name: >10} {severity_color}{severity: >7}{BBLK} : {BWHT}"`
-     *
-     * which would resolve to something like:
-     *
-     * `"[08-23-2021 21:13:17.3582186]         "window.cpp" LN0074 |       Envy   info : "`
-     *
-     * \param [in] pattern A string containing option preamble macros
-     ********************************************************************************/
-    void set_preamble_pattern(std::string_view pattern);
-
-
-    /********************************************************************************
-     * \brief Logs an error message with the global logger
-     *
-     * \param [in] fmt The format string, pass argument in parens after function call
-     * \param [in] loc \ref std::source_location describing where the message was logged from
-     * \return Envy::log_message Format the message with function call operator
-     *
-     * \see Envy::logger::error()
-     ********************************************************************************/
-    log_message error(std::string fmt, std::source_location loc = std::source_location::current());
-
-
-    /********************************************************************************
-     * \brief Logs a warning message with the global logger
-     *
-     * \param [in] fmt The format string, pass argument in parens after function call
-     * \param [in] loc \ref std::source_location describing where the message was logged from
-     * \return Envy::log_message Format the message with function call operator
-     *
-     * \see Envy::logger::warning()
-     ********************************************************************************/
-    log_message warning(std::string fmt, std::source_location loc = std::source_location::current());
-
-
-    /********************************************************************************
-     * \brief Logs a note message with the global logger
-     *
-     * \param [in] fmt The format string, pass argument in parens after function call
-     * \param [in] loc \ref std::source_location describing where the message was logged from
-     * \return Envy::log_message Format the message with function call operator
-     *
-     * \see Envy::logger::note()
-     * \see Envy::log_message::note()
-     ********************************************************************************/
-    log_message note(std::string fmt, std::source_location loc = std::source_location::current());
-
-
-    /********************************************************************************
-     * \brief Logs an info message with the global logger
-     *
-     * \param [in] fmt The format string, pass argument in parens after function call
-     * \param [in] loc \ref std::source_location describing where the message was logged from
-     * \return Envy::log_message Format the message with function call operator
-     *
-     * \see Envy::logger::info()
-     ********************************************************************************/
-    log_message info(std::string fmt, std::source_location loc = std::source_location::current());
-
-
-    /********************************************************************************
-     * \brief Asserts that a condition is true, logs with global logger
-     *
-     * If the assertion fails the given message will be logged and an \ref Envy::assertion
-     * will be thrown. It is expected that this assertion exception will be unhandled and
-     * cause the program to crash.
-     *
-     * \param [in] test Condition to test
-     * \param [in] msg Message to log if the test fails
-     * \param [in] loc \ref std::source_location describing where the assertion occured
-     *
-     * \see Envy::logger::assert()
-     ********************************************************************************/
-    void assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current());
-
-
-    /********************************************************************************
-     * \brief Asserts that a condition is true in debug builds only, logs with global logger
-     *
-     * If the assertion fails the given message will be logged and an \ref Envy::assertion
-     * will be thrown. It is expected that this assertion exception will be unhandled and
-     * cause the program to crash.
-     *
-     * \param [in] test Condition to test
-     * \param [in] msg Message to log if the test fails
-     * \param [in] loc \ref std::source_location describing where the assertion occured
-     *
-     * \see Envy::logger::debug_assert()
-     ********************************************************************************/
-    void debug_assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current()) noexcept(!Envy::debug);
 
 
     /********************************************************************************
@@ -257,16 +292,16 @@ namespace Envy
      * \brief Updates the log message state
      *
      * \param [in] logger_name Name of the logger logging the next message
-     * \param [in] severity Severity of the next message
+     * \param [in] sev Severity of the next message
      * \param [in] loc Source location of the next message
      ********************************************************************************/
-    void update_log_state(std::string_view logger_name, log_severity severity, log_message_source loc);
+    void update_log_state(std::string_view logger_name, severity sev, message_source loc);
 
 
     /********************************************************************************
      * \brief Contains information about the source location of a log_message
      ********************************************************************************/
-    class log_message_source
+    class message_source
     {
     public:
 
@@ -279,7 +314,7 @@ namespace Envy
         /********************************************************************************
          * \brief Constructs a log_message_source from a std::source_location
          ********************************************************************************/
-        log_message_source(std::source_location loc = std::source_location::current()) :
+        message_source(std::source_location loc = std::source_location::current()) :
             file { loc.file_name() },
             func { loc.function_name() },
             line { loc.line() },
@@ -290,7 +325,7 @@ namespace Envy
         /********************************************************************************
          * \brief Constructs a log_message_source
          ********************************************************************************/
-        log_message_source(const char* file, const char* func, u32 line, u32 col) :
+        message_source(const char* file, const char* func, u32 line, u32 col) :
             file { file },
             func { func },
             line { line },
@@ -353,7 +388,7 @@ namespace Envy
          *
          * \return \ref Envy::log_message
          ********************************************************************************/
-        log_message message(log_severity severity, std::string_view fmt, std::source_location loc = std::source_location::current());
+        message make_message(severity severity, std::string_view fmt, std::source_location loc = std::source_location::current());
 
 
         /********************************************************************************
@@ -372,7 +407,7 @@ namespace Envy
          *
          * \return Envy::log_message Format the message with function call operator
          ********************************************************************************/
-        log_message error(std::string_view fmt, std::source_location loc = std::source_location::current());
+        message error(std::string_view fmt, std::source_location loc = std::source_location::current());
 
 
         /********************************************************************************
@@ -391,7 +426,7 @@ namespace Envy
          *
          * \return Envy::log_message Format the message with function call operator
          ********************************************************************************/
-        log_message warning(std::string_view fmt, std::source_location loc = std::source_location::current());
+        message warning(std::string_view fmt, std::source_location loc = std::source_location::current());
 
 
         /********************************************************************************
@@ -412,7 +447,7 @@ namespace Envy
          *
          * \return Envy::log_message Format the message with function call operator
          ********************************************************************************/
-        log_message note(std::string_view fmt, std::source_location loc = std::source_location::current());
+        message note(std::string_view fmt, std::source_location loc = std::source_location::current());
 
 
         /********************************************************************************
@@ -431,7 +466,7 @@ namespace Envy
          *
          * \return Envy::log_message Format the message with function call operator
          ********************************************************************************/
-        log_message info(std::string_view fmt, std::source_location loc = std::source_location::current());
+        message info(std::string_view fmt, std::source_location loc = std::source_location::current());
 
 
         /********************************************************************************
@@ -487,7 +522,7 @@ namespace Envy
          *
          * TODO: Envy::set_log_seperator()
          ********************************************************************************/
-        void seperator();
+        void print_header(std::string name = "Message");
 
 
         /********************************************************************************
@@ -547,7 +582,7 @@ namespace Envy
      * \see Envy::error()
      * \see Envy::logger
      ********************************************************************************/
-    inline logger log {"Envy"};
+    inline logger global {"Envy"};
 
 
     /********************************************************************************
@@ -558,11 +593,11 @@ namespace Envy
      * \see Envy::note()
      * \see Envy::info()
      ********************************************************************************/
-    class log_message
+    class message
     {
 
         logger& log;               //< The logger the message will be logged with
-        log_severity severity;     //< The log severity of the message
+        severity sev;     //< The log severity of the message
         std::source_location loc;  //< Location where the message was logged
         std::string fmt;           //< The format string, can be formatted with the function call operator
 
@@ -585,9 +620,9 @@ namespace Envy
          * \see Envy::note()
          * \see Envy::info()
          ********************************************************************************/
-        log_message(logger& log, log_severity severity, std::source_location loc, std::string fmt) noexcept :
+        message(logger& log, severity sev, std::source_location loc, std::string fmt) noexcept :
             log {log},
-            severity {severity},
+            sev {sev},
             loc {std::move(loc)},
             fmt {std::move(fmt)}
         { }
@@ -596,17 +631,17 @@ namespace Envy
         /********************************************************************************
          * \brief Destructor, this is where the message actually gets logged
          ********************************************************************************/
-        ~log_message()
+        ~message()
         {
             // TODO: test on release build
             raw_log(log.get_file(), log.logs_to_console(), fmt);
         }
 
 
-        log_message(const log_message&) = delete;
-        log_message(log_message&&) = delete;
-        log_message& operator=(const log_message&) = delete;
-        log_message& operator=(log_message&&) = delete;
+        message(const message&) = delete;
+        message(message&&) = delete;
+        message& operator=(const message&) = delete;
+        message& operator=(message&&) = delete;
 
 
         /********************************************************************************
@@ -621,7 +656,7 @@ namespace Envy
          * \return log_message& Refference to this log_message
          ********************************************************************************/
         template <convertable_to_string ... Ts>
-        log_message& operator()(Ts&& ... args)
+        message& operator()(Ts&& ... args)
         {
             fmt = std::format( fmt, std::forward<Ts>(args)... );
             return *this;
@@ -641,7 +676,7 @@ namespace Envy
          * \return log_message& Refference to this log_message, to chain .note() calls
          ********************************************************************************/
         template <convertable_to_string ... Ts>
-        log_message& note(const std::string_view& fmtstr, Ts&& ... args)
+        message& note(const std::string_view& fmtstr, Ts&& ... args)
         {
             // logging system interprets new-lines as a new note
             fmt += "\n" + std::format(fmtstr, std::forward<Ts>(args)...);
@@ -649,8 +684,6 @@ namespace Envy
         }
 
     };
-
-
 
 
     /********************************************************************************
@@ -671,6 +704,7 @@ namespace Envy
         std::chrono::high_resolution_clock::time_point t; ///< The time point the scope_logger was constructed
     public:
 
+
         /********************************************************************************
          * \brief Constructs a scope_logger
          *
@@ -681,7 +715,8 @@ namespace Envy
          * \param [in] l Logger to use to log open and close scope messages
          * \param [in] loc Location the scope_logger was created
          ********************************************************************************/
-        explicit scope_logger(std::string msg, logger& l = Envy::log, std::source_location loc = std::source_location::current());
+        explicit scope_logger(std::string msg, logger& l = Envy::log::global, std::source_location loc = std::source_location::current());
+
 
         /********************************************************************************
          * \brief scope_logger's destructor
@@ -689,7 +724,96 @@ namespace Envy
          * Ends logging of the scope, logs time since construction in seconds.
          ********************************************************************************/
         ~scope_logger();
+
     };
+
+}
+
+namespace Envy
+{
+    using logger = Envy::log::logger;
+    using scope_logger = Envy::log::scope_logger;
+
+
+    /********************************************************************************
+     * \brief Logs an error message with the global logger
+     *
+     * \param [in] fmt The format string, pass argument in parens after function call
+     * \param [in] loc \ref std::source_location describing where the message was logged from
+     * \return Envy::log::message Format the message with function call operator
+     *
+     * \see Envy::logger::error()
+     ********************************************************************************/
+    log::message error(std::string fmt, std::source_location loc = std::source_location::current());
+
+
+    /********************************************************************************
+     * \brief Logs a warning message with the global logger
+     *
+     * \param [in] fmt The format string, pass argument in parens after function call
+     * \param [in] loc \ref std::source_location describing where the message was logged from
+     * \return Envy::log::message Format the message with function call operator
+     *
+     * \see Envy::logger::warning()
+     ********************************************************************************/
+    log::message warning(std::string fmt, std::source_location loc = std::source_location::current());
+
+
+    /********************************************************************************
+     * \brief Logs a note message with the global logger
+     *
+     * \param [in] fmt The format string, pass argument in parens after function call
+     * \param [in] loc \ref std::source_location describing where the message was logged from
+     * \return Envy::log::message Format the message with function call operator
+     *
+     * \see Envy::logger::note()
+     * \see Envy::log::message::note()
+     ********************************************************************************/
+    log::message note(std::string fmt, std::source_location loc = std::source_location::current());
+
+
+    /********************************************************************************
+     * \brief Logs an info message with the global logger
+     *
+     * \param [in] fmt The format string, pass argument in parens after function call
+     * \param [in] loc \ref std::source_location describing where the message was logged from
+     * \return Envy::log::message Format the message with function call operator
+     *
+     * \see Envy::logger::info()
+     ********************************************************************************/
+    log::message info(std::string fmt, std::source_location loc = std::source_location::current());
+
+
+    /********************************************************************************
+     * \brief Asserts that a condition is true, logs with global logger
+     *
+     * If the assertion fails the given message will be logged and an \ref Envy::assertion
+     * will be thrown. It is expected that this assertion exception will be unhandled and
+     * cause the program to crash.
+     *
+     * \param [in] test Condition to test
+     * \param [in] msg Message to log if the test fails
+     * \param [in] loc \ref std::source_location describing where the assertion occured
+     *
+     * \see Envy::logger::assert()
+     ********************************************************************************/
+    void assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current());
+
+
+    /********************************************************************************
+     * \brief Asserts that a condition is true in debug builds only, logs with global logger
+     *
+     * If the assertion fails the given message will be logged and an \ref Envy::assertion
+     * will be thrown. It is expected that this assertion exception will be unhandled and
+     * cause the program to crash.
+     *
+     * \param [in] test Condition to test
+     * \param [in] msg Message to log if the test fails
+     * \param [in] loc \ref std::source_location describing where the assertion occured
+     *
+     * \see Envy::logger::debug_assert()
+     ********************************************************************************/
+    void debug_assert(bool test, std::string_view msg = "Assertion failed", std::source_location loc = std::source_location::current()) noexcept(!Envy::debug);
 
 
     /********************************************************************************
@@ -733,5 +857,4 @@ namespace Envy
     template <convertable_to_string T>
     void printl(T&& v)
     { print(std::forward<T>(v)); print('\n'); }
-
 }
