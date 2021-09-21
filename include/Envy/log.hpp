@@ -41,6 +41,10 @@
 #include <filesystem>
 #include <chrono>
 
+#ifdef assert
+#undef assert
+#endif
+
 namespace Envy::log
 {
 
@@ -364,7 +368,7 @@ namespace Envy::log
 
         Envy::string name {};          ///< Name of the logger, can be displayed in a log preamble
         Envy::string logfile {};       ///< File to log to, empty for no file
-        bool console_logging {true};  ///< Whether messages should be logged to the console
+        bool console_logging {true};   ///< Whether messages should be logged to the console
 
     public:
 

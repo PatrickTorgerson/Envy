@@ -31,7 +31,6 @@
 #include <cstddef>
 #include <version>
 
-
 // Ensure build support for required features
 
 #if !defined(__cpp_concepts) || !defined(__cpp_lib_concepts)
@@ -95,6 +94,7 @@
     #define ENVY_RELEASE
     #define ENVY_DEBUG_CALL(x)
 #endif
+
 
 using i8  = int8_t;
 using i16 = int16_t;

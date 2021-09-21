@@ -26,4 +26,4 @@ target_include_directories(Envy INTERFACE "${CMAKE_SOURCE_DIR}/include" PRIVATE 
 
 target_compile_options(Envy PUBLIC -DUNICODE)
 
-target_link_libraries(Envy PRIVATE Diligent-GraphicsEngineD3D11-static Diligent-GraphicsEngineD3D12-static)
+target_link_libraries(Envy PUBLIC d3d12.lib dxgi.lib dxguid.lib d3dcompiler.lib)

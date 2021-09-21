@@ -28,23 +28,15 @@
 #pragma once
 
 #include "common.hpp"
-#include "log.hpp"
 
-#include "directx.hpp"
+#include "win32.hpp"
 
-namespace Envy::graphics
-{
-    struct description
-    {
-        // ???
-    };
+// DirectX 11 specific headers
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
 
-
-    void init(const description& gfxdesc);
-    void shutdown();
-
-    void clear();
-    void present();
-
-    ID3D12Resource* create_resource(const D3D12_HEAP_PROPERTIES& properties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initial_state);
-}
+// D3D12 extension library
+#define D3DX12_NO_CHECK_FEATURE_SUPPORT_CLASS
+#include <d3dx12.h>

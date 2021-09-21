@@ -28,23 +28,20 @@
 #pragma once
 
 #include "common.hpp"
-#include "log.hpp"
 
-#include "directx.hpp"
+#include "renderer.hpp"
 
-namespace Envy::graphics
+namespace Envy
 {
-    struct description
+
+    class quad_renderer final : public Envy::renderer
     {
-        // ???
+    public:
+        virtual ~quad_renderer() = default;
+
+        virtual Diligent::IPipelineState* get_pipeline() override;
+
+        virtual Diligent::DrawAttribs get_draw_attribs() const override;
     };
 
-
-    void init(const description& gfxdesc);
-    void shutdown();
-
-    void clear();
-    void present();
-
-    ID3D12Resource* create_resource(const D3D12_HEAP_PROPERTIES& properties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initial_state);
 }

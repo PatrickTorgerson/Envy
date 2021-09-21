@@ -27,24 +27,60 @@
 
 #pragma once
 
-#include "common.hpp"
-#include "log.hpp"
+// The following #defines disable a bunch of unused windows stuff. If you
+// get weird errors when trying to do some windows stuff, try removing some
+// (or all) of these defines (it will increase build time though).
+#ifndef ENVY_FULL_WINDOWS
+    #define WIN32_LEAN_AND_MEAN
+    // #define NOGDICAPMASKS
+    // #define NOSYSMETRICS
+    // #define NOMENUS
+    // #define NOICONS
+    // #define NOSYSCOMMANDS
+    // #define NORASTEROPS
+    // #define OEMRESOURCE
+    // #define NOATOM
+    // #define NOCLIPBOARD
+    // #define NOCOLOR
+    // #define NOCTLMGR
+    // #define NODRAWTEXT
+    // #define NOKERNEL
+    // #define NONLS
+    // #define NOMEMMGR
+    // #define NOMETAFILE
+    // #define NOOPENFILE
+    // #define NOSCROLL
+    // #define NOSERVICE
+    // #define NOSOUND
+    // #define NOTEXTMETRIC
+    // #define NOWH
+    // #define NOCOMM
+    // #define NOKANJI
+    // #define NOHELP
+    // #define NOPROFILER
+    // #define NODEFERWINDOWPOS
+    // #define NOMCX
+    // #define NORPC
+    // #define NOPROXYSTUB
+    // #define NOIMAGE
+    // #define NOTAPE
+#endif
 
-#include "directx.hpp"
+//#define NOMINMAX
 
-namespace Envy::graphics
-{
-    struct description
-    {
-        // ???
-    };
+//#define STRICT
+
+#include <Windows.h>
+
+// Windows Runtime Library. Needed for Microsoft::WRL::ComPtr<> template class.
+#include <wrl.h>
+using namespace Microsoft::WRL;
 
 
-    void init(const description& gfxdesc);
-    void shutdown();
+#ifdef min
+#undef min
+#endif
 
-    void clear();
-    void present();
-
-    ID3D12Resource* create_resource(const D3D12_HEAP_PROPERTIES& properties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initial_state);
-}
+#ifdef max
+#undef max
+#endif

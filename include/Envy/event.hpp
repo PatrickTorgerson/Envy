@@ -70,11 +70,12 @@ namespace Envy
         queue_event( type<E>(), new E {std::forward<Ts>(args)...} );
     }
 
+
     template <std::derived_from<event> E, typename F>
     requires std::regular_invocable<F,const E&>
     void register_callback(F&& f)
     {
-        register_callback_impl( type<E>(), [f](const event* e){ std::invoke(std::forward<F>(f), *dynamic_cast<const E*>(e)); });
+        register_callback_impl( type<E>(), [f](const event* e){ std::invoke(f, *dynamic_cast<const E*>(e)); });
     }
 
 

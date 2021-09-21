@@ -207,6 +207,8 @@ namespace Envy
         template <std::convertible_to<T> U>
         vector2<T>& operator /= (const vector2<U>& other)
         { x /= (T) other.x;  y /= (T) other.y;  return *this; }
+
+        friend bool operator==(const vector2<T>&, const vector2<T>&) = default;
     };
 
 

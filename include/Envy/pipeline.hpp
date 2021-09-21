@@ -32,19 +32,18 @@
 
 #include "directx.hpp"
 
-namespace Envy::graphics
+namespace Envy
 {
-    struct description
+
+    class pipeline
     {
-        // ???
+
+        ComPtr<ID3D12RootSignature> rootsignature;
+        ComPtr<ID3D12PipelineState> pipeline_state;
+
+    public:
+
+
     };
 
-
-    void init(const description& gfxdesc);
-    void shutdown();
-
-    void clear();
-    void present();
-
-    ID3D12Resource* create_resource(const D3D12_HEAP_PROPERTIES& properties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initial_state);
 }

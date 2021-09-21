@@ -28,23 +28,34 @@
 #pragma once
 
 #include "common.hpp"
-#include "log.hpp"
 
 #include "directx.hpp"
 
-namespace Envy::graphics
+namespace Envy
 {
-    struct description
+
+    class render_commands
     {
-        // ???
+        ComPtr<ID3D12GraphicsCommandList> commandlist;
+    public:
+
+        render_commands();
+
+        void set_pipeline();
+        void bind_vertices();
+        void bind_indices();
+        void bind_resource();
+
+        void set_scissors();
+        void set_viewports();
+
+        void draw_vertices();
+        void draw_indices();
+
+        ID3D12GraphicsCommandList* operator->();
+        ID3D12GraphicsCommandList* get();
+        ID3D12GraphicsCommandList** addressof();
+        ComPtr<ID3D12GraphicsCommandList> comptr();
     };
 
-
-    void init(const description& gfxdesc);
-    void shutdown();
-
-    void clear();
-    void present();
-
-    ID3D12Resource* create_resource(const D3D12_HEAP_PROPERTIES& properties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initial_state);
 }

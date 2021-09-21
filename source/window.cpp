@@ -15,7 +15,14 @@ namespace Envy::window
     // state
     namespace
     {
+        // -- window state
+
         std::atomic<bool> open {};
+        std::atomic<bool> fullscreen {};
+        bool sizing {false};
+
+        RECT restore_rect;
+
         HWND hwnd {nullptr};
 
         Envy::vector2<i32> min_size;
@@ -23,13 +30,21 @@ namespace Envy::window
         Envy::vector2<i32> current_size;
 
 
+        // -- syncronization
+
         std::mutex mutex_hwnd;
         std::mutex mutex_open;
         std::mutex mutex_size;
 
         std::latch window_latch {1};
 
+        // -- cursor
+
         HCURSOR cursor {LoadCursor(NULL, IDC_ARROW)};
+
+        // -- diagnostics
+
+        Envy::logger wndlog {"Window"};
     }
 
 
@@ -40,7 +55,7 @@ namespace Envy::window
         // Window Class
         WNDCLASSEX wc {};
         wc.cbSize = sizeof( wc );
-        wc.style = CS_OWNDC;
+        wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
         wc.lpfnWndProc = winproc;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = 0;
@@ -49,7 +64,7 @@ namespace Envy::window
         wc.lpszClassName = L"EnvyWindow";
         wc.hCursor = cursor;
 
-        RegisterClassEx(&wc);
+        wndlog.assert( RegisterClassEx(&wc) > 0 , "Could not regester window class" );
 
         // Create Window
         hwnd = CreateWindowEx(
@@ -65,13 +80,13 @@ namespace Envy::window
             nullptr                        // Additional data
         );
 
-        Envy::assert(hwnd, "Could not create window!");
+        wndlog.assert(hwnd, "Could not create window!");
 
         ShowWindow(hwnd, SW_SHOWDEFAULT);
 
         open.store(true);
 
-        Envy::info("Window successfully initialized!")();
+        wndlog.info("Window successfully initialized!")();
 
         // notifies main thread that window has been created
         window_latch.count_down();
@@ -106,6 +121,58 @@ namespace Envy::window
     { PostMessage(hwnd, WM_CLOSE, 0, 0); }
 
 
+    void request_fullscreen(bool full)
+    {
+        if(fullscreen.load() != full)
+        {
+            fullscreen.store(full);
+
+            if(fullscreen.load())
+            {
+                // -- Go fullscreen
+
+                ::GetWindowRect(hwnd, &restore_rect);
+
+                u32 borderless = WS_OVERLAPPEDWINDOW & ~(WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+
+                ::SetWindowLongW(hwnd, GWL_STYLE, borderless);
+
+                // Query the name of the nearest display device for the window.
+                // This is required to set the fullscreen dimensions of the window
+                // when using a multi-monitor setup.
+                HMONITOR monitor = ::MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+                MONITORINFOEX monitor_info {};
+                monitor_info.cbSize = sizeof(MONITORINFOEX);
+                ::GetMonitorInfo(monitor, &monitor_info);
+
+                ::SetWindowPos(hwnd, HWND_TOP,
+                    monitor_info.rcMonitor.left,
+                    monitor_info.rcMonitor.top,
+                    monitor_info.rcMonitor.right - monitor_info.rcMonitor.left,
+                    monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
+                    SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+                ::ShowWindow(hwnd, SW_MAXIMIZE);
+            }
+            else
+            {
+                // -- Restore all the window decorators.
+
+                ::SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+
+                ::SetWindowPos(hwnd, HWND_NOTOPMOST,
+                    restore_rect.left,
+                    restore_rect.top,
+                    restore_rect.right - restore_rect.left,
+                    restore_rect.bottom - restore_rect.top,
+                    SWP_FRAMECHANGED | SWP_NOACTIVATE);
+
+                ::ShowWindow(hwnd, SW_NORMAL);
+            }
+        }
+    }
+
+
     HWND get_hwnd()
     { return hwnd; }
 
@@ -136,7 +203,9 @@ LRESULT CALLBACK winproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_GETMINMAXINFO:
     {
         std::scoped_lock l {mutex_size};
+
         LPMINMAXINFO lpMMI = (LPMINMAXINFO) lParam;
+
         lpMMI->ptMinTrackSize.x = min_size.x;
         lpMMI->ptMinTrackSize.y = min_size.y;
         // TODO: max_size , maxamized size/pos
@@ -147,19 +216,40 @@ LRESULT CALLBACK winproc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_SIZE:
     {
         current_size = { LOWORD(lParam) , HIWORD(lParam) };
+
+        Envy::post_event<resizing>( current_size );
+
+        if(wParam == SIZE_MAXIMIZED || (wParam == SIZE_RESTORED && !sizing))
+        {
+            Envy::post_event<resized>( current_size );
+        }
         return 0;
     }
 
     // window resizing finnished, notify engine
+    case WM_ENTERSIZEMOVE:
+    {
+        sizing = true;
+        return 0;
+    }
     case WM_EXITSIZEMOVE:
     {
+        sizing = false;
         Envy::post_event<resized>( current_size );
         return 0;
     }
 
-    // case WM_SETCURSOR:
-    //     SetCursor(c);
-    //     return 0;
+    case WM_SYSKEYDOWN:
+    case WM_KEYDOWN:
+    {
+        bool alt = (::GetAsyncKeyState(VK_MENU) & 0x8000) != 0;
+
+        if( (alt && wParam == VK_RETURN) || wParam == VK_F11)
+        {
+            request_fullscreen(!fullscreen.load());
+            Envy::post_event<resized>( current_size );
+        }
+    }
 
     default: return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }

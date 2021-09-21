@@ -5,7 +5,7 @@
 namespace Envy
 {
 
-    const std::string msgfmt {"[{} LN{}] {}: {}"};
+    const std::string msgfmt {"[{} : {}] {}: {}"};
 
     exception::exception(std::string_view msg, std::source_location loc)
         : msg { std::format(msgfmt, loc.file_name(), loc.line(), "Exception", msg) }

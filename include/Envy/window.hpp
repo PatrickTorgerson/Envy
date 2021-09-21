@@ -38,7 +38,7 @@
 #include "vector.hpp"
 #include "event.hpp"
 
-#include <Windows.h>
+#include "win32.hpp"
 
 #include <thread>
 
@@ -65,6 +65,7 @@ namespace Envy::window
         // TODO: border, resizable, confine cursor, etc
     };
 
+
     /********************************************************************************
      * \brief Pauses execution until Window is created
      *
@@ -76,6 +77,7 @@ namespace Envy::window
      * \see Envy::engine::run()
      ********************************************************************************/
     void wait_for_creation();
+
 
     /********************************************************************************
      * \brief Launches the Window thread
@@ -90,6 +92,7 @@ namespace Envy::window
      ********************************************************************************/
     void run(std::stop_token stop_token, const description& windesc);
 
+
     /********************************************************************************
      * \brief Returns whether the window is open
      *
@@ -103,6 +106,7 @@ namespace Envy::window
      ********************************************************************************/
     bool is_open();
 
+
     /********************************************************************************
      * \brief Requests the window be closed
      *
@@ -115,12 +119,22 @@ namespace Envy::window
      ********************************************************************************/
     void request_close();
 
+
+    /********************************************************************************
+     * \brief Requests the window fullscreened or windowed
+     *
+     * \param [in] full true for fullscreen, false for windowed
+     ********************************************************************************/
+    void request_fullscreen(bool full);
+
+
     /********************************************************************************
      * \brief Returns the native Win32 window handle
      *
      * \return HWND the native Win32 window handle
      ********************************************************************************/
     HWND get_hwnd();
+
 
     /********************************************************************************
      * \brief Sets the Window's size constraints
@@ -156,6 +170,24 @@ namespace Envy::window
         Envy::vector2<i32> size; ///< The new size of the Window
 
         resized(Envy::vector2<i32> s) : size {s} {}
+    };
+
+
+    /********************************************************************************
+     * \brief Window resized event
+     *
+     * Envy will post this event when the size of the window is being changed
+     *
+     * \see Envy::listener
+     * \see Envy::register_callback()
+     ********************************************************************************/
+    class resizing : public Envy::event
+    {
+    public:
+
+        Envy::vector2<i32> size; ///< The new size of the Window
+
+        resizing(Envy::vector2<i32> s) : size {s} {}
     };
 
 }

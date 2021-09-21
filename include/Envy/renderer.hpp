@@ -28,23 +28,28 @@
 #pragma once
 
 #include "common.hpp"
-#include "log.hpp"
 
 #include "directx.hpp"
 
-namespace Envy::graphics
+namespace Envy
 {
-    struct description
+
+    class render_commands;
+
+    template <typename T>
+    class renderer
     {
-        // ???
+    public:
+
+        using renderable_t = T;
+
+        virtual ~renderer() = default;
+
+        virtual void submit(const renderable_t&) = 0;
+
+        virtual void clear() = 0;
+
+        virtual render_commands commands() = 0;
     };
 
-
-    void init(const description& gfxdesc);
-    void shutdown();
-
-    void clear();
-    void present();
-
-    ID3D12Resource* create_resource(const D3D12_HEAP_PROPERTIES& properties, const D3D12_RESOURCE_DESC& description, D3D12_RESOURCE_STATES initial_state);
 }
