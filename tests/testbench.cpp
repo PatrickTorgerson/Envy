@@ -24,7 +24,6 @@ int main(int argc, char** argv)
 {
     SetConsoleOutputCP(CP_UTF8);
 
-
     Envy::engine::description engdesc {};
 
     // engdesc.log.preamble = { Envy::log::column::logger_name };
@@ -67,8 +66,4 @@ void run_tests()
     tests.report();
 
     Envy::log::global.print_header();
-
-    Envy::warning("Get off your ass and do the god damn dishes");
-    Envy::note("No one even loves you").note("(cuz u fat)");
-    Envy::error("404 : affection not found");
 }
