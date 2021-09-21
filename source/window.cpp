@@ -197,6 +197,13 @@ namespace Envy::window
             }
         }
     }
+
+
+    //**********************************************************************
+    Envy::vector2<i32> get_size()
+    {
+        return current_size;
+    }
 }
 
 

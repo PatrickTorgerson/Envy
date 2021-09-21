@@ -1,16 +1,17 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(EnvyEngine)
+project(envyworks)
 
-# output directories
+# == output directories == #
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # == Dependencies == #
+add_subdirectory("${CMAKE_SOURCE_DIR}/dependencies")
 
-# == Envy ==
-add_subdirectory("./source")
+# == Envy == #
+add_subdirectory("${CMAKE_SOURCE_DIR}/source")
 
-# == Tests ==
-add_subdirectory("./tests")
+# == Tests == #
+add_subdirectory("${CMAKE_SOURCE_DIR}/tests")

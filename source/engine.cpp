@@ -38,6 +38,8 @@ namespace Envy::engine
             graphics::present();
         }
 
+        graphics::shutdown();
+
         std::chrono::duration<f64> runtime { std::chrono::high_resolution_clock::now() - start };
 
         Envy::info("Application exited")

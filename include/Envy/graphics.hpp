@@ -39,6 +39,7 @@ namespace Envy::graphics
 
 
     void init(const description& gfxdesc);
+    void shutdown();
 
     void clear();
     void present();

@@ -1,0 +1,5 @@
+# Envy Dependencies
+
+# LLGL
+set(LLGL_D3D11_ENABLE_FEATURELEVEL "Direct3D 11.3")
+add_subdirectory("LLGL")
