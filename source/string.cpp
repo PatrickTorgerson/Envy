@@ -94,7 +94,7 @@ namespace Envy
     //**********************************************************************
     string::string(const std::string& from) :
         buffer_size       { from.size() },
-        buffer_capacity   { from.capacity() + 1 },
+        buffer_capacity   { from.capacity() + 1u },
         buffer            { new utf8::code_unit[buffer_capacity] },
         code_point_count  { npos }
     {
@@ -167,7 +167,7 @@ namespace Envy
     string& string::operator=(const std::string& from)
     {
         buffer_size       = from.size();
-        buffer_capacity   = from.capacity();
+        buffer_capacity   = from.capacity() + 1u;
         buffer            = new utf8::code_unit[buffer_capacity];
         code_point_count  = npos;
 

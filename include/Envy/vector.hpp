@@ -207,10 +207,13 @@ namespace Envy
         template <std::convertible_to<T> U>
         vector2<T>& operator /= (const vector2<U>& other)
         { x /= (T) other.x;  y /= (T) other.y;  return *this; }
+
+        friend bool operator==(const vector2<T>&, const vector2<T>&) = default;
     };
 
 
     template <typename T>
+    [[deprecated("Envy::vector3 is not yet implemented")]]
     class vector3
     {
         public: T x,y,z;
@@ -220,10 +223,13 @@ namespace Envy
 
         vector3(vector2<T> xy, T z) : x{xy.x} , y{xy.y} , z{z} {}
         vector3(T x, vector2<T> yz) : x{x} , y{yz.x} , z{yz.y} {}
+
+        friend bool operator==(const vector3<T>&, const vector3<T>&) = default;
     };
 
 
     template <typename T>
+    [[deprecated("Envy::vector4 is not yet implemented")]]
     class vector4
     {
         public: T x,y,z,w;
@@ -235,6 +241,8 @@ namespace Envy
         vector4(T x, T y, vector2<T> zw) : x{x} , y{y} , z{zw.x} , w{zw.y} {}
 
         vector4(vector2<T> xy, vector2<T> zw) : x{xy.x} , y{xy.y} , z{zw.x} , w{zw.y} {}
+
+        friend bool operator==(const vector4<T>&, const vector4<T>&) = default;
     };
 
 

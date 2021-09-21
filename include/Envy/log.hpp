@@ -41,6 +41,11 @@
 #include <filesystem>
 #include <chrono>
 
+// We undef assert so as not to colide with Envy::assert() and Envy::logger::assert()
+#ifdef assert
+#undef assert
+#endif
+
 namespace Envy::log
 {
 

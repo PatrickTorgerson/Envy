@@ -74,7 +74,7 @@ namespace Envy
     requires std::regular_invocable<F,const E&>
     void register_callback(F&& f)
     {
-        register_callback_impl( type<E>(), [f](const event* e){ std::invoke(std::forward<F>(f), *dynamic_cast<const E*>(e)); });
+        register_callback_impl( type<E>(), [f](const event* e){ std::invoke(f, *dynamic_cast<const E*>(e)); });
     }
 
 
