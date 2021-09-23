@@ -88,7 +88,7 @@
 #endif
 
 
-#if defined(N_DEBUG)
+#if defined(_DEBUG)
     #define ENVY_DEBUG
     #define ENVY_DEBUG_CALL(x) (x)
 #else

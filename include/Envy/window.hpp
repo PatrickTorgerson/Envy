@@ -144,6 +144,7 @@ namespace Envy::window
     void set_size_constraints(Envy::vector2<i32> min, Envy::vector2<i32> max);
 
     void request_fullscreen(bool full);
+    bool is_fullscreen();
     Envy::vector2<i32> get_size();
 
 

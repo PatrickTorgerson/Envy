@@ -13,6 +13,15 @@ namespace Envy::engine
     {
         log::init(engdesc.log);
 
+        if constexpr (Envy::debug)
+        {
+            Envy::info(" ==== Envy Debug ====");
+        }
+        else
+        {
+            Envy::info(" ==== Envy Release ====");
+        }
+
         std::chrono::high_resolution_clock::time_point start { std::chrono::high_resolution_clock::now() };
 
         // Launch message thread

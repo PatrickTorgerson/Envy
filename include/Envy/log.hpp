@@ -279,7 +279,7 @@ namespace Envy::log
      * Envy uses this internaly to do the logging, you likely will not need to use it
      * yourself. However if you wish to forward messages from third party libraries to
      * Envy's logging system this function can be used. You must remember to call
-     * Envy::update_log_state() first though.
+     * Envy::log::update_log_state() first though.
      *
      * \param [in] logger_file File to log to, leave empty to not log to a file
      * \param [in] log_to_console Whether this message should be logged to the console

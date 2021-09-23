@@ -7,6 +7,8 @@
 #include <algorithm>
 
 #include <LLGL/LLGL.h>
+#include <LLGL/Strings.h>
+#include <LLGL/Log.h>
 #include <LLGL/Platform/NativeHandle.h>
 
 namespace Envy::graphics
@@ -28,6 +30,8 @@ namespace Envy::graphics
         virtual void ResetPixelFormat() override;
         virtual bool ProcessEvents() override;
         virtual std::unique_ptr<LLGL::Display> FindResidentDisplay() const override;
+
+        LLGL::VideoModeDescriptor GetVideoMode() const;
     };
 
 
@@ -39,6 +43,8 @@ namespace Envy::graphics
         // -- LLGL state
 
         std::unique_ptr<LLGL::RenderSystem> llgl;
+        std::unique_ptr<LLGL::RenderingDebugger> llgl_debug   {nullptr};
+        std::unique_ptr<LLGL::RenderingProfiler> llgl_profile {nullptr};
 
         LLGL::RenderContext* context;
         LLGL::CommandQueue* queue;
@@ -56,6 +62,8 @@ namespace Envy::graphics
 
 
     void resize(const window::resized& resize);
+
+    void llgl_log(LLGL::Log::ReportType type, const std::string& message, const std::string& contextInfo, void* userData);
 
 
     // [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ TEMP ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
@@ -78,9 +86,9 @@ namespace Envy::graphics
 
         Vertex vertices[] =
         {
-            { {  0,  s }, { 255, 0, 0, 255 } }, // 1st vertex: center-top, red
-            { {  s, -s }, { 0, 255, 0, 255 } }, // 2nd vertex: right-bottom, green
-            { { -s, -s }, { 0, 0, 255, 255 } }, // 3rd vertex: left-bottom, blue
+            { {  0,  s }, { 100, 50, 50, 255 } }, // 1st vertex: center-top, red
+            { {  s, -s }, { 50, 100, 50, 255 } }, // 2nd vertex: right-bottom, green
+            { { -s, -s }, { 50, 50, 100, 255 } }, // 3rd vertex: left-bottom, blue
         };
 
         // Vertex format
@@ -121,11 +129,11 @@ namespace Envy::graphics
 
         for(auto shader : { vertShader, fragShader })
         {
-            if (shader != nullptr)
+            if(shader != nullptr)
             {
                 std::string log = shader->GetReport();
                 if (!log.empty())
-                    gfxlog.info("Shader Info: {}")(log);
+                    gfxlog.info("Shader Error").note(log);
             }
         }
 
@@ -165,13 +173,36 @@ namespace Envy::graphics
     void init(const description& gfxdesc)
     {
 
+        // -- diagnostic setup
+
+        LLGL::Log::SetReportCallback(llgl_log);
+        LLGL::Log::PostReport(LLGL::Log::ReportType::Information, "LLGL Reports will be displayed here");
+
         // -- init LLGL
 
-        llgl = LLGL::RenderSystem::Load("Direct3D11");
+        LLGL::RenderSystemDescriptor renderdesc {"Direct3D11"};
+
+        if constexpr (Envy::debug)
+        {
+            llgl_profile.reset(new LLGL::RenderingProfiler());
+            llgl_debug.reset(new LLGL::RenderingDebugger());
+
+            renderdesc.debugCallback = [](const std::string& type, const std::string& message)
+            { llgl_log(LLGL::Log::ReportType::Error, message, type, nullptr); };
+
+            if(llgl_profile)
+            {
+                llgl_profile->timeRecordingEnabled = true;
+                gfxlog.info("LLGL Profiling enabled");
+            }
+        }
+
+        llgl = LLGL::RenderSystem::Load(renderdesc, llgl_profile.get(), llgl_debug.get());
 
         surface = std::make_shared<surface_t>();
 
         LLGL::RenderContextDescriptor contextdesc {};
+        contextdesc.videoMode = surface->GetVideoMode();
 
         context = llgl->CreateRenderContext(contextdesc, surface);
 
@@ -183,11 +214,21 @@ namespace Envy::graphics
         .note("Vendor:           {}", info.vendorName)
         .note("Shading Language: {}", info.shadingLanguageName);
 
+        // print contex information
+        const auto resolution = context->GetResolution();
+        gfxlog.info("Context Information")
+        .note("resolution:         {} x {}", resolution.width, resolution.height)
+        .note("samples:            {}", context->GetSamples())
+        .note("colorFormat:        {}", LLGL::ToString(context->GetColorFormat()))
+        .note("depthStencilFormat: {}", LLGL::ToString(context->GetDepthStencilFormat()));
+
         // Get command queue to record and submit command buffers
         queue = llgl->GetCommandQueue();
 
         // Create command buffer to submit subsequent graphics commands to the GPU
-        commands = llgl->CreateCommandBuffer();
+        LLGL::CommandBufferDescriptor commandsdesc {};
+        commands = llgl->CreateCommandBuffer(commandsdesc);
+        commands->SetClearColor({0.3f,0.3f,0.3f,1.0f});
 
         // -- woot
 
@@ -212,6 +253,11 @@ namespace Envy::graphics
     //**********************************************************************
     void clear()
     {
+        if(llgl_profile && llgl_profile->timeRecordingEnabled)
+        {
+            llgl_profile->NextProfile();
+        }
+
         commands->Begin();
         commands->SetViewport(context->GetResolution());
         commands->BeginRenderPass(*context);
@@ -241,6 +287,27 @@ namespace Envy::graphics
     //**********************************************************************
     void resize(const window::resized& resize)
     {
+    }
+
+
+    //**********************************************************************
+    void llgl_log(LLGL::Log::ReportType type, const std::string& message, const std::string& contextInfo, void* userData)
+    {
+        Envy::log::severity sev;
+
+        switch(type)
+        {
+            using enum Envy::log::severity;
+            using enum LLGL::Log::ReportType;
+
+            case Error:        sev = error;    break;
+            case Warning:      sev = warning;  break;
+            case Information:  sev = info;     break;
+            case Performance:  sev = warning;  break;
+        }
+
+        Envy::log::update_log_state(gfxlog.get_name(), sev, Envy::log::message_source {});
+        Envy::log::raw_log(gfxlog.get_file(), gfxlog.logs_to_console(), std::format("{} : {}", contextInfo, message));
     }
 
 
@@ -319,6 +386,22 @@ namespace Envy::graphics
         gfxlog.info("{func}");
         gfxlog.warning("{func} is not implemented");
         return {};
+    }
+
+    //**********************************************************************
+    LLGL::VideoModeDescriptor surface_t::GetVideoMode() const
+    {
+        LLGL::VideoModeDescriptor videomode {};
+
+        // videomode.colorBits;
+        // videomode.depthBits;
+        // videomode.stencilBits;
+
+        videomode.fullscreen = window::is_fullscreen();
+        videomode.resolution = GetContentSize();
+        videomode.swapChainSize = 3;;
+
+        return videomode;
     }
 
 }

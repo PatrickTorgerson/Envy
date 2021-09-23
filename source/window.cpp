@@ -200,6 +200,13 @@ namespace Envy::window
 
 
     //**********************************************************************
+    bool is_fullscreen()
+    {
+        return fullscreen.load();
+    }
+
+
+    //**********************************************************************
     Envy::vector2<i32> get_size()
     {
         return current_size;
